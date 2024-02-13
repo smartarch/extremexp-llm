@@ -2,3 +2,9 @@ jupyter
 langchain
 python-dotenv
 langchain-openai
+
+chromadb
+# sentence-transformers
+unstructured
+markdown
+tqdm
