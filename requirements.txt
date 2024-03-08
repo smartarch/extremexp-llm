@@ -8,3 +8,4 @@ chromadb
 unstructured
 markdown
 tqdm
+colorama
