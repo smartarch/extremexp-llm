@@ -5,12 +5,12 @@ A LLM-based Agent, all tools are faked and require a human to respond.
 from dotenv import load_dotenv, find_dotenv
 from langchain_openai import ChatOpenAI
 from langchain_community.callbacks import get_openai_callback
-from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder, HumanMessagePromptTemplate
 from langchain_core.messages import SystemMessage, HumanMessage
 from langchain.agents import AgentExecutor, create_openai_tools_agent
 from langchain_community.chat_message_histories import ChatMessageHistory
 from langchain_core.runnables.history import RunnableWithMessageHistory
-from langchain.tools import StructuredTool
+from langchain.tools import StructuredTool, tool
 import sys
 from datetime import datetime
 from colorama import Fore, Style
@@ -52,6 +52,25 @@ def print_token_usage(token_counter):
     print(token_counter)
     print(Style.RESET_ALL)
 
+def print_prompt_template(prompt):
+    print("Prompt template:")
+    print(Fore.MAGENTA)
+    for message in prompt.messages:
+        print(repr(message))
+    print(Style.RESET_ALL)
+
+def print_available_tools(tools):
+    print("Tools:")
+    print(Fore.MAGENTA)
+    for tool in tools:
+        print(tool.name, tool.description, sep=": ")
+    print(Style.RESET_ALL)
+
+def print_main_workflow(message):
+    print(Fore.MAGENTA)
+    print(message)
+    print(Style.RESET_ALL)
+
 def print_input_message(message):
     print("User input:")
     print(Fore.MAGENTA)
@@ -71,10 +90,22 @@ MEMORY_KEY = "chat_history"
 
 # based on https://smith.langchain.com/hub/hwchase17/openai-tools-agent and modified
 prompt = ChatPromptTemplate.from_messages([
-    SystemMessage(content="You are a helpful assistant. You can use the provided tools to obtain additional information. If you need more information and there is no tool to do so, you can ask the user."),
-    SystemMessage(content="Your goal is to help the user with analyzing results of an experiment."),
+    SystemMessage(content="""Your goal is to help the user with analyzing results of an experiment and suggest improvements to the experiment itself.
+
+The experiment workflow is an activity diagram consisting of several tasks with a data flow among them. Each of the tasks can be composed of a sub-workflow and you can use tools to obtain the description of the sub-workflow.
+
+The workflow is described using a DSL:
+arrows "->" represent control flow
+arrows with question mark “?->” represent conditional control flow
+dashed arrows "-->" represent data flow
+
+The workflow can be derived from another workflow, which is denoted by the “from” keyword. Use the tools to obtain the description of the original workflow.
+
+You can use the tools and ask the user if you need additional information about a task, results collected during the experiment, etc. Be specific with your questions and include all the necessary information to answer them.
+"""),
+    HumanMessagePromptTemplate.from_template("Description of {main_workflow_name}:\n{main_workflow}\nEnd of description."),
     MessagesPlaceholder(variable_name=MEMORY_KEY),
-    HumanMessage(content="{input}"),
+    HumanMessagePromptTemplate.from_template("{input}"),
     MessagesPlaceholder(variable_name="agent_scratchpad"),
 ])
 
@@ -94,7 +125,7 @@ def fake_tool(input: str) -> str:
 
 # fake tools names and descriptions
 TOOLS = {
-    "workflow_tasks": "Get the description of the workflow tasks.",
+    # "workflow_tasks": "Get the description of the workflow tasks.",
     "results_schema": "Get the names of the columns of the table with results.",
 }
 tools = [
@@ -102,6 +133,13 @@ tools = [
         func=fake_tool, name=name, description=description,
     ) for name, description in TOOLS.items()
 ]
+
+@tool
+def workflow_description(workflow_name: str) -> str:
+    """Get the description of the workflow with the given name."""
+    return fake_tool(workflow_name)
+
+tools += [workflow_description]
 
 
 ########## Agent ##########
@@ -123,11 +161,16 @@ agent_with_chat_history = RunnableWithMessageHistory(
 ########## Main ##########
 print(f"{Style.DIM}This script uses multiline input. Press Ctrl+D (Linux) or Ctrl+Z (Windows) on an empty line to end input message.{Style.RESET_ALL}\n")
 
-print("Prompt template:\n")
-print(Fore.MAGENTA)
-for message in prompt.messages:
-    print(repr(message))
-print(Style.RESET_ALL)
+print_prompt_template(prompt)
+print_available_tools(tools)
+
+print("\nEnter main workflow name:")
+main_workflow_name = input()
+print_main_workflow(main_workflow_name)
+
+print("\nEnter main workflow DSL:")
+main_workflow = multiline_input()
+print_main_workflow(main_workflow)
 
 print("\nStart of chat.\n")
 
@@ -141,7 +184,7 @@ while True:
         print_input_message(message)
 
         result = agent_with_chat_history.invoke(
-            {"input": message},
+            {"input": message, "main_workflow_name": main_workflow_name, "main_workflow": main_workflow},
             # This is needed because in most real world scenarios, a session id is needed
             # It isn't really used here because we are using a simple in memory ChatMessageHistory
             config={"configurable": {"session_id": "<foo>"}},
