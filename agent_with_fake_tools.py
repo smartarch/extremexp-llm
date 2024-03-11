@@ -2,23 +2,24 @@
 A LLM-based Agent, all tools are faked and require a human to respond.
 """
 
-from pathlib import Path
-from dotenv import load_dotenv, find_dotenv
-from langchain_openai import ChatOpenAI
-from langchain_community.callbacks import get_openai_callback
-from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder, HumanMessagePromptTemplate
-from langchain_core.messages import SystemMessage, HumanMessage
-from langchain.agents import AgentExecutor, create_openai_tools_agent
-from langchain_community.chat_message_histories import ChatMessageHistory
-from langchain_core.runnables.history import RunnableWithMessageHistory
-from langchain.tools import StructuredTool, tool
 import sys
 from datetime import datetime
-from colorama import Fore, Style
-from langchain_core.pydantic_v1 import BaseModel, Field
-from langchain_core.tools import BaseTool
-from langchain_community.tools.file_management.utils import INVALID_PATH_TEMPLATE, BaseFileToolMixin,FileValidationError
+from pathlib import Path
 from typing import Type
+
+from colorama import Fore, Style
+from dotenv import find_dotenv, load_dotenv
+from langchain.agents import AgentExecutor, create_openai_tools_agent
+from langchain.tools import StructuredTool, tool
+from langchain_community.callbacks import get_openai_callback
+from langchain_community.chat_message_histories import ChatMessageHistory
+from langchain_community.tools.file_management.utils import INVALID_PATH_TEMPLATE, BaseFileToolMixin, FileValidationError
+from langchain_core.messages import HumanMessage, SystemMessage
+from langchain_core.prompts import ChatPromptTemplate, HumanMessagePromptTemplate, MessagesPlaceholder
+from langchain_core.pydantic_v1 import BaseModel, Field
+from langchain_core.runnables.history import RunnableWithMessageHistory
+from langchain_core.tools import BaseTool
+from langchain_openai import ChatOpenAI
 
 load_dotenv(find_dotenv(), override=True)  # take environment variables from .env.
 
