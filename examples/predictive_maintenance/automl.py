@@ -13,12 +13,12 @@ from joblib import dump
 import random
 
 random.seed(42)
-TARGET = "label"
+TARGET = "Target"
 
 # workflow AutoML
 
 def W_automl():
-    input_data_path = get_environ_path("NEW_DATA_FILE")
+    input_data_path = get_environ_path("INPUT_DATA_FILE")
 
     retrieved_data = T_data_retrieval(input_data_path)
     training_data, test_data = T_train_test_split(retrieved_data)
@@ -26,17 +26,11 @@ def W_automl():
 
 def T_data_retrieval(input_data_path):
     dataframe = pd.read_csv(input_data_path)
-    
-    # add labels
-    dataframe[TARGET] = 0
-    # correct data
-    dataframe.loc[343:, TARGET] = 1
-
-    retrieved_data = dataframe
+    retrieved_data = dataframe.drop(["UDI", "Product ID", "Failure Type"], axis=1)
     return retrieved_data
 
 def T_train_test_split(retrieved_data, test_size=0.2):
-    training_data, test_data = train_test_split(retrieved_data, test_size=test_size)
+    training_data, test_data = train_test_split(retrieved_data, test_size=test_size, stratify=retrieved_data[TARGET])
     return training_data, test_data
 
 def T_hyperparameter_optimization(training_data):
@@ -49,10 +43,10 @@ def T_hyperparameter_optimization(training_data):
 def W_hyperparameter_optimization(training_data):
     params_iterator = chain(iter(ParameterGrid({
         "algorithm": ["neural_network"],
-        "hidden_layer_sizes": [1, 2, 5, 10],
-    # })), iter(ParameterGrid({
-    #     "algorithm": ["decision_tree"],
-    #     "max_leaf_nodes": [1, 2, 5],
+        "hidden_layer_sizes": [[5], [10], [20], [50], [10, 10], [20, 20]],
+    })), iter(ParameterGrid({
+        "algorithm": ["decision_tree"],
+        "max_leaf_nodes": [5, 10, 20, 30],
     })))
 
     results_path = get_environ_path("RESULTS_FOLDER") / 'ml_models.csv'
@@ -107,11 +101,11 @@ def W_ml_training_and_evaluation(hypeparameters, training_data, test_data):
 
 def T_feature_extraction(hypeparameters, training_data, test_data):
     train_X = training_data.drop(TARGET, axis=1)
-    # train_X = training_data[["positive_std","negative_std"]]
+    train_X = pd.get_dummies(train_X, columns=["Type"], prefix="Type")  # one-hot encoding of Type
     train_Y = training_data[TARGET]
 
     test_X = test_data.drop(TARGET, axis=1)
-    # test_X = test_data[["positive_std","negative_std"]]
+    test_X = pd.get_dummies(test_X, columns=["Type"], prefix="Type")  # one-hot encoding of Type
     test_Y = test_data[TARGET]
 
     training_features = train_X, train_Y
@@ -127,6 +121,8 @@ def T_model_training(hyperparameters, training_features):
         model_hyperparameters = hyperparameters.copy()
         del model_hyperparameters["algorithm"]
         ml_model = DecisionTreeClassifier(**model_hyperparameters, random_state=42)
+    else:
+        raise ValueError(f'Unsupported algorithm: {hyperparameters["algorithm"]}')
 
     train_X, train_Y = training_features
     ml_model.fit(train_X, train_Y)
@@ -141,6 +137,8 @@ def T_model_training(hyperparameters, training_features):
             writer.writerow(["Epoch", "Loss"])
             for epoch, loss in enumerate(ml_model.loss_curve_):
                 writer.writerow([epoch, loss])
+    else:
+        pass
 
     # save the model
     ml_model_path = get_environ_path("RESULTS_FOLDER") / 'ml_models' / f"{model_name}.joblib"
@@ -156,7 +154,12 @@ def T_model_evaluation(ml_model, test_features):
     precision = precision_score(test_Y, predicted_Y, zero_division=0)
     recall = recall_score(test_Y, predicted_Y, zero_division=0)
     f1 = f1_score(test_Y, predicted_Y, zero_division=0)
-    num_of_params = sum(np.prod(coef.shape) for coef in ml_model.coefs_ + ml_model.intercepts_)
+    if isinstance(ml_model, MLPClassifier):
+        num_of_params = sum(np.prod(coef.shape) for coef in ml_model.coefs_ + ml_model.intercepts_)
+    elif isinstance(ml_model, DecisionTreeClassifier):
+        num_of_params = ml_model.get_n_leaves() * 4  # approximate calculation: in each inner node, we need to select feature and a threshold; in each leaf, we have class probabily
+    else:
+        raise ValueError(f'Unsupported algorithm')
 
     ml_model_metrics = [accuracy, precision, recall, f1, num_of_params]
     return ml_model_metrics
