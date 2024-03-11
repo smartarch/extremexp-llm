@@ -2,6 +2,7 @@
 A LLM-based Agent, all tools are faked and require a human to respond.
 """
 
+from pathlib import Path
 from dotenv import load_dotenv, find_dotenv
 from langchain_openai import ChatOpenAI
 from langchain_community.callbacks import get_openai_callback
@@ -14,8 +15,15 @@ from langchain.tools import StructuredTool, tool
 import sys
 from datetime import datetime
 from colorama import Fore, Style
+from langchain_core.pydantic_v1 import BaseModel, Field
+from langchain_core.tools import BaseTool
+from langchain_community.tools.file_management.utils import INVALID_PATH_TEMPLATE, BaseFileToolMixin,FileValidationError
+from typing import Type
 
 load_dotenv(find_dotenv(), override=True)  # take environment variables from .env.
+
+
+AUTOML_RESULTS_FOLDER = Path(__file__).parent / "examples" / "predictive_maintenance" / "results"
 
 
 ########## Helpers ##########
@@ -126,7 +134,7 @@ def fake_tool(input: str) -> str:
 # fake tools names and descriptions
 TOOLS = {
     # "workflow_tasks": "Get the description of the workflow tasks.",
-    "results_schema": "Get the names of the columns of the table with results.",
+    # "results_schema": "Get the names of the columns of the table with results.",
 }
 tools = [
     StructuredTool.from_function(
@@ -134,12 +142,55 @@ tools = [
     ) for name, description in TOOLS.items()
 ]
 
+# workflow description tool
+
 @tool
 def workflow_description(workflow_name: str) -> str:
     """Get the description of the workflow with the given name."""
     return fake_tool(workflow_name)
 
 tools += [workflow_description]
+
+# result files tools
+
+@tool
+def list_results_directory() -> str:
+    """Lists the files in the results directory."""
+    return "\n".join(
+        str(file.relative_to(AUTOML_RESULTS_FOLDER))
+        for file in AUTOML_RESULTS_FOLDER.glob("**/*.csv")
+    ) + "\n"
+
+tools += [list_results_directory]
+
+
+class CSVFileReadTool(BaseFileToolMixin, BaseTool):
+    """Tool that reads a file. Based on https://github.com/langchain-ai/langchain/blob/master/libs/community/langchain_community/tools/file_management/read.py"""
+
+    class CSVFileReadToolInput(BaseModel):
+        file_path: str = Field(..., description="Path to the CSV file")
+
+    name: str = "read_csv_file"
+    args_schema: Type[BaseModel] = CSVFileReadToolInput
+    description: str = "Read the first and last 5 rows of a CSV file"
+
+    def _run(self, file_path: str, run_manager=None) -> str:
+        try:
+            read_path = self.get_relative_path(file_path)
+        except FileValidationError:
+            return INVALID_PATH_TEMPLATE.format(arg_name="file_path", value=file_path)
+        if not read_path.exists():
+            return f"Error: no such file or directory: {file_path}"
+        try:
+            with read_path.open("r", encoding="utf-8") as file:
+                content = file.readlines()
+            return "".join(content[:6] + ["...\n"] + content[-5:])
+        except Exception as e:
+            return "Error: " + str(e)
+        
+read_csv_file_tool = CSVFileReadTool()
+read_csv_file_tool.root_dir = str(AUTOML_RESULTS_FOLDER)
+tools += [read_csv_file_tool]
 
 
 ########## Agent ##########
