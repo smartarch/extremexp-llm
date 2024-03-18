@@ -101,18 +101,19 @@ MEMORY_KEY = "chat_history"
 prompt = ChatPromptTemplate.from_messages([
     SystemMessage(content="""Your goal is to help the user with analyzing results of an experiment and suggest improvements to the experiment itself.
 
-The experiment workflow is an activity diagram consisting of several tasks with a data flow among them. Each of the tasks can be composed of a sub-workflow and you can use tools to obtain the description of the sub-workflow.
+The experiment is defined by a workflow, which is an activity diagram consisting of several tasks with a data flow among them. Each of the tasks can be composed of a sub-workflow and you can use tools to obtain the description of the sub-workflow.
 
-The workflow is described using a DSL:
+The workflow is specified using a DSL:
 arrows "->" represent control flow
 arrows with question mark “?->” represent conditional control flow
 dashed arrows "-->" represent data flow
 
-The workflow can be derived from another workflow, which is denoted by the “from” keyword. Use the tools to obtain the description of the original workflow.
+A workflow can be derived from another workflow, which is denoted by the “from” keyword. Use the tools to obtain the description of the original workflow.
 
-You can use the tools and ask the user if you need additional information about a task, results collected during the experiment, etc. Be specific with your questions and include all the necessary information to answer them.
+Think in steps and use the available tools. Use the tools if you need description of a workflow or a task, list the results collected during the experiment, etc. If the information cannot be obtained using the tools, ask the user. Always gather all the necessary information before submitting your final answer.
 """),
-    HumanMessagePromptTemplate.from_template("Description of {main_workflow_name}:\n{main_workflow}\nEnd of description."),
+    # HumanMessagePromptTemplate.from_template("Experiment workflow: '{main_workflow_name}'\n Workflow specification:\n{main_workflow}\nEnd of specification."),
+    HumanMessagePromptTemplate.from_template("Experiment workflow: '{main_workflow_name}'\n Workflow summary: {main_workflow}\n"),
     MessagesPlaceholder(variable_name=MEMORY_KEY),
     HumanMessagePromptTemplate.from_template("{input}"),
     MessagesPlaceholder(variable_name="agent_scratchpad"),
@@ -121,7 +122,9 @@ You can use the tools and ask the user if you need additional information about 
 
 ########## LLM ##########
 
-llm = ChatOpenAI(model="gpt-3.5-turbo")
+LLM_MODEL = "gpt-3.5-turbo"
+# LLM_MODEL = "gpt-4-0125-preview"
+llm = ChatOpenAI(model=LLM_MODEL)
 
 
 ########## Tools ##########
@@ -143,14 +146,29 @@ tools = [
     ) for name, description in TOOLS.items()
 ]
 
-# workflow description tool
+# workflow tools
 
 @tool
-def workflow_description(workflow_name: str) -> str:
-    """Get the description of the workflow with the given name."""
+def workflow_summary(workflow_name: str) -> str:
+    """Get the summary of the workflow with the given name."""
     return fake_tool(workflow_name)
 
-tools += [workflow_description]
+@tool
+def workflow_specification(workflow_name: str) -> str:
+    """Get the full specification of the workflow with the given name."""
+    return fake_tool(workflow_name)
+
+
+tools += [workflow_summary, workflow_specification]
+
+# task description tool
+
+@tool
+def task_description(workflow_name: str, task_name: str) -> str:
+    """Get the description of the task with "task_name" from the workflow with "workflow_name"."""
+    return fake_tool(f"{workflow_name}.{task_name}")
+
+tools += [task_description]
 
 # result files tools
 
@@ -162,30 +180,89 @@ def list_results_directory() -> str:
         for file in AUTOML_RESULTS_FOLDER.glob("**/*.csv")
     ) + "\n"
 
-tools += [list_results_directory]
+# tools += [list_results_directory]
+
+
+@tool
+def list_results_files() -> str:
+    """Lists the files in the results directory with their descriptions. The output is one file per line formatted "path: description"."""
+    result = []
+    for file in AUTOML_RESULTS_FOLDER.glob("**/*.xxpa"):
+        path = str(file.relative_to(AUTOML_RESULTS_FOLDER))
+        path = path[:-5]  # remove ".xxpa"
+        
+        with file.open() as f: 
+            description = f.readline().strip()
+
+        result.append(f"{path}: {description}\n")
+
+    return "".join(result)
+
+tools += [list_results_files]
+
+
+# TODO: refactor the read file tools
+# TODO (optional): force the LLM to read the description before reading file
+class FileDescriptionTool(BaseFileToolMixin, BaseTool):
+    """Tool that reads a description of a file. Based on https://github.com/langchain-ai/langchain/blob/master/libs/community/langchain_community/tools/file_management/read.py"""
+
+    class ArgsSchema(BaseModel):
+        file_path: str = Field(..., description="Path to the file")
+
+    name: str = "get_file_description"
+    args_schema: Type[BaseModel] = ArgsSchema
+    description: str = "Returns the description of the file. You should read the description of a file before reading the file itself."
+
+    def _run(self, file_path: str, run_manager=None) -> str:
+        description_path = file_path + ".xxpa"
+        try:
+            read_path = self.get_relative_path(description_path)
+        except FileValidationError:
+            return f"Error: Access denied to: {file_path}. Permission granted exclusively to the current working directory"
+        
+        if not read_path.exists():
+            return f"Error: no such file or directory: {file_path}"
+        
+        try:
+            with read_path.open("r", encoding="utf-8") as file:
+                content = file.readlines()
+            # return "".join(content[:6] + ["...\n"] + content[-5:])
+            return "".join(content)
+        
+        except Exception as e:
+            return "Error: " + str(e)
+        
+file_description_tool = FileDescriptionTool()
+file_description_tool.root_dir = str(AUTOML_RESULTS_FOLDER)
+tools += [file_description_tool]
 
 
 class CSVFileReadTool(BaseFileToolMixin, BaseTool):
     """Tool that reads a file. Based on https://github.com/langchain-ai/langchain/blob/master/libs/community/langchain_community/tools/file_management/read.py"""
 
-    class CSVFileReadToolInput(BaseModel):
+    class ArgsSchema(BaseModel):
         file_path: str = Field(..., description="Path to the CSV file")
 
     name: str = "read_csv_file"
-    args_schema: Type[BaseModel] = CSVFileReadToolInput
-    description: str = "Read the first and last 5 rows of a CSV file"
+    args_schema: Type[BaseModel] = ArgsSchema
+    # description: str = "Read the first and last 5 rows of a CSV file"
+    description: str = "Read the CSV file"
 
     def _run(self, file_path: str, run_manager=None) -> str:
         try:
             read_path = self.get_relative_path(file_path)
         except FileValidationError:
-            return INVALID_PATH_TEMPLATE.format(arg_name="file_path", value=file_path)
+            return f"Error: Access denied to: {file_path}. Permission granted exclusively to the current working directory"
+        
         if not read_path.exists():
             return f"Error: no such file or directory: {file_path}"
+        
         try:
             with read_path.open("r", encoding="utf-8") as file:
                 content = file.readlines()
-            return "".join(content[:6] + ["...\n"] + content[-5:])
+            # return "".join(content[:6] + ["...\n"] + content[-5:])
+            return "".join(content[:20])  # prevent reading too much  TODO: how to handle this?
+        
         except Exception as e:
             return "Error: " + str(e)
         
@@ -213,16 +290,20 @@ agent_with_chat_history = RunnableWithMessageHistory(
 ########## Main ##########
 print(f"{Style.DIM}This script uses multiline input. Press Ctrl+D (Linux) or Ctrl+Z (Windows) on an empty line to end input message.{Style.RESET_ALL}\n")
 
+print("LLM model:", LLM_MODEL, "\n")
 print_prompt_template(prompt)
 print_available_tools(tools)
 
-print("\nEnter main workflow name:")
-main_workflow_name = input()
-print_main_workflow(main_workflow_name)
+# print("\nEnter main workflow name:")
+# main_workflow_name = input()
+# print_main_workflow(main_workflow_name)
 
-print("\nEnter main workflow DSL:")
-main_workflow = multiline_input()
-print_main_workflow(main_workflow)
+# print("\nEnter main workflow DSL:")
+# main_workflow = multiline_input()
+# print_main_workflow(main_workflow)
+
+main_workflow_name = "FailurePredictionInManufacture"
+main_workflow = "AutoML for selecting a model to perform prediction of machine failures (binary classification)."
 
 print("\nStart of chat.\n")
 

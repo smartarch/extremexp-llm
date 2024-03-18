@@ -1,5 +1,5 @@
 jupyter
-langchain
+langchain==0.1.11
 python-dotenv
 langchain-openai
 

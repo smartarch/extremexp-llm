@@ -1,0 +1,7 @@
+Evaluation metrics of all the explored hyperparameter configurations on test data.
+MLModelHyperparameters: str - Hyperparameter configuration.
+Accuracy: float - Accuracy on test data.
+Precision: float - Precision on test data.
+Recall: float - Recall on test data.
+F1: float - F1 score on test data.
+NumOfParams: int - Number of parameters of the ML model (corresponds to model complexity).

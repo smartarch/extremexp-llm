@@ -26,7 +26,8 @@ def W_automl():
 
 def T_data_retrieval(input_data_path):
     dataframe = pd.read_csv(input_data_path)
-    retrieved_data = dataframe.drop(["UDI", "Product ID", "Failure Type"], axis=1)
+    retrieved_data = dataframe.drop(["UID", "Product ID", "Failure Type"], axis=1)
+    retrieved_data.to_csv(get_environ_path("RESULTS_FOLDER") / 'retrieved_data.csv')
     return retrieved_data
 
 def T_train_test_split(retrieved_data, test_size=0.2):

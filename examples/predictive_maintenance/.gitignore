@@ -1,2 +1,2 @@
-results
+results/**/*.joblib
 chat_gpt_generated
