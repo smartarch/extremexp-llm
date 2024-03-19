@@ -97,9 +97,8 @@ def print_result(message):
 
 MEMORY_KEY = "chat_history"
 
-# based on https://smith.langchain.com/hub/hwchase17/openai-tools-agent and modified
-prompt = ChatPromptTemplate.from_messages([
-    SystemMessage(content="""Your goal is to help the user with analyzing results of an experiment and suggest improvements to the experiment itself.
+DSL_SYSTEM_PROMPT = """\
+Your goal is to help the user with analyzing results of an experiment and suggest improvements to the experiment itself.
 
 The experiment is defined by a workflow, which is an activity diagram consisting of several tasks with a data flow among them. Each of the tasks can be composed of a sub-workflow and you can use tools to obtain the description of the sub-workflow.
 
@@ -111,7 +110,23 @@ dashed arrows "-->" represent data flow
 A workflow can be derived from another workflow, which is denoted by the “from” keyword. Use the tools to obtain the description of the original workflow.
 
 Think in steps and use the available tools. Use the tools if you need description of a workflow or a task, list the results collected during the experiment, etc. If the information cannot be obtained using the tools, ask the user. Always gather all the necessary information before submitting your final answer.
-"""),
+"""
+
+DESCRIPTIONS_SYSTEM_PROMPT = """\
+Your goal is to help the user with analyzing results of an experiment and suggest improvements to the experiment itself.
+
+The experiment is defined by a workflow, which is an activity diagram consisting of several tasks with a data flow among them. Each of the tasks can be composed of a subworkflow so to fully understand the whole workflow, it is necessary to also read the specification of the subworkflows (use the available tools to obtain it).
+
+Think in steps and use the available tools. Use the tools if you need a description of a workflow (or subworkflow), list the results collected during the experiment, etc. If the information cannot be obtained using the tools, ask the user. Always gather all the necessary information before submitting your final answer.
+"""
+
+
+# based on https://smith.langchain.com/hub/hwchase17/openai-tools-agent and modified
+prompt = ChatPromptTemplate.from_messages([
+    SystemMessage(
+        # content=DSL_SYSTEM_PROMPT
+        content=DESCRIPTIONS_SYSTEM_PROMPT
+    ),
     # HumanMessagePromptTemplate.from_template("Experiment workflow: '{main_workflow_name}'\n Workflow specification:\n{main_workflow}\nEnd of specification."),
     HumanMessagePromptTemplate.from_template("Experiment workflow: '{main_workflow_name}'\n Workflow summary: {main_workflow}\n"),
     MessagesPlaceholder(variable_name=MEMORY_KEY),
@@ -155,7 +170,8 @@ def workflow_summary(workflow_name: str) -> str:
 
 @tool
 def workflow_specification(workflow_name: str) -> str:
-    """Get the specification of the workflow (or sub-workflow) with the given name. Note that the workflow specification can contain references to sub-workflows and parent workflows. To fully understand the whole workflow, it might be necessary to also obtain the specification of the sub-workflows and parent workflows."""
+    """Get the specification of the workflow (or subworkflow) in YAML. Note that the workflow specification can contain references to subworkflows. To fully understand the whole workflow, it might be necessary to also obtain the specification of the subworkflows."""
+    # """Get the specification of the workflow (or subworkflow) with the given name. Note that the workflow specification can contain references to subworkflows and parent workflows. To fully understand the whole workflow, it might be necessary to also obtain the specification of the subworkflows and parent workflows."""
     return fake_tool(workflow_name)
 
 @tool

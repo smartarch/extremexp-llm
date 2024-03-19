@@ -1,0 +1,18 @@
+workflow TrainTestSplitValidation:
+  description: Splits the data into training set and validation (test) set and trains and evaluates the ML model.
+  tasks: [TrainTestSplit, MLTrainingAndEvaluation]
+  data: [InputData, Hyperparameters, TrainingData, ValidationData, MLModelMetrics]
+
+task TrainTestSplit:
+  description: Randomly splits the data into training and test sets.
+  implementation: random_train_test_split.py
+  input data: [InputData]
+  output data: [TrainingData, ValidationData]
+  params:
+    test_size: 0.2
+
+task MLTrainingAndEvaluation:
+  description: Final training and evaluation of the ML model with the best hyperparameters.
+  subworkflow: MLTrainingAndEvaluation
+  input data: [TrainingData, ValidationData, Hyperparameters]
+  output data: [MLModel, MLModelMetrics]

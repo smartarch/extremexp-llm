@@ -1,0 +1,26 @@
+workflow HyperparameterOptimization:
+  description: Uses grid search to explores hyperparameter configurations and asks the user to select the best one.
+  tasks: [HyperparameterProposal, MLModelValidation, BestHyperparameterSelection]
+  data: 
+  - TrainingData
+  - Hyperparameters
+  - name: MLModelMetrics
+    schema: MLModelMetrics.schema
+  - BestHyperparameters
+
+task HyperparameterProposal:
+  description: Repeatedly proposes hyperparameter configurations until a stop condition is met (based on the metrics of the current ML model).
+  implementation: grid_search.py
+  output data: [Hyperparameters, MLModelMetrics]
+
+task MLModelValidation:
+  description: Trains and evaluates the ML model with the proposed hyperparameter configuration.
+  subworkflow: TrainTestSplitValidation
+  input data: [Hyperparameters, TrainingData]
+  output data: [MLModel, MLModelMetrics]
+
+task BestHyperparameterSelection:
+  description: Asks the user to select the best hyperparameter configuration.
+  implementation: user_hyperparameter_selection.py;
+  input data: [MLModelMetrics]
+  output data: [BestHyperparameters]

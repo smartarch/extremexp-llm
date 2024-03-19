@@ -1,0 +1,34 @@
+workflow MLTrainingAndEvaluation:
+  description: Training and evaluation of the ML model with the given hyperparameters.
+  tasks: [FeatureExtraction, ModelTraining, ModelEvaluation]
+  data: 
+  - Hyperparameters
+  - TrainingData
+  - TestData
+  - name: TrainingFeatures
+    schema: Features.schema
+  - name: TestFeatures
+    schema: Features.schema
+  - MLModel
+  - name: MLModelMetrics
+    schema: MLModelMetrics.schema
+
+task FeatureExtraction:
+  description: Extracts features from the input data.
+  implementation: ideko_feature_extraction.py
+  input data: [TrainingData, TestData, Hyperparameters]
+  output data: [TrainingFeatures, TestFeatures]
+
+task ModelTraining:
+  description: Trains the ML model with the given hyperparameters.
+  implementation: binary_classification_training.py
+  input data: [TrainingFeatures, Hyperparameters]
+  output data: [MLModel]
+
+task ModelEvaluation:
+  description: Evaluates the trained ML model.
+  implementation: binary_classification_evaluation.py
+  input data: [MLModel, TestFeatures]
+  output data: [MLModelMetrics]
+  params:
+    metrics: ["accuracy", "precision", "recall", "f1", "num_of_params"]

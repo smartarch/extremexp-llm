@@ -1,0 +1,30 @@
+workflow FailurePredictionInManufacture:
+  description: AutoML for selecting a model to perform prediction of machine failures (binary classification).
+  tasks: [DataRetrieval, TrainTestSplit, HyperparameterOptimization, MLTrainingAndEvaluation]
+  data: [InputData, RetrievedData, TrainingData, TestData, BestHyperparameters, MLModel, MLModelMetrics]
+
+task DataRetrieval:
+  description: Loads the data from the predictive_maintenance.csv file and drops the unnecessary data.
+  implementation: ideko_data_retreival.py
+  input data: [InputData]
+  output data: [RetrievedData]
+
+task TrainTestSplit:
+  description: Randomly splits the data into training and test sets.
+  implementation: random_train_test_split.py
+  input data: [RetrievedData]
+  output data: [TrainingData, TestData]
+  params:
+    test_size: 0.2
+
+task HyperparameterOptimization:
+  description: Uses grid search to explores hyperparameter configurations and asks the user to select the best one.
+  subworkflow: HyperparameterOptimization
+  input data: [TrainingData]
+  output data: [BestHyperparameters]
+
+task MLTrainingAndEvaluation:
+  description: Final training and evaluation of the ML model with the best hyperparameters.
+  subworkflow: MLTrainingAndEvaluation
+  input data: [TrainingData, TestData, BestHyperparameters]
+  output data: [MLModel, MLModelMetrics]
