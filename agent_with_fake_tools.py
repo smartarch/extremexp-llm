@@ -155,11 +155,15 @@ def workflow_summary(workflow_name: str) -> str:
 
 @tool
 def workflow_specification(workflow_name: str) -> str:
-    """Get the full specification of the workflow with the given name."""
+    """Get the specification of the workflow (or sub-workflow) with the given name. Note that the workflow specification can contain references to sub-workflows and parent workflows. To fully understand the whole workflow, it might be necessary to also obtain the specification of the sub-workflows and parent workflows."""
     return fake_tool(workflow_name)
 
+@tool
+def workflow_data_schema(schema_file_name: str) -> str:
+    """Read the data schema file referenced in workflow specification."""
+    return fake_tool(schema_file_name)
 
-tools += [workflow_summary, workflow_specification]
+tools += [workflow_summary, workflow_specification, workflow_data_schema]
 
 # task description tool
 
@@ -221,7 +225,7 @@ class FileDescriptionTool(BaseFileToolMixin, BaseTool):
             return f"Error: Access denied to: {file_path}. Permission granted exclusively to the current working directory"
         
         if not read_path.exists():
-            return f"Error: no such file or directory: {file_path}"
+            return f"Error: no such file or directory: {file_path}"  # TODO: informative messages for different tools, e.g. "Error: file 'predictive_maintenance.csv' not found in workflow specification"
         
         try:
             with read_path.open("r", encoding="utf-8") as file:

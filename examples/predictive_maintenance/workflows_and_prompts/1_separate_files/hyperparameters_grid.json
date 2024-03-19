@@ -1,0 +1,7 @@
+[{
+    "algorithm": ["neural_network"],
+    "hidden_layer_sizes": [[5], [10], [20], [50], [10, 10], [20, 20]]
+}, {
+    "algorithm": ["decision_tree"],
+    "max_leaf_nodes": [5, 10, 20, 30]
+}]

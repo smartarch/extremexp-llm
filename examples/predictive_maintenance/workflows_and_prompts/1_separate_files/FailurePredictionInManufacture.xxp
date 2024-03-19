@@ -6,6 +6,8 @@ workflow FailurePredictionInManufacture from AutoML {
   }
 
   configure task HyperparameterOptimization {
+    param hyperparameters_grid = "file://hyperparameters_grid.json";
+
     configure task HyperparameterProposal {
       implementation "file://grid_search.py";
     }
