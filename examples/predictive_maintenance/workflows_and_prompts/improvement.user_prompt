@@ -1,1 +1,1 @@
-Explore the whole workflow of the experiment including all its subworkflows and parent workflows. Identify potential issues with the experiment and suggest improvements.
+Explore the whole workflow of the experiment including all its subworkflows (recursively) and parent workflows. Identify potential issues with the experiment and errors in the workflow specification and suggest improvements.

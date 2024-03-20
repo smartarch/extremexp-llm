@@ -1,6 +1,6 @@
 package automl_ideko;
 
-workflow FailurePredictionInManufacture from AutoML {
+workflow FailurePredictionInManufacture from automl.AutoML {
   configure task DataRetrieval {
     implementation "file://ideko_data_retreival.py";
   }
