@@ -2,8 +2,14 @@ package automl;
 
 workflow TrainTestSplitValidation {
   // TASKS
-  define task TrainTestSplit;
-  define task MLTrainingAndEvaluation;
+  task TrainTestSplit {
+    implementation "file://random_train_test_split.py";
+    param test_size = 0.2;
+  }
+  task MLTrainingAndEvaluation {
+    subworkflow MLTrainingAndEvaluation;
+    data TestData = ValidationData; // rename input data
+  }
 
   // DATA
   define data InputData;
@@ -28,16 +34,5 @@ workflow TrainTestSplitValidation {
   // model training and evaluation
   Hyperparameters --> MLTrainingAndEvaluation;
   TrainingData --> MLTrainingAndEvaluation;
-  ValidationData --> MLTrainingAndEvaluation --> MLModelMetrics;
-
-  // TASK CONFIGURATION
-  configure task TrainTestSplit {
-    implementation "file://random_train_test_split.py";
-    param test_size = 0.2;
-  }
-
-  configure task MLTrainingAndEvaluation {
-    subworkflow MLTrainingAndEvaluation;
-    data TestData = ValidationData; // rename input data
-  }
+  ValidationData --> MLTrainingAndEvaluation --> MLModelMetrics;  
 }

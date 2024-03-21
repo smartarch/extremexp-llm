@@ -4,8 +4,8 @@
 
 1. Separate `xxp` files divided to packages (`examples/artificial_workflow/1_config.yaml`).
 2. Assembled `xxp` workflows -> information from parent workflow are copied to the assembled workflow, nested specification is separated to the subworkflow files, packages are not necessary anymore (`examples/artificial_workflow/2_config.yaml`).
-3. 1. with list of all packages and workflows in the initial prompt.
-4. 2. with list of all workflows in the initial prompt.
+3. 1\. with list of all packages and workflows in the initial prompt.
+4. 2\. with list of all workflows in the initial prompt.
 5. Expanded workflow: one `xxp` file with nested subworkflows (`examples/artificial_workflow/5_config.yaml`).
 
 Note: Variants 3 and 4 are not implemented yet (and 1 and 2 perform well enough in this example, so 3 and 4 were not necessary).

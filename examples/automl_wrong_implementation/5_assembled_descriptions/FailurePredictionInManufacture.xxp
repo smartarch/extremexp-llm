@@ -4,10 +4,24 @@ workflow FailurePredictionInManufacture {
   description "AutoML for selecting a model to perform prediction of machine failures (binary classification).";
 
   // TASKS
-  define task DataRetrieval;
-  define task TrainTestSplit;
-  define task HyperparameterOptimization;
-  define task MLTrainingAndEvaluation;
+  task DataRetrieval {
+    description "Loads the data from the predictive_maintenance.csv file and drops the unnecessary data.";
+    implementation "file://ideko_data_retreival.py";
+  }
+  task TrainTestSplit {
+    description "Randomly splits the data into training and test sets.";
+    implementation "file://random_train_test_split.py";
+    param test_size = 0.2;
+  }
+  task HyperparameterOptimization {
+    description "Uses grid search to explore hyperparameter configurations and asks the user to select the best one.";
+    subworkflow HyperparameterOptimization;
+    param hyperparameters_grid = "file://hyperparameters_grid.json";
+  }
+  task MLTrainingAndEvaluation {
+    description "Final training and evaluation of the ML model with the best hyperparameters.";
+    subworkflow MLTrainingAndEvaluation;
+  }
 
   // DATA
   define data InputData;
@@ -39,26 +53,4 @@ workflow FailurePredictionInManufacture {
   BestHyperparameters --> MLTrainingAndEvaluation; 
   TrainingData --> MLTrainingAndEvaluation --> MLModel;
   TestData --> MLTrainingAndEvaluation --> MLModelMetrics;
-
-  // TASK CONFIGURATION
-  configure task TrainTestSplit {
-    implementation "file://random_train_test_split.py";
-    param test_size = 0.2;
-  }
-
-  configure task DataRetrieval {
-    description "Loads the data from the predictive_maintenance.csv file and drops the unnecessary data.";
-    implementation "file://ideko_data_retreival.py";
-  }
-
-  configure task HyperparameterOptimization {
-    description "Uses grid search to explore hyperparameter configurations and asks the user to select the best one.";
-    subworkflow HyperparameterOptimization;
-    param hyperparameters_grid = "file://hyperparameters_grid.json";
-  }
-
-  configure task MLTrainingAndEvaluation {
-    description "Final training and evaluation of the ML model with the best hyperparameters.";
-    subworkflow MLTrainingAndEvaluation;
-  }
 }

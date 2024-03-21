@@ -1,12 +1,22 @@
 package automl_ideko;
 
 workflow MLTrainingAndEvaluation {
-  description "Training and evaluation of the ML model with the given hyperparameters.";
+  description "Training and evaluation of the regression ML model with the given hyperparameters.";
   
   // TASKS
-  define task FeatureExtraction;
-  define task ModelTraining;
-  define task ModelEvaluation;
+  task FeatureExtraction {
+    description "Extracts features from the input data.";
+    implementation "file://ideko_feature_extraction.py";
+  }
+  task ModelTraining {
+    description "Trains the regression ML model with the given hyperparameters.";
+    implementation "file://regression_training.py";
+  }
+  task ModelEvaluation {
+    description "Evaluates the trained ML model using regression metrics.";
+    implementation "file://regression_evaluation.py";
+    param metrics = ["accuracy", "precision", "recall", "f1", "num_of_params"];
+  }
 
   // INPUT DATA
   define data Hyperparameters;  // ML algorithm and its parameters
@@ -14,12 +24,18 @@ workflow MLTrainingAndEvaluation {
   define data TestData;
 
   // INNER DATA
-  define data TrainingFeatures;
-  define data TestFeatures;
+  define data TrainingFeatures {
+    schema "file://Features.schema";
+  }
+  define data TestFeatures {
+    schema "file://Features.schema";
+  }
 
   // OUTPUT DATA
   define data MLModel;
-  define data MLModelMetrics;
+  define data MLModelMetrics {
+    schema "file://MLModelMetrics.schema";
+  }
 
   // TASK CONNECTIONS
   
@@ -39,28 +55,4 @@ workflow MLTrainingAndEvaluation {
   // model evaluation
   MLModel --> ModelEvaluation;
   TestFeatures --> ModelEvaluation --> MLModelMetrics;
-
-  configure task FeatureExtraction {
-    description "Extracts features from the input data.";
-    implementation "file://ideko_feature_extraction.py";
-  }
-  configure task ModelTraining {
-    description "Trains the ML model with the given hyperparameters.";
-    implementation "file://regression_training.py";
-  }
-  configure task ModelEvaluation {
-    description "Evaluates the trained ML model.";
-    implementation "file://regression_evaluation.py";
-    param metrics = ["accuracy", "precision", "recall", "f1", "num_of_params"];
-  }
-
-  configure data TrainingFeatures {
-    schema "file://Features.schema";
-  }
-  configure data TestFeatures {
-    schema "file://Features.schema";
-  }
-  configure data MLModelMetrics {
-    schema "file://MLModelMetrics.schema";
-  }
 }

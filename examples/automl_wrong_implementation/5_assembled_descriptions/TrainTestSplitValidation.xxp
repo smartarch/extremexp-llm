@@ -4,8 +4,16 @@ workflow TrainTestSplitValidation {
   description "Splits the data into training set and validation (test) set and trains and evaluates the ML model.";
 
   // TASKS
-  define task TrainTestSplit;
-  define task MLTrainingAndEvaluation;
+  task TrainTestSplit {
+    description "Randomly splits the data into training and test sets.";
+    implementation "file://random_train_test_split.py";
+    param test_size = 0.2;
+  }
+  task MLTrainingAndEvaluation {
+    description "Training and evaluation of the ML model with the given hyperparameters.";
+    subworkflow MLTrainingAndEvaluation;
+    data TestData = ValidationData; // rename input data
+  }
 
   // DATA
   define data InputData;
@@ -30,18 +38,5 @@ workflow TrainTestSplitValidation {
   // model training and evaluation
   Hyperparameters --> MLTrainingAndEvaluation;
   TrainingData --> MLTrainingAndEvaluation;
-  ValidationData --> MLTrainingAndEvaluation --> MLModelMetrics;
-
-  // TASK CONFIGURATION
-  configure task TrainTestSplit {
-    description "Randomly splits the data into training and test sets.";
-    implementation "file://random_train_test_split.py";
-    param test_size = 0.2;
-  }
-
-  configure task MLTrainingAndEvaluation {
-    description "Training and evaluation of the ML model with the given hyperparameters.";
-    subworkflow MLTrainingAndEvaluation;
-    data TestData = ValidationData; // rename input data
-  }
+  ValidationData --> MLTrainingAndEvaluation --> MLModelMetrics;  
 }
