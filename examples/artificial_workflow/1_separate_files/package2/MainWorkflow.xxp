@@ -1,0 +1,21 @@
+package package2;
+
+workflow MainWorkflow from package1.Workflow1 {
+  
+  configure task Task3 {
+    implementation "file://implementation_B.py";
+  }
+
+  configure task Task4 {
+    subworkflow SubWorkflow;
+  }
+
+  configure task Task1 {
+    configure tasks Task6 {
+      configure task Task8 {
+        implementation "file://implementation_E.exe";
+      }
+    }
+  }
+
+}

@@ -1,3 +1,4 @@
+import enum
 import os
 import sys
 from datetime import datetime
@@ -102,3 +103,15 @@ class FileValidationError(ValueError):
 
 MEMORY_KEY = "chat_history"
 AGENT_SCRATCHPAD = "agent_scratchpad"
+RESULTS_FOLDER = "results_folder"
+SPECIFICATION_TYPE = "specification_type"
+SPECIFICATION_FOLDER = "specification_folder"
+LOGGER_FOLDER = "logger_folder"
+MODEL = "model"
+MAIN_WORKFLOW = "main_workflow_name"
+MAIN_WORKFLOW_PACKAGE = "main_workflow_package"
+
+class SpecificationType(str, enum.Enum):
+    XXP = "xxp"
+    XXP_ASSEMBLED = "xxp_assembled"
+    YAML = "yaml"

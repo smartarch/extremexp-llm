@@ -1,0 +1,18 @@
+package package1;
+
+workflow Workflow4 {
+  
+  // TASKS
+  define task Task9;
+  define task Task10;
+  define task Task11;
+
+  // TASK CONNECTIONS
+  
+  START -> Task10 -> Task9 -> Task11 -> END;
+
+  // TASK CONFIGURATION
+  configure task Task10 {
+    implementation "file://implementation_F.java";
+  }
+}

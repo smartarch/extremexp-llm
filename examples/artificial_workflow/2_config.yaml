@@ -1,0 +1,5 @@
+logger_folder: xxp_agent_logs/artificial_workflow
+model: gpt-4-0125-preview
+specification_type: xxp_assembled
+specification_folder: examples/artificial_workflow/2_assembled
+main_workflow_name: MainWorkflow

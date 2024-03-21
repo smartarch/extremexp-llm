@@ -1,0 +1,34 @@
+package package1;
+
+workflow Workflow1 {
+  
+  // TASKS
+  define task Task1;
+  define task Task2;
+  define task Task3;
+  define task Task4;
+
+  // DATA
+  define data InputData;
+
+  // TASK CONNECTIONS
+  
+  START -> Task2 -> PARALLEL_1;
+  PARALLEL_1 -> Task1 -> PARALLEL_END_1;
+  PARALLEL_1 -> Task3 -> Task4 -> PARALLEL_END_1;
+  PARALLEL_END_1 -> END;
+
+  // DATA CONNECTIONS
+
+  InputData --> Task2;
+
+  // TASK CONFIGURATION
+  configure task Task2 {
+    implementation "file://implementation_A.py";
+    param value = 0.2;
+  }
+
+  configure task Task1 {
+    subworkflow Workflow2;
+  }
+}

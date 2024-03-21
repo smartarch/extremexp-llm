@@ -1,0 +1,19 @@
+package package2;
+
+workflow SubWorkflow {
+
+  // TASKS
+  task Task10 {
+    implementation "file://implementation_F.java";
+  }
+  task Task9 {
+    implementation "file://implementation_F.py";
+  }
+  task Task11 {
+    implementation "file://implementation_G.java";
+  }
+
+  // TASK CONNECTIONS
+  
+  START -> Task10 -> Task9 -> Task11 -> END;  
+}

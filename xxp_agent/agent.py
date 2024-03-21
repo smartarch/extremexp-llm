@@ -27,4 +27,4 @@ def create_agent(llm, tools, prompt):
         history_messages_key=MEMORY_KEY,
     )
 
-    return agent_with_chat_history
+    return agent_with_chat_history, message_history

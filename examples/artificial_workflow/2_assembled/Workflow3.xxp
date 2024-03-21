@@ -1,0 +1,29 @@
+package package1;
+
+workflow Workflow3 {
+  
+  // TASKS
+  task Task7 {
+    implementation "file://implementation_D.py";
+  }
+  task Task8 {
+    implementation "file://implementation_E.exe";
+  }
+
+  // PARAMETERS
+  param p = 0;
+
+  // TASK CONNECTIONS
+  
+  START -> Task7;
+
+  Task7 ?-> END {
+    condition "p > 1";
+  }
+
+  Task7 ?-> Task8 {
+    condition "otherwise";
+  }
+  
+  Task8 -> END;
+}

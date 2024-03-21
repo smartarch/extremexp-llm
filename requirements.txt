@@ -9,3 +9,4 @@ unstructured
 markdown
 tqdm
 colorama
+pyyaml

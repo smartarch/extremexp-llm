@@ -1,0 +1,22 @@
+package package1;
+
+workflow Workflow2 {
+  
+  // TASKS
+  define task Task5;
+  define task Task6;
+
+  // TASK CONNECTIONS
+  
+  START -> Task5 -> Task6 -> END;
+
+  // TASK CONFIGURATION
+  configure task Task5 {
+    implementation "file://implementation_C.py";
+  }
+
+  configure task Task6 {
+    subworkflow Workflow3;
+    param p = 4;
+  }
+}

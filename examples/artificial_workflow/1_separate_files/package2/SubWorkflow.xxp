@@ -1,0 +1,12 @@
+package package2;
+
+workflow SubWorkflow from package1.Workflow4 {
+  
+  configure task Task9 {
+    implementation "file://implementation_F.py";
+  }
+
+  configure task Task11 {
+    implementation "file://implementation_G.java";
+  }
+}

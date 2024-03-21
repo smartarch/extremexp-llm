@@ -9,9 +9,10 @@ from colorama import Style
 from dotenv import find_dotenv, load_dotenv
 from langchain.tools import tool
 from langchain_community.callbacks import get_openai_callback
+import yaml
 
-from helpers import Logger, multiline_input, print_color, print_token_usage, print_prompt_template, \
-    print_available_tools, print_input_message, print_result
+from helpers import LOGGER_FOLDER, MAIN_WORKFLOW, MAIN_WORKFLOW_PACKAGE, MODEL, SPECIFICATION_FOLDER, SPECIFICATION_TYPE, Logger, multiline_input, print_color, print_token_usage, print_prompt_template, \
+    print_available_tools, print_input_message, print_result, RESULTS_FOLDER, SpecificationType
 from agent import create_agent, create_llm
 from results_tools import ListResultFilesTool, FileDescriptionTool, CSVFileReadTool
 import xxp_dsl_tools
@@ -22,17 +23,24 @@ load_dotenv(find_dotenv(), override=True)  # take environment variables from .en
 
 PROJECT_DIR = Path(__file__).parent.parent  # root of the repository
 
-AUTOML_RESULTS_FOLDER = PROJECT_DIR / "examples" / "predictive_maintenance" / "results"
-YAML = False  # TODO: better management of configurations
+# Load configuration file
 
+config_file_path = input("Configuration file path: ")
+config = yaml.load((PROJECT_DIR / config_file_path).open(), Loader=yaml.Loader)
 
-sys.stdout = Logger(PROJECT_DIR / "xxp_agent_logs" / "automl_wrong_implementation")
+# Create Logger
 
-llm = create_llm(model="gpt-3.5-turbo")  # model="gpt-4-0125-preview"
+sys.stdout = Logger(PROJECT_DIR / config.get(LOGGER_FOLDER, "xxp_agent_logs"))
+
+print("Configuration file path:", config_file_path)
+print("Configuration:", config)
+
+# Create LLM
+
+llm = create_llm(model=config.get(MODEL, "gpt-3.5-turbo"))
 tools = []
 
 # Tools
-
 
 # TODO: update
 @tool
@@ -40,33 +48,32 @@ def workflow_data_schema(schema_file_name: str) -> str:
     """Read the schema of data referenced in workflow specification."""
     return multiline_input()
 
-
 # tools.append(workflow_data_schema)
 
 # result files tools
 
-# tools += [ListResultFilesTool(AUTOML_RESULTS_FOLDER), FileDescriptionTool(AUTOML_RESULTS_FOLDER), CSVFileReadTool(AUTOML_RESULTS_FOLDER)]
+if RESULTS_FOLDER in config:
+    tools += [
+        ListResultFilesTool(config[RESULTS_FOLDER]),
+        FileDescriptionTool(config[RESULTS_FOLDER]),
+        CSVFileReadTool(config[RESULTS_FOLDER])
+    ]
 
 # Main
 
 print_color("This script uses multiline input. Press Ctrl+D (Linux) or Ctrl+Z (Windows) on an empty line to end input message.", Style.DIM)
 
-main_workflow_name = "FailurePredictionInManufacture"
+if config[SPECIFICATION_TYPE] == SpecificationType.XXP:
+    prompt = xxp_dsl_tools.get_prompt_template(config[MAIN_WORKFLOW], config[MAIN_WORKFLOW_PACKAGE])
+    tools.append(xxp_dsl_tools.DSLWorkflowSpecificationTool(PROJECT_DIR / config[SPECIFICATION_FOLDER]))
+elif config[SPECIFICATION_TYPE] == SpecificationType.YAML:
+    prompt = yaml_tools.get_prompt_template(config[MAIN_WORKFLOW])
+    tools.append(yaml_tools.YAMLWorkflowSpecificationTool(PROJECT_DIR / config[SPECIFICATION_FOLDER]))
+elif config[SPECIFICATION_TYPE] == SpecificationType.XXP_ASSEMBLED:
+    prompt = xxp_dsl_tools_assembled.get_prompt_template(config[MAIN_WORKFLOW])
+    tools.append(xxp_dsl_tools_assembled.DSLAssembledWorkflowSpecificationTool(PROJECT_DIR / config[SPECIFICATION_FOLDER]))
 
-
-# DSL
-# prompt = xxp_dsl_tools.get_prompt_template(main_workflow_name, "automl_ideko")
-# # tools.append(xxp_dsl_tools.DSLWorkflowSpecificationTool(PROJECT_DIR / "examples/automl_wrong_implementation/1_separate_files"))
-# tools.append(xxp_dsl_tools.DSLWorkflowSpecificationTool(PROJECT_DIR / "examples/automl_wrong_implementation/4_separate_files_descriptions"))
-# # YAML
-# prompt = yaml_tools.get_prompt_template(main_workflow_name)
-# tools.append(yaml_tools.YAMLWorkflowSpecificationTool(PROJECT_DIR / "examples/automl_wrong_implementation/2_yaml_descriptions"))
-# DSL assembled
-prompt = xxp_dsl_tools_assembled.get_prompt_template(main_workflow_name)
-# tools.append(xxp_dsl_tools_assembled.DSLAssembledWorkflowSpecificationTool(PROJECT_DIR / "examples/automl_wrong_implementation/3_assembled"))
-tools.append(xxp_dsl_tools_assembled.DSLAssembledWorkflowSpecificationTool(PROJECT_DIR / "examples/automl_wrong_implementation/5_assembled_descriptions"))
-
-agent = create_agent(llm, tools, prompt)
+agent, message_history = create_agent(llm, tools, prompt)
 
 print_prompt_template(prompt)
 print_available_tools(tools)
