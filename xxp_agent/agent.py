@@ -14,7 +14,7 @@ def create_llm(model="gpt-3.5-turbo"):
 
 def create_agent(llm, tools, prompt):
     agent = create_openai_tools_agent(llm, tools, prompt)
-    agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True, max_iterations=10)  # TODO: max_iterations are for debugging, we can increase it or change to max_execution_time later
+    agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True, max_iterations=10, return_intermediate_steps=True)  # TODO: max_iterations are for debugging, we can increase it or change to max_execution_time later
 
     message_history = ChatMessageHistory()
 

@@ -1,0 +1,66 @@
+package automl_ideko;
+
+workflow MLTrainingAndEvaluation {
+  description "Training and evaluation of the ML model with the given hyperparameters.";
+  
+  // TASKS
+  define task FeatureExtraction;
+  define task ModelTraining;
+  define task ModelEvaluation;
+
+  // INPUT DATA
+  define data Hyperparameters;  // ML algorithm and its parameters
+  define data TrainingData;
+  define data TestData;
+
+  // INNER DATA
+  define data TrainingFeatures;
+  define data TestFeatures;
+
+  // OUTPUT DATA
+  define data MLModel;
+  define data MLModelMetrics;
+
+  // TASK CONNECTIONS
+  
+  START -> FeatureExtraction -> ModelTraining -> ModelEvaluation -> END;
+
+  // DATA CONNECTIONS
+
+  // feature extraction
+  TrainingData --> FeatureExtraction --> TrainingFeatures;
+  TestData --> FeatureExtraction --> TestFeatures;
+  Hyperparameters --> FeatureExtraction;
+
+  // model training
+  Hyperparameters --> ModelTraining;
+  TrainingFeatures --> ModelTraining --> MLModel;
+
+  // model evaluation
+  MLModel --> ModelEvaluation;
+  TestFeatures --> ModelEvaluation --> MLModelMetrics;
+
+  configure task FeatureExtraction {
+    description "Extracts features from the input data.";
+    implementation "file://ideko_feature_extraction.py";
+  }
+  configure task ModelTraining {
+    description "Trains the ML model with the given hyperparameters.";
+    implementation "file://regression_training.py";
+  }
+  configure task ModelEvaluation {
+    description "Evaluates the trained ML model.";
+    implementation "file://regression_evaluation.py";
+    param metrics = ["accuracy", "precision", "recall", "f1", "num_of_params"];
+  }
+
+  configure data TrainingFeatures {
+    schema "file://Features.schema";
+  }
+  configure data TestFeatures {
+    schema "file://Features.schema";
+  }
+  configure data MLModelMetrics {
+    schema "file://MLModelMetrics.schema";
+  }
+}

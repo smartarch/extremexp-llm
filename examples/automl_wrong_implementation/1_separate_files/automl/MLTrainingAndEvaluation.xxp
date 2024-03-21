@@ -1,0 +1,41 @@
+package automl;
+
+workflow MLTrainingAndEvaluation {
+
+  // TASKS
+  define task FeatureExtraction;
+  define task ModelTraining;
+  define task ModelEvaluation;
+
+  // INPUT DATA
+  define data Hyperparameters;  // ML algorithm and its parameters
+  define data TrainingData;
+  define data TestData;
+
+  // INNER DATA
+  define data TrainingFeatures;
+  define data TestFeatures;
+
+  // OUTPUT DATA
+  define data MLModel;
+  define data MLModelMetrics;
+
+  // TASK CONNECTIONS
+  
+  START -> FeatureExtraction -> ModelTraining -> ModelEvaluation -> END;
+
+  // DATA CONNECTIONS
+
+  // feature extraction
+  TrainingData --> FeatureExtraction --> TrainingFeatures;
+  TestData --> FeatureExtraction --> TestFeatures;
+  Hyperparameters --> FeatureExtraction;
+
+  // model training
+  Hyperparameters --> ModelTraining;
+  TrainingFeatures --> ModelTraining --> MLModel;
+
+  // model evaluation
+  MLModel --> ModelEvaluation;
+  TestFeatures --> ModelEvaluation --> MLModelMetrics;
+}

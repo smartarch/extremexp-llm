@@ -49,3 +49,8 @@ class YAMLWorkflowSpecificationTool(BaseTool):
             return f"Error: workflow '{workflow_name}' not found. Available workflows: {available_workflows}"
 
         return workflow_path.read_text()
+
+
+def list_workflows(specification_folder):
+    workflows = [workflow.stem for workflow in specification_folder.glob("*.yaml")]
+    return workflows

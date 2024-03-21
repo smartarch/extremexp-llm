@@ -1,0 +1,59 @@
+package automl_ideko;
+
+workflow FailurePredictionInManufacture {
+  // TASKS
+  define task DataRetrieval;
+  define task TrainTestSplit;
+  define task HyperparameterOptimization;
+  define task MLTrainingAndEvaluation;
+
+  // DATA
+  define data InputData;
+  define data RetrievedData;
+
+  define data TrainingData;
+  define data TestData;
+  
+  define data BestHyperparameters;
+  define data MLModel;
+  define data MLModelMetrics;
+
+  // TASK CONNECTIONS
+  
+  START -> DataRetrieval -> TrainTestSplit -> HyperparameterOptimization -> MLTrainingAndEvaluation -> END;
+
+  // DATA CONNECTIONS
+
+  // input data preprocessing and train-test split
+  InputData --> DataRetrieval --> RetrievedData;
+  RetrievedData --> TrainTestSplit;
+  TrainTestSplit --> TrainingData;
+  TrainTestSplit --> TestData;
+
+  // hyperparameter optimization
+  TrainingData --> HyperparameterOptimization --> BestHyperparameters;
+
+  // final model training and evaluation
+  BestHyperparameters --> MLTrainingAndEvaluation; 
+  TrainingData --> MLTrainingAndEvaluation --> MLModel;
+  TestData --> MLTrainingAndEvaluation --> MLModelMetrics;
+
+  // TASK CONFIGURATION
+  configure task TrainTestSplit {
+    implementation "file://random_train_test_split.py";
+    param test_size = 0.2;
+  }
+
+  configure task DataRetrieval {
+    implementation "file://ideko_data_retreival.py";
+  }
+
+  configure task HyperparameterOptimization {
+    subworkflow HyperparameterOptimization;
+    param hyperparameters_grid = "file://hyperparameters_grid.json";
+  }
+
+  configure task MLTrainingAndEvaluation {
+    subworkflow MLTrainingAndEvaluation;
+  }
+}

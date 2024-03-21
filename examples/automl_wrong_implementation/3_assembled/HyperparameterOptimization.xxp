@@ -1,0 +1,64 @@
+package automl;
+
+workflow HyperparameterOptimization {
+
+  // TASKS
+  define task HyperparameterProposal;
+  define task MLModelValidation;
+  define task BestHyperparameterSelection;
+  
+  // DATA
+  define data TrainingData;
+  
+  define data Hyperparameters;  // ML algorithm and its parameters
+  define data MLModelMetrics;
+
+  define data BestHyperparameters; // output
+
+  // TASK CONNECTIONS
+  
+  START -> HyperparameterProposal;
+
+  HyperparameterProposal ?-> BestHyperparameterSelection {
+    condition "stop condition"; // e.g., model is good enough, iteration limit reached, ...
+  }
+
+  HyperparameterProposal ?-> MLModelValidation {
+    condition "otherwise";
+  }
+
+  MLModelValidation -> HyperparameterProposal;
+
+  BestHyperparameterSelection -> END;
+
+  // DATA CONNECTIONS
+
+  // hyperparameter selection
+  HyperparameterProposal --> Hyperparameters;
+
+  // model training and evaluation
+  Hyperparameters --> MLModelValidation;
+  TrainingData --> MLModelValidation --> MLModelMetrics;
+  MLModelMetrics --> HyperparameterProposal; // possibility to stop proposing hyperparameters if model is good enough
+
+  // best hyperparameter selection
+  MLModelMetrics --> BestHyperparameterSelection;
+  BestHyperparameterSelection --> BestHyperparameters;
+
+  // TASK CONFIGURATION
+  configure task HyperparameterProposal {
+    implementation "file://grid_search.py";
+  }
+
+  configure task MLModelValidation {
+    subworkflow TrainTestSplitValidation;
+  }
+
+  configure data MLModelMetrics {
+    schema "file://MLModelMetrics.schema";
+  }
+
+  configure task BestHyperparameterSelection {
+    implementation "file://user_hyperparameter_selection.py";
+  }
+}

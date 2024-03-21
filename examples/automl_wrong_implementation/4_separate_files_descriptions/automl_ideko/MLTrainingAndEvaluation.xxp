@@ -1,0 +1,29 @@
+package automl_ideko;
+
+workflow MLTrainingAndEvaluation from automl.MLTrainingAndEvaluation {
+  description "Training and evaluation of the ML model with the given hyperparameters.";
+
+  configure task FeatureExtraction {
+    description "Extracts features from the input data.";
+    implementation "file://ideko_feature_extraction.py";
+  }
+  configure task ModelTraining {
+    description "Trains the ML model with the given hyperparameters.";
+    implementation "file://regression_training.py";
+  }
+  configure task ModelEvaluation {
+    description "Evaluates the trained ML model.";
+    implementation "file://regression_evaluation.py";
+    param metrics = ["accuracy", "precision", "recall", "f1", "num_of_params"];
+  }
+
+  configure data TrainingFeatures {
+    schema "file://Features.schema";
+  }
+  configure data TestFeatures {
+    schema "file://Features.schema";
+  }
+  configure data MLModelMetrics {
+    schema "file://MLModelMetrics.schema";
+  }
+}
