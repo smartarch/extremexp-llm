@@ -37,7 +37,8 @@ workflow MainWorkflow {
 
     // TASK CONNECTIONS
     
-    START -> Task5 -> Task6 -> END;
+    START -> Task5 -> Task6;
+    Task6 -> Task5;
   }
   task Task2 {
     implementation "file://implementation_A.py";

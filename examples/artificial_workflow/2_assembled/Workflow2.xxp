@@ -13,5 +13,6 @@ workflow Workflow2 {
 
   // TASK CONNECTIONS
   
-  START -> Task5 -> Task6 -> END;
+  START -> Task5 -> Task6;
+  Task6 -> Task5;
 }
