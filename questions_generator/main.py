@@ -11,7 +11,7 @@ from helpers import LOGGER_FOLDER, MODEL, Logger, print_color, print_prompt_temp
 from agent import create_agent, create_llm
 from config import get_prompt_template, get_specification_tools, load_config
 
-from test_instance_templates import YesNoQuestion
+from test_instance_templates import SetQuestion, YesNoQuestion
 
 load_dotenv(find_dotenv(), override=True)  # take environment variables from .env.
 
@@ -44,6 +44,8 @@ tools.append(get_specification_tools(config, PROJECT_DIR))
 test_instances = [
     YesNoQuestion("In workflow 'SubWorkflow', does 'Task9' follow directly after 'Task10' in the control flow?", True),
     YesNoQuestion("In workflow 'SubWorkflow', does 'Task10' follow directly after 'Task9' in the control flow?", False),
+    SetQuestion("List all tasks in workflow 'MainWorkflow'.", {"Task1", "Task2", "Task3", "Task4"}),
+    SetQuestion("List all tasks in workflow 'MainWorkflow' that have a subworkflow.", {"Task1", "Task4"}),
 ]
 
 # Main

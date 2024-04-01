@@ -12,6 +12,7 @@ class TestInstance(ABC):
 
 
 class YesNoQuestion(TestInstance):
+    """Question with response "yes" or "no"."""
 
     def __init__(self, question: str, is_true: bool):
         self._question = question
@@ -29,3 +30,25 @@ class YesNoQuestion(TestInstance):
             return 1
         else:
             return 0
+
+
+class SetQuestion(TestInstance):
+    """Response to this question is a set of values."""
+
+    def __init__(self, question: str, correct_answer: set[str]):
+        self._question = question
+        self._correct_answer = correct_answer
+
+    def question(self) -> str:
+        return self._question + " Write a comma separated list of values and nothing else."
+
+    def check_answer(self, answer: str) -> float:
+        answer, _, _ = answer.partition("\n")
+        answers = set(answer.replace(" ", "").split(","))
+
+        # compute Jaccard similarity (size of intersection / size of union)
+        intersection = answers.intersection(self._correct_answer)
+        union = answers.union(self._correct_answer)
+        jaccard_similarity = len(intersection) / len(union)
+
+        return jaccard_similarity
