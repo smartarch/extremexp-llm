@@ -15,11 +15,15 @@ def create_llm(model="gpt-3.5-turbo"):
 def create_agent(llm, tools, prompt):
     agent = create_openai_tools_agent(llm, tools, prompt)
     agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True, max_iterations=10, return_intermediate_steps=True)  # TODO: max_iterations are for debugging, we can increase it or change to max_execution_time later
+    
+    return agent_executor
 
+
+def add_memory_to_agent(agent):
     message_history = ChatMessageHistory()
 
     agent_with_chat_history = RunnableWithMessageHistory(
-        agent_executor,
+        agent,
         # This is needed because in most real world scenarios, a session id is needed
         # It isn't really used here because we are using a simple in memory ChatMessageHistory
         lambda session_id: message_history,

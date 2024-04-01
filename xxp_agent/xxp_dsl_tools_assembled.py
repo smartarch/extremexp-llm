@@ -9,26 +9,33 @@ from langchain_core.pydantic_v1 import BaseModel, Field
 from helpers import MEMORY_KEY, AGENT_SCRATCHPAD
 
 
-def get_prompt_template(main_workflow_name):
+def get_prompt_template(main_workflow_name, with_memory=True):
     # based on https://smith.langchain.com/hub/hwchase17/openai-tools-agent and modified
-    prompt = ChatPromptTemplate.from_messages([
+    messages = [
         SystemMessage(content="""\
-    Your goal is to help the user with analyzing results of an experiment and suggest improvements to the experiment itself.
+Your goal is to help the user with analyzing results of an experiment and suggest improvements to the experiment itself.
+
+The experiment is defined by a workflow, which is an activity diagram consisting of several tasks with a data flow among them. Each of the tasks can be composed of a subworkflow and you can use tools to obtain the description of the subworkflow.
+
+The workflow is specified using a DSL:
+arrows "->" represent control flow
+arrows with question mark “?->” represent conditional control flow
+dashed arrows "-->" represent data flow
+
+Think in steps and use the available tools. Use the tools if you need description of a workflow or a task, list the results collected during the experiment, etc. If the information cannot be obtained using the tools, ask the user. Always gather all the necessary information before submitting your final answer.
+"""),
+        HumanMessagePromptTemplate.from_template(f"Experiment workflow: '{main_workflow_name}'\n")
+    ]
+
+    if with_memory:
+        messages.append(MessagesPlaceholder(variable_name=MEMORY_KEY))
     
-    The experiment is defined by a workflow, which is an activity diagram consisting of several tasks with a data flow among them. Each of the tasks can be composed of a subworkflow and you can use tools to obtain the description of the subworkflow.
-    
-    The workflow is specified using a DSL:
-    arrows "->" represent control flow
-    arrows with question mark “?->” represent conditional control flow
-    dashed arrows "-->" represent data flow
-    
-    Think in steps and use the available tools. Use the tools if you need description of a workflow or a task, list the results collected during the experiment, etc. If the information cannot be obtained using the tools, ask the user. Always gather all the necessary information before submitting your final answer.
-    """),
-        HumanMessagePromptTemplate.from_template(f"Experiment workflow: '{main_workflow_name}'\n"),
-        MessagesPlaceholder(variable_name=MEMORY_KEY),
+    messages += [
         HumanMessagePromptTemplate.from_template("{input}"),
         MessagesPlaceholder(variable_name=AGENT_SCRATCHPAD),
-    ])
+    ]
+
+    prompt = ChatPromptTemplate.from_messages(messages)
     return prompt
 
 

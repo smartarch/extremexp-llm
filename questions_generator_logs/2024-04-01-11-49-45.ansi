@@ -1,0 +1,102 @@
+Configuration file path: examples/artificial_workflow/2_config.yaml
+Configuration: {'logger_folder': 'xxp_agent_logs/artificial_workflow', 'model': 'gpt-4-0125-preview', 'specification_type': 'xxp_assembled', 'specification_folder': 'examples/artificial_workflow/2_assembled', 'main_workflow_name': 'MainWorkflow'}
+LLM model: gpt-4-0125-preview 
+
+[2m
+This script uses multiline input. Press Ctrl+D (Linux) or Ctrl+Z (Windows) on an empty line to end input message.
+[0m
+Prompt template:
+[35m
+SystemMessage(content='Your goal is to help the user with analyzing results of an experiment and suggest improvements to the experiment itself.\n\nThe experiment is defined by a workflow, which is an activity diagram consisting of several tasks with a data flow among them. Each of the tasks can be composed of a subworkflow and you can use tools to obtain the description of the subworkflow.\n\nThe workflow is specified using a DSL:\narrows "->" represent control flow\narrows with question mark “?->” represent conditional control flow\ndashed arrows "-->" represent data flow\n\nThink in steps and use the available tools. Use the tools if you need description of a workflow or a task, list the results collected during the experiment, etc. If the information cannot be obtained using the tools, ask the user. Always gather all the necessary information before submitting your final answer.\n')
+HumanMessagePromptTemplate(prompt=PromptTemplate(input_variables=[], template="Experiment workflow: 'MainWorkflow'\n"))
+HumanMessagePromptTemplate(prompt=PromptTemplate(input_variables=['input'], template='{input}'))
+MessagesPlaceholder(variable_name='agent_scratchpad')
+[0m
+Tools:
+[35m
+workflow_specification: Get the specification of the workflow (or subworkflow). Note that the workflow specification can contain references to subworkflows. To fully understand the whole workflow, it might be necessary to also obtain the specification of the subworkflows.
+[0m
+
+Start of test.
+
+User input:
+[35m
+In workflow 'SubWorkflow', does 'Task9' follow directly after 'Task10'? Respond with either "yes" or "no" and nothing else.
+[0m
+
+
+[1m> Entering new AgentExecutor chain...[0m
+[32;1m[1;3m
+Invoking: `workflow_specification` with `{'workflow_name': 'SubWorkflow'}`
+
+
+[0m[36;1m[1;3mpackage package2;
+
+workflow SubWorkflow {
+
+  // TASKS
+  task Task10 {
+    implementation "file://implementation_F.java";
+  }
+  task Task9 {
+    implementation "file://implementation_F.py";
+  }
+  task Task11 {
+    implementation "file://implementation_G.java";
+  }
+
+  // TASK CONNECTIONS
+  
+  START -> Task10 -> Task9 -> Task11 -> END;  
+}
+[0m[32;1m[1;3mno[0m
+
+[1m> Finished chain.[0m
+Agent reply:
+[36m
+no
+[0m
+0
+User input:
+[35m
+In workflow 'SubWorkflow', does 'Task10' follow directly after 'Task9'? Respond with either "yes" or "no" and nothing else.
+[0m
+
+
+[1m> Entering new AgentExecutor chain...[0m
+[32;1m[1;3m
+Invoking: `workflow_specification` with `{'workflow_name': 'SubWorkflow'}`
+
+
+[0m[36;1m[1;3mpackage package2;
+
+workflow SubWorkflow {
+
+  // TASKS
+  task Task10 {
+    implementation "file://implementation_F.java";
+  }
+  task Task9 {
+    implementation "file://implementation_F.py";
+  }
+  task Task11 {
+    implementation "file://implementation_G.java";
+  }
+
+  // TASK CONNECTIONS
+  
+  START -> Task10 -> Task9 -> Task11 -> END;  
+}
+[0m[32;1m[1;3mno[0m
+
+[1m> Finished chain.[0m
+Agent reply:
+[36m
+no
+[0m
+1
+
+End of test.
+
+Total test instances: 2
+Final result: 0.500

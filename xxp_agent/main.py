@@ -9,15 +9,12 @@ from colorama import Style
 from dotenv import find_dotenv, load_dotenv
 from langchain.tools import tool
 from langchain_community.callbacks import get_openai_callback
-import yaml
 
-from helpers import LOGGER_FOLDER, MAIN_WORKFLOW, MAIN_WORKFLOW_PACKAGE, MODEL, SPECIFICATION_FOLDER, SPECIFICATION_TYPE, Logger, multiline_input, print_color, print_token_usage, print_prompt_template, \
-    print_available_tools, print_input_message, print_result, RESULTS_FOLDER, SpecificationType
-from agent import create_agent, create_llm
+from helpers import LOGGER_FOLDER, MODEL, Logger, multiline_input, print_color, print_token_usage, print_prompt_template, \
+    print_available_tools, print_input_message, print_result, RESULTS_FOLDER
+from agent import add_memory_to_agent, create_agent, create_llm
 from results_tools import ListResultFilesTool, FileDescriptionTool, CSVFileReadTool
-import xxp_dsl_tools
-import yaml_tools
-import xxp_dsl_tools_assembled
+from config import get_prompt_template, get_specification_tools, load_config
 
 load_dotenv(find_dotenv(), override=True)  # take environment variables from .env.
 
@@ -26,7 +23,7 @@ PROJECT_DIR = Path(__file__).parent.parent  # root of the repository
 # Load configuration file
 
 config_file_path = input("Configuration file path: ")
-config = yaml.load((PROJECT_DIR / config_file_path).open(), Loader=yaml.Loader)
+config = load_config(PROJECT_DIR / config_file_path)
 
 # Create Logger
 
@@ -38,9 +35,10 @@ print("Configuration:", config)
 # Create LLM
 
 llm = create_llm(model=config.get(MODEL, "gpt-3.5-turbo"))
-tools = []
 
 # Tools
+
+tools = []
 
 # TODO: update
 @tool
@@ -59,21 +57,15 @@ if RESULTS_FOLDER in config:
         CSVFileReadTool(config[RESULTS_FOLDER])
     ]
 
+tools.append(get_specification_tools(config, PROJECT_DIR))
+
 # Main
 
 print_color("This script uses multiline input. Press Ctrl+D (Linux) or Ctrl+Z (Windows) on an empty line to end input message.", Style.DIM)
 
-if config[SPECIFICATION_TYPE] == SpecificationType.XXP:
-    prompt = xxp_dsl_tools.get_prompt_template(config[MAIN_WORKFLOW], config[MAIN_WORKFLOW_PACKAGE])
-    tools.append(xxp_dsl_tools.DSLWorkflowSpecificationTool(PROJECT_DIR / config[SPECIFICATION_FOLDER]))
-elif config[SPECIFICATION_TYPE] == SpecificationType.YAML:
-    prompt = yaml_tools.get_prompt_template(config[MAIN_WORKFLOW])
-    tools.append(yaml_tools.YAMLWorkflowSpecificationTool(PROJECT_DIR / config[SPECIFICATION_FOLDER]))
-elif config[SPECIFICATION_TYPE] == SpecificationType.XXP_ASSEMBLED:
-    prompt = xxp_dsl_tools_assembled.get_prompt_template(config[MAIN_WORKFLOW])
-    tools.append(xxp_dsl_tools_assembled.DSLAssembledWorkflowSpecificationTool(PROJECT_DIR / config[SPECIFICATION_FOLDER]))
-
-agent, message_history = create_agent(llm, tools, prompt)
+prompt = get_prompt_template(config)
+agent = create_agent(llm, tools, prompt)
+agent, message_history = add_memory_to_agent(agent)
 
 print_prompt_template(prompt)
 print_available_tools(tools)
