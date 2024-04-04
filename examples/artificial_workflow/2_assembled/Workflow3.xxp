@@ -9,6 +9,9 @@ workflow Workflow3 {
   task Task8 {
     implementation "file://implementation_E.exe";
   }
+  task Task9 {
+    implementation "file://implementation_F.exe";
+  }
 
   // PARAMETERS
   param p = 0;
@@ -17,7 +20,7 @@ workflow Workflow3 {
   
   START -> Task7;
 
-  Task7 ?-> END {
+  Task7 ?-> Task9 {
     condition "p > 1";
   }
 
@@ -25,5 +28,6 @@ workflow Workflow3 {
     condition "otherwise";
   }
   
+  Task9 -> END;
   Task8 -> END;
 }

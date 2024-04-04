@@ -1,0 +1,133 @@
+Configuration file path: examples/artificial_workflow/2_config.yaml
+Configuration: {'logger_folder': 'xxp_agent_logs/artificial_workflow', 'model': 'gpt-4-0125-preview', 'specification_type': 'xxp_assembled', 'specification_folder': 'examples/artificial_workflow/2_assembled', 'main_workflow_name': 'MainWorkflow'}
+LLM model: gpt-4-0125-preview 
+
+[2m
+This script uses multiline input. Press Ctrl+D (Linux) or Ctrl+Z (Windows) on an empty line to end input message.
+[0m
+Prompt template:
+[35m
+SystemMessage(content='Your goal is to help the user with analyzing results of an experiment and suggest improvements to the experiment itself.\n\nThe experiment is defined by a workflow, which is an activity diagram consisting of several tasks with a data flow among them. Each of the tasks can be composed of a subworkflow and you can use tools to obtain the description of the subworkflow.\n\nThe workflow is specified using a DSL:\narrows "->" represent control flow\narrows with question mark “?->” represent conditional control flow\ndashed arrows "-->" represent data flow\n\nThink in steps and use the available tools. Use the tools if you need description of a workflow or a task, list the results collected during the experiment, etc. If the information cannot be obtained using the tools, ask the user. Always gather all the necessary information before submitting your final answer.\n')
+HumanMessagePromptTemplate(prompt=PromptTemplate(input_variables=[], template="Experiment workflow: 'MainWorkflow'\n"))
+HumanMessagePromptTemplate(prompt=PromptTemplate(input_variables=['input'], template='{input}'))
+MessagesPlaceholder(variable_name='agent_scratchpad')
+[0m
+Tools:
+[35m
+workflow_specification: Get the specification of the workflow (or subworkflow). Note that the workflow specification can contain references to subworkflows. To fully understand the whole workflow, it might be necessary to also obtain the specification of the subworkflows.
+[0m
+
+Start of test.
+
+User input:
+[35m
+In workflow 'SubWorkflow', which tasks come directly after 'Task9' in the control flow? On the first line of your response, write a comma separated list of values and nothing else. On the second, write a short justification of the answer.
+[0m
+
+
+[1m> Entering new AgentExecutor chain...[0m
+[32;1m[1;3m
+Invoking: `workflow_specification` with `{'workflow_name': 'SubWorkflow'}`
+
+
+[0m[36;1m[1;3mpackage package2;
+
+workflow SubWorkflow {
+
+  // TASKS
+  task Task10 {
+    implementation "file://implementation_F.java";
+  }
+  task Task9 {
+    implementation "file://implementation_F.py";
+  }
+  task Task11 {
+    implementation "file://implementation_G.java";
+  }
+
+  // TASK CONNECTIONS
+  
+  START -> Task10 -> Task9 -> Task11 -> END;  
+}
+[0m[32;1m[1;3mTask11
+
+In the SubWorkflow, Task11 is the only task that directly follows Task9 in the control flow, as indicated by the sequence "Task9 -> Task11".[0m
+
+[1m> Finished chain.[0m
+Agent reply:
+[36m
+Task11
+
+In the SubWorkflow, Task11 is the only task that directly follows Task9 in the control flow, as indicated by the sequence "Task9 -> Task11".
+[0m
+Answer correctness: 1.000
+
+User input:
+[35m
+List all tasks in workflow 'HyperparameterOptimization'. On the first line of your response, write a comma separated list of values and nothing else. On the second, write a short justification of the answer.
+[0m
+
+
+[1m> Entering new AgentExecutor chain...[0m
+[32;1m[1;3m
+Invoking: `workflow_specification` with `{'workflow_name': 'HyperparameterOptimization'}`
+
+
+[0m[36;1m[1;3mError: workflow 'HyperparameterOptimization' not found. Available workflows: ['SubWorkflow', 'MainWorkflow', 'Workflow2', 'Workflow3'][0m[32;1m[1;3mHyperparameterOptimization,
+
+The workflow 'HyperparameterOptimization' was not found among the available workflows, which are 'SubWorkflow', 'MainWorkflow', 'Workflow2', and 'Workflow3'. Thus, it's not possible to list all tasks in a non-existing workflow.[0m
+
+[1m> Finished chain.[0m
+Agent reply:
+[36m
+HyperparameterOptimization,
+
+The workflow 'HyperparameterOptimization' was not found among the available workflows, which are 'SubWorkflow', 'MainWorkflow', 'Workflow2', and 'Workflow3'. Thus, it's not possible to list all tasks in a non-existing workflow.
+[0m
+Answer correctness: 0.000
+
+User input:
+[35m
+List all tasks in workflow 'MLTrainingAndEvaluation' that have a parameter. On the first line of your response, write a comma separated list of values and nothing else. On the second, write a short justification of the answer.
+[0m
+
+
+[1m> Entering new AgentExecutor chain...[0m
+[32;1m[1;3m
+Invoking: `workflow_specification` with `{'workflow_name': 'MLTrainingAndEvaluation'}`
+
+
+[0m[36;1m[1;3mError: workflow 'MLTrainingAndEvaluation' not found. Available workflows: ['SubWorkflow', 'MainWorkflow', 'Workflow2', 'Workflow3'][0m[32;1m[1;3mIt appears that there was an error in the request since the workflow 'MLTrainingAndEvaluation' was not found among the available workflows. The available workflows are 'SubWorkflow', 'MainWorkflow', 'Workflow2', and 'Workflow3'. If you are looking for details on a specific workflow or task, please ensure the correct name is provided.[0m
+
+[1m> Finished chain.[0m
+Agent reply:
+[36m
+It appears that there was an error in the request since the workflow 'MLTrainingAndEvaluation' was not found among the available workflows. The available workflows are 'SubWorkflow', 'MainWorkflow', 'Workflow2', and 'Workflow3'. If you are looking for details on a specific workflow or task, please ensure the correct name is provided.
+[0m
+Answer correctness: 0.000
+
+User input:
+[35m
+List all tasks in workflow 'MLTrainingAndEvaluation' that have a subworkflow. On the first line of your response, write a comma separated list of values and nothing else. On the second, write a short justification of the answer.
+[0m
+
+
+[1m> Entering new AgentExecutor chain...[0m
+[32;1m[1;3m
+Invoking: `workflow_specification` with `{'workflow_name': 'MLTrainingAndEvaluation'}`
+
+
+[0m[36;1m[1;3mError: workflow 'MLTrainingAndEvaluation' not found. Available workflows: ['SubWorkflow', 'MainWorkflow', 'Workflow2', 'Workflow3'][0m[32;1m[1;3mThe workflow 'MLTrainingAndEvaluation' is not available. Available workflows are: 'SubWorkflow', 'MainWorkflow', 'Workflow2', 'Workflow3'. Please provide the correct workflow name or choose from the available options.[0m
+
+[1m> Finished chain.[0m
+Agent reply:
+[36m
+The workflow 'MLTrainingAndEvaluation' is not available. Available workflows are: 'SubWorkflow', 'MainWorkflow', 'Workflow2', 'Workflow3'. Please provide the correct workflow name or choose from the available options.
+[0m
+Answer correctness: 0.000
+
+
+End of test.
+
+Total test instances: 5
+Final result: 0.250

@@ -40,7 +40,7 @@ class SetQuestion(TestInstance):
         self._correct_answer = correct_answer
 
     def question(self) -> str:
-        return self._question + " Write a comma separated list of values and nothing else."
+        return self._question + " On the first line of your response, write a comma separated list of values and nothing else. On the second, write a short justification of the answer."
 
     def check_answer(self, answer: str) -> float:
         answer, _, _ = answer.partition("\n")
@@ -49,6 +49,6 @@ class SetQuestion(TestInstance):
         # compute Jaccard similarity (size of intersection / size of union)
         intersection = answers.intersection(self._correct_answer)
         union = answers.union(self._correct_answer)
-        jaccard_similarity = len(intersection) / len(union)
+        jaccard_similarity = len(intersection) / len(union) if len(union) > 0 else 1
 
         return jaccard_similarity
