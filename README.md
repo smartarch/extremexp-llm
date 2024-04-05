@@ -1,5 +1,13 @@
 # extremexp-llm
 
+## ❗❗❗ TODO before submission ❗❗❗
+
+* remove quickstart, IDEKO and predictive maintenance (only keep `xxp_agent` and `agent_evaluation`)
+
+---
+
+Full list of evaluation patterns: [`patterns.md](patterns.md)
+
 ## Quickstart
 
 1. (Optional): create virtual environment: `python3 -m venv .venv` and activate it: `source env/bin/activate`
@@ -10,12 +18,19 @@ To use OpenAI (paid API):
 * create API key: <https://platform.openai.com/api-keys>
 * rename `.env.example` to `.env` and save the API key there
 
-### Not used anymore
+## LLM Evaluation
 
-To use Ollama (local free models):
+The [`agent_evaluation`](agent_evaluation/) folder contains sample test instances for evaluating a LLM-based Agent. The instances are manually created based on the [*test instance patterns*](patterns.md). The evaluation can be run via the [`main.py`](xxp_agent/main.py) file.
 
-* `curl -fsSL https://ollama.com/install.sh | sh`
-* Fetch a model: `ollama pull llama2` (3.8GB)
+## XXP Agent Chat
+
+The [`xxp_agent`](xxp_agent/) folder contains code for running a LLM-based agent that chats with the user. Based on the configuration (see examples in the [`examples`](examples/) folder) the available tools are selected (so the agent can read workflow specifications, data produced by experiments, ...). To start the agent, run the [`main.py`](xxp_agent/main.py) file.
+
+
+
+
+
+
 
 ## [`agent_with_fake_tools.py`](agent_with_fake_tools.py)
 
@@ -41,3 +56,10 @@ Similar use-case to IDEKO but with a better dataset. The [dataset](https://www.k
 2. install requirements: `pip install -r requirements.txt`
 3. rename `.env.example` to `.env` (set the variables if needed)
 4. run [`automl.py`](examples/predictive_maintenance/automl.py) to perform the AutoML workflow and obtain results
+
+## How to use local models (not used anymore)
+
+To use Ollama (local free models):
+
+* `curl -fsSL https://ollama.com/install.sh | sh`
+* Fetch a model: `ollama pull llama2` (3.8GB)
