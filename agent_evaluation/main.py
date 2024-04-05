@@ -25,7 +25,7 @@ config = load_config(PROJECT_DIR / config_file_path)
 
 # Create Logger
 
-sys.stdout = Logger(PROJECT_DIR / "questions_generator_logs")
+sys.stdout = Logger(PROJECT_DIR / "agent_evaluation_logs")
 
 print("Configuration file path:", config_file_path)
 print("Configuration:", config)
