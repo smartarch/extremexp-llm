@@ -66,6 +66,52 @@ Evaluation metric: correctness
 
 TODO
 
+### Dependency (in the flow)
+
+Rationale: Can the LLM understand dependencies (in the flow)?
+
+Parameters:
+
+* $W$: workflow name
+* $E$: entity (e.g., task, data) in the workflow
+* $T$: task in the workflow that depends on $E$ (trough e.g., control flow, data flow)
+
+Architecture: Workflow $W$ with task $T$ that depends on $E$.
+
+Question: In workflow $W$, does $T$ depend on $E$?
+
+Reference answer: yes
+
+Evaluation metric: correctness
+
+Example instances:
+
+* "In workflow 'MLTrainingAndEvaluation' does task 'MLModelEvaluation' depend on task 'MLModelTraining'?"
+* "In workflow 'MLTrainingAndEvaluation' does task 'MLModelTraining' depend on data 'TrainingData'?"
+
+---
+
+Rationale: Can the LLM understand dependencies (in the flow)? (negative test)
+
+Parameters:
+
+* $W$: workflow name
+* $E$: entity (e.g., task, data) in the workflow
+* $T$: task in the workflow that does not depend on $E$ (trough e.g., control flow, data flow)
+
+Architecture: Workflow $W$ with task $T$ that does not depend on $E$.
+
+Question: In workflow $W$, does $T$ depend on $E$?
+
+Reference answer: not
+
+Evaluation metric: correctness
+
+Example instances:
+
+* "In workflow 'MLTrainingAndEvaluation' does task 'MLModelTraining' depend on task 'MLModelEvaluation'?"
+* "In workflow 'MLTrainingAndEvaluation' does task 'MLModelTraining' depend on data 'TestData'?"
+
 ## Behavior patterns
 
 TODO
