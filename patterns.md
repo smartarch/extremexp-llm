@@ -27,6 +27,8 @@ Evaluation metric: Jaccard index
 
 Example instance: "List all tasks in workflow 'MLTrainingAndEvaluation' that have a parameter."
 
+---
+
 ### Task links in flow
 
 Rationale: Can the LLM understand flow links between tasks?
@@ -67,6 +69,8 @@ Evaluation metric: correctness
 
 Example instance: "In workflow 'MLTrainingAndEvaluation', does 'MLModelTraining' directly follow 'MLModelEvaluation' in control flow?"
 
+---
+
 ### Flow cycle
 
 Rationale: Can the LLM find cycles in the flow?
@@ -101,6 +105,8 @@ Question: In workflow $W$, is there a cycle in the $F$?
 Reference answer: no
 
 Evaluation metric: correctness
+
+---
 
 ### Task hierarchy (if the architecture is hierarchical)
 
@@ -142,6 +148,8 @@ Evaluation metric: correctness
 
 Example instance: "Is task 'DataRetrieval' a part of task 'HyperparameterOptimization' (from workflow 'FailurePredictionInManufacture')?"
 
+---
+
 ### Infinite recursion in references
 
 Rationale: Can the LLM detect infinite recursion in references (e.g., sub-workflows if the architecture is hierarchical)?
@@ -175,6 +183,8 @@ Question: In workflow $W$, is there an infinite recursion in the references?
 Reference answer: no
 
 Evaluation metric: correctness
+
+---
 
 ### Dependency (in the flow)
 
@@ -222,6 +232,8 @@ Example instances:
 * "In workflow 'MLTrainingAndEvaluation' does task 'MLModelTraining' depend on task 'MLModelEvaluation'?"
 * "In workflow 'MLTrainingAndEvaluation' does task 'MLModelTraining' depend on data 'TestData'?"
 
+---
+
 ### List of dependencies (in the flow)
 
 Rationale: Can the LLM list dependencies (in the flow)?
@@ -246,6 +258,8 @@ Example instances:
 * "List all data that task 'MLModelEvaluation' (from workflow 'MLTrainingAndEvaluation') depends on.", reference answer: { MLModel, TestFeatures }
 * "List all tasks that must run before task 'MLModelEvaluation' in workflow 'MLTrainingAndEvaluation'.", reference answer: { FeatureExtraction, ModelTraining }
 
+---
+
 ### Data production
 
 Rationale: Can the LLM detect which task produces the given data?
@@ -265,6 +279,8 @@ Reference answer: $T$
 Evaluation metric: correctness
 
 Example instance: "In workflow 'MLTrainingAndEvaluation' which task produces 'MLModel'?", reference answer: 'MLModelTraining'
+
+---
 
 ## Behavior patterns
 
@@ -309,6 +325,8 @@ Evaluation metric: correctness
 
 Example instance: "Can the trace of tasks 'TrainTestSplit', 'MLModelEvaluation', 'MLModelTraining' occur in workflow 'MLTrainingAndEvaluation'?"
 
+---
+
 ### Task order (without conditional flow)
 
 Rationale: Can the LLM understand the order of tasks in the workflow without conditional flow?
@@ -327,6 +345,8 @@ Reference answer: $T_1, \dots, T_K$ *(note: if some tasks can run in parallel, t
 Evaluation metric: Damerau–Levenshtein distance *(note: special care must be given to the order of parallel tasks)*
 
 Example instance: "List all the tasks in workflow 'MLTrainingAndEvaluation' in order in which they run.", reference answer: FeatureExtraction, MLModelTraining, MLModelEvaluation
+
+---
 
 ### Conditional flow
 
@@ -350,6 +370,8 @@ Evaluation metric: correctness ($1$ if LLM's answer is correct, $0$ otherwise)
 
 Example instance: "Which task will follow `HyperparameterProposal' in control flow in workflow `HyperparameterOptimization'?"
 
+---
+
 ### Task order (with conditional flow)
 
 Rationale: Can the LLM understand the order of tasks in the workflow with conditional flow?
@@ -370,6 +392,8 @@ Reference answer: $R_1, \dots, R_L$ *(note: if some tasks can run in parallel, t
 Evaluation metric: Damerau–Levenshtein distance *(note: special care must be given to the order of parallel tasks)*
 
 Example instance: "Given the initial situation p=0, list all the tasks that will run when workflow 'Workflow3' is executed in order in which they will run.", reference answer: Task7, Task8
+
+---
 
 ## Semantics patterns
 
@@ -393,6 +417,8 @@ Evaluation metric: ROUGE
 
 Example instance: A workflow specifying an ML pipeline where the ML goal is said to be "binary classification" in the workflow description. At the same time, the tasks perform training of a "regression" ML model (which is inconsistent with "binary classification").
 
+---
+
 ### Semantically incorrect order of tasks
 
 Rationale: Can the LLM detect tasks that are clearly in wrong order (semantically)?
@@ -412,6 +438,8 @@ Reference answer: Task $T_2$ should preceed task $T_1$ in flow $F$. *(concrete f
 Evaluation metric: ROUGE
 
 Example instance: Workflow with task 'MLModelTraining' after 'MLModelEvaluation'.
+
+---
 
 ### Understanding properties (meaning) of tasks
 
@@ -458,6 +486,7 @@ Example instance: "Does a data preprocessing task run before 'DataRetrieval?" (s
 
 Note: Other variants of this pattern can also be created, e.g., "Does a task with property $P$ run *after* $T_2$?" (if the order of tasks is appropriately changed in the architecture).
 
+---
 
 ## Evaluation metrics used in the patterns
 
