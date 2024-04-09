@@ -1,8 +1,0 @@
-Data retrieved from the Machine Predictive Maintenance Classification Dataset.
-Type: category - Product quality.
-Air temperature [K]: float - Air temperature in Kelvins.
-Process temperature [K]: float - Process temperature in Kelvins.
-Rotational speed [rpm]: float - Speed of the machine in rotations per minute.
-Torque [Nm]: float - Torque of the machine.
-Tool wear [min]: int - Duration of usage of the tool in minutes.
-Target: bool - True if the machine failed.
