@@ -11,9 +11,8 @@ from langchain.tools import tool
 from langchain_community.callbacks import get_openai_callback
 
 from helpers import LOGGER_FOLDER, MODEL, Logger, multiline_input, print_color, print_token_usage, print_prompt_template, \
-    print_available_tools, print_input_message, print_result, RESULTS_FOLDER
+    print_available_tools, print_input_message, print_result
 from agent import add_memory_to_agent, create_agent, create_llm
-from results_tools import ListResultFilesTool, FileDescriptionTool, CSVFileReadTool
 from config import get_prompt_template, get_specification_tools, load_config
 
 load_dotenv(find_dotenv(), override=True)  # take environment variables from .env.
@@ -47,15 +46,6 @@ def workflow_data_schema(schema_file_name: str) -> str:
     return multiline_input()
 
 # tools.append(workflow_data_schema)
-
-# result files tools
-
-if RESULTS_FOLDER in config:
-    tools += [
-        ListResultFilesTool(config[RESULTS_FOLDER]),
-        FileDescriptionTool(config[RESULTS_FOLDER]),
-        CSVFileReadTool(config[RESULTS_FOLDER])
-    ]
 
 tools.append(get_specification_tools(config, PROJECT_DIR))
 
