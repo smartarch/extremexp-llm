@@ -6,7 +6,7 @@
 
 ---
 
-Full list of evaluation patterns: [`patterns.md](patterns.md)
+Full list of evaluation patterns: [`patterns.md`](patterns.md)
 
 ## Quickstart
 
