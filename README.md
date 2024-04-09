@@ -4,7 +4,7 @@ This is a replication package for the "Understanding workflow architectures by L
 
 ---
 
-Full list of evaluation patterns: [`patterns.md](patterns.md)
+Full list of evaluation patterns: [`patterns.md`](patterns.md)
 
 ## Quickstart
 
