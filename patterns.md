@@ -196,7 +196,7 @@ Parameters:
 * $E$: entity (e.g., task, data) in the workflow
 * $T$: task in the workflow that depends on $E$ (trough e.g., control flow, data flow)
 
-Architecture: Workflow $W$ with task $T$ that depends on $E$ (the dependecy might be transitive through other entities).
+Architecture: Workflow $W$ with task $T$ that depends on $E$ (the dependency might be transitive through other entities).
 
 Question: In workflow $W$, does $T$ depend on $E$?
 
@@ -368,7 +368,7 @@ Reference answer: $T_1$
 
 Evaluation metric: correctness ($1$ if LLM's answer is correct, $0$ otherwise)
 
-Example instance: "Which task will follow `HyperparameterProposal' in control flow in workflow `HyperparameterOptimization'?"
+Example instance: "Which task will follow 'HyperparameterProposal' in control flow in workflow 'HyperparameterOptimization'?"
 
 ---
 
@@ -433,7 +433,7 @@ Architecture: Workflow $W$ containing tasks $T_1, T_2$ (and possibly other). In 
 
 Question: Identify potential errors in the specification of $W$ and present a list of them.
 
-Reference answer: Task $T_2$ should preceed task $T_1$ in flow $F$. *(concrete formulation depends on the test instance)*
+Reference answer: Task $T_2$ should precede task $T_1$ in flow $F$. *(concrete formulation depends on the test instance)*
 
 Evaluation metric: ROUGE
 
@@ -452,7 +452,7 @@ Parameters:
 * $T_1$: task in $W$ with property $P$
 * $T_2$: task in $W$
 
-Architecture: Workflow $W$ containing tasks $T_1, T_2$ (and possibly other). Property $P$ is mentioned in description/specification of $T_1$. Task $T_1$ preceeds (not necessarily direclty) task $T_2$ in the control flow.
+Architecture: Workflow $W$ containing tasks $T_1, T_2$ (and possibly other). Property $P$ is mentioned in description/specification of $T_1$. Task $T_1$ precedes (not necessarily directly) task $T_2$ in the control flow.
 
 Question: Does a task with property $P$ run before $T_2$?
 
@@ -460,7 +460,7 @@ Reference answer: yes
 
 Evaluation metric: correctness
 
-Example instance: Task 'FeatureExtraction' is labeled as "data preprocessing" and it preceeds 'MLModelTraining', question: "Does a data preprocessing task run before 'MLModelTraining?"
+Example instance: Task 'FeatureExtraction' is labeled as "data preprocessing" and it precedes 'MLModelTraining', question: "Does a data preprocessing task run before 'MLModelTraining?"
 
 Note: Other variants of this pattern can also be created, e.g., "Does a task with property $P$ run *after* $T_2$?" (if the order of tasks is appropriately changed in the architecture).
 
@@ -474,7 +474,7 @@ Parameters:
 * $P$: property of task (e.g., the task is part of data preprocessing)
 * $T_2$: task in $W$
 
-Architecture: Workflow $W$ containing task $T_2$ (and possibly other). No tasks preceeding $T_2$ in the control flow satisfy the property $P$.
+Architecture: Workflow $W$ containing task $T_2$ (and possibly other). No tasks preceding $T_2$ in the control flow satisfy the property $P$.
 
 Question: Does a task with property $P$ run before $T_2$?
 
