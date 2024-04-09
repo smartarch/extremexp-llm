@@ -1,3 +1,0 @@
-Learning curve for a neural network with hyperparameters "hidden_layer_sizes=[10]".
-Epoch: int - Epoch of ML training.
-Loss: float - Training loss in the epoch.
