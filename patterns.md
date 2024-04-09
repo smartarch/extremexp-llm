@@ -348,6 +348,70 @@ Example instance: "List all the tasks in workflow 'MLTrainingAndEvaluation' in o
 
 ---
 
+### Mutually exclusive conditional flow
+
+Rationale: Can the LLM understand conditional flow guards?
+
+Parameters:
+
+* $F$: flow type (e.g., control flow)
+* $W$: workflow name
+* $T_0, T_1, T_2$: tasks in the workflow
+* $C_1, C_2$: conditions for conditional links (in flow $F$) that are mutually exclusive
+
+Architecture: Workflow $W$ with tasks $T_0, T_1, T_2$ (and possibly other), conditional link in flow $F$ between $T_0$ and $T_1$ with condition $C_1$, conditional link in flow $F$ between $T_0$ and $T_2$ with condition $C_2$, $C_1$ and $C_2$ are mutually exclusive
+
+Question: Are conditional links in flow $F$ from task $T_0$ mutually exclusive?
+
+Reference answer: yes
+
+Evaluation metric: correctness ($1$ if LLM's answer is correct, $0$ otherwise)
+
+Example instance: Workflow with a parameter $p$, $C_1$ is "$p < 0$", $C_2$ is "$p \ge 0$".
+
+---
+
+Rationale: Can the LLM understand conditional flow guards? (negative test)
+
+Parameters:
+
+* $F$: flow type (e.g., control flow)
+* $W$: workflow name
+* $T_0, T_1, T_2$: tasks in the workflow
+* $C_1, C_2$: conditions for conditional links (in flow $F$) that are not mutually exclusive
+
+Architecture: Workflow $W$ with tasks $T_0, T_1, T_2$ (and possibly other), conditional link in flow $F$ between $T_0$ and $T_1$ with condition $C_1$, conditional link in flow $F$ between $T_0$ and $T_2$ with condition $C_2$, $C_1$ and $C_2$ are not mutually exclusive
+
+Question: Are conditional links in flow $F$ from task $T_0$ mutually exclusive?
+
+Reference answer: no
+
+Evaluation metric: correctness ($1$ if LLM's answer is correct, $0$ otherwise)
+
+Example instance: Workflow with a parameter $p$, $C_1$ is "$p < 10$", $C_2$ is "$p > 0$" (both conditions can be true simultaneously).
+
+---
+
+### Does task run in every situation?
+
+Rationale: Can the LLM understand conditional flow guards?
+
+Parameters:
+
+* $F$: flow type (e.g., control flow)
+* $W$: workflow name
+* $T$: task in the workflow $W$
+
+Architecture: Workflow $W$ with task $T$ (and possibly other). There is at least one conditional link in flow $F$ into or before task $T$ such that for any initial situation, task $T$ is executed.
+
+Question: Will the task $T$ be executed in every possible initial situation?
+
+Reference answer: yes
+
+Evaluation metric: correctness
+
+Example instance: TODO
+
 ### Conditional flow
 
 Rationale: Can the LLM evaluate conditional flow?
@@ -396,6 +460,28 @@ Example instance: "Given the initial situation p=0, list all the tasks that will
 ---
 
 ## Semantics patterns
+
+### Inconsistent task name and description
+
+Rationale: Can the LLM detect inconsistent task name and description?
+
+Parameters:
+
+* $W$: workflow name
+* $T$: task name
+* $D_T$: task description that is inconsistent with name $T$
+
+Architecture: Workflow $W$ with task $T$ that has a description $D_T$
+
+Question: Identify potential errors in the specification of $W$ and present a list of them.
+
+Reference answer: The description of task $T$ does not correspond with its name. *(exact formulation might depend on the test instance)*
+
+Evaluation metric: ROUGE
+
+Example instance: Task named 'BinaryClassificationModelTraining' with description 'Training of a regression ML model'
+
+---
 
 ### Inconsistent descriptions
 
