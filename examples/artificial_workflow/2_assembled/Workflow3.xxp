@@ -25,7 +25,7 @@ workflow Workflow3 {
   }
 
   Task7 ?-> Task8 {
-    condition "otherwise";
+    condition "p < 10";
   }
   
   Task9 -> END;

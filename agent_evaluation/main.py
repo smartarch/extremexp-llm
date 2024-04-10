@@ -3,7 +3,7 @@ import sys
 
 sys.path.append(str((Path(__file__).parent / ".." / "xxp_agent" ).resolve()))  # dirty trick to allow importing python files from the 'xxp_agent' folder
 
-from colorama import Style
+from colorama import Style, Fore
 from dotenv import find_dotenv, load_dotenv
 import pandas as pd
 
@@ -20,14 +20,18 @@ PROJECT_DIR = Path(__file__).parent.parent  # root of the repository
 
 # Load configuration file
 
-# config_file_path = input("Configuration file path: ")
-variant = "2_config.yaml"
-config_file_path = f"examples/artificial_workflow/{variant}"
+# TODO: improve configuration
+# variant = 1  # separate files (inheritance)
+# variant = 2  # assembled
+variant = 3  # expanded
+config_file_suffix = "_config.yaml"
+
+config_file_path = f"examples/artificial_workflow/{variant}{config_file_suffix}"
 config = load_config(PROJECT_DIR / config_file_path)
 
 # Create Logger
 
-sys.stdout = Logger(PROJECT_DIR / "agent_evaluation_logs")
+sys.stdout = Logger(PROJECT_DIR / "agent_evaluation_logs" / str(variant))
 
 print("Configuration file path:", config_file_path)
 print("Configuration:", config)
@@ -45,7 +49,11 @@ tools.append(specification_tool)
 # FIXME: this is a hacky way to change the configuration folder, but it works for now
 def update_specification_tool_path(folder_name):
     def update_specification_folder():
-        new_config_path = f"examples/{folder_name}/{variant}"
+        if folder_name == "automl_wrong_implementation":
+            config_file = str(variant + 3) + config_file_suffix  # FIXME: variants with descriptions are +3
+        else:
+            config_file = str(variant) + config_file_suffix
+        new_config_path = f"examples/{folder_name}/{config_file}"
         new_config = load_config(PROJECT_DIR / new_config_path)
         new_specification_folder = PROJECT_DIR / new_config[SPECIFICATION_FOLDER]
         specification_tool.specification_folder = new_specification_folder
@@ -55,51 +63,18 @@ def update_specification_tool_path(folder_name):
 
 # Test instances
 
-test_instances_structure = {
-    "List of tasks": [
-        update_specification_tool_path("artificial_workflow"),
-        SetQuestion("List all tasks in workflow 'MainWorkflow'.", {"Task1", "Task2", "Task3", "Task4"}),
-        SetQuestion("List all tasks in workflow 'MainWorkflow' that have a subworkflow.", {"Task1", "Task4"}),
-        update_specification_tool_path("automl_wrong_implementation"),
-        SetQuestion("List all tasks in workflow 'HyperparameterOptimization'.", {"HyperparameterProposal", "MLModelValidation", "BestHyperparameterSelection"}),
-        SetQuestion("List all tasks in workflow 'MLTrainingAndEvaluation' that have a parameter (set via the 'param' keyword).", {"ModelEvaluation"}),
-        SetQuestion("List all tasks in workflow 'MLTrainingAndEvaluation' that have a subworkflow.", set()),  # TODO: deal with empty set as an answer
-    ],
-    "Task links in flow": [
-        update_specification_tool_path("artificial_workflow"),
-        YesNoQuestion("In workflow 'SubWorkflow', does 'Task9' follow directly after 'Task10' in the control flow?", True),
-        YesNoQuestion("In workflow 'SubWorkflow', does 'Task10' follow directly after 'Task9' in the control flow?", False),
-        update_specification_tool_path("automl_wrong_implementation"),
-        YesNoQuestion("In workflow 'MLTrainingAndEvaluation', does 'ModelTraining' follow directly after 'ModelEvaluation' in the control flow?", False),
-        YesNoQuestion("In workflow 'MLTrainingAndEvaluation2', does 'ModelTraining' follow directly after 'ModelEvaluation' in the control flow?", True),  # semantically incorrect order
-    ],
-    "Next tasks in flow": [
-        update_specification_tool_path("artificial_workflow"),
-        SetQuestion("In workflow 'MainWorkflow', which tasks come directly after 'Task2' in the control flow?", {"Task1", "Task3"}),  # parallel
-        SetQuestion("In workflow 'Workflow3', which tasks come directly after 'Task7' in the control flow?", {"Task9", "Task8"}),  # conditional
-        SetQuestion("In workflow 'MainWorkflow', which tasks come directly after 'Task3' in the control flow?", {"Task4"}),
-        SetQuestion("In workflow 'SubWorkflow', which tasks come directly after 'Task9' in the control flow?", {"Task11"}),
-    ],
-    "Flow cycle": [
-        update_specification_tool_path("artificial_workflow"),
-        YesNoQuestion("In workflow 'Workflow2', is there a cycle in the control flow?", True),
-        YesNoQuestion("In workflow 'MainWorkflow', is there a cycle in the control flow?", False),
-        YesNoQuestion("In workflow 'Workflow3', is there a cycle in the control flow?", False),  # conditional flow
-        update_specification_tool_path("automl_wrong_implementation"),
-        YesNoQuestion("In workflow 'HyperparameterOptimization', is there a cycle in the control flow?", True),  # conditional cycle
-    ],
-}
-
-def test_instances():
-    for pattern, test_instances in test_instances_structure.items():
-        for test_instance in test_instances:
-            yield "structure", pattern, test_instance
+if variant == 1:
+    from test_instances_separate_files import test_instances
+elif variant == 2:
+    from test_instances_assembled import test_instances
+else:  # 3_config.yaml
+    from test_instances_expanded import test_instances
 
 # Main
 
 print_color("This script uses multiline input. Press Ctrl+D (Linux) or Ctrl+Z (Windows) on an empty line to end input message.", Style.DIM)
 
-prompt = get_prompt_template(config, with_memory=False)
+prompt = get_prompt_template(config, with_memory=False, with_main=False)
 agent = create_agent(llm, tools, prompt)
 
 print_prompt_template(prompt)
@@ -110,10 +85,13 @@ print("\nStart of test.\n")
 results = pd.DataFrame(columns=["category", "pattern", "score"])
 
 # Chat loop
-for category, pattern, test_instance in test_instances():
+for category, pattern, test_instance in test_instances(update_specification_tool_path):
     if isinstance(test_instance, TestInstance):
 
         question = test_instance.question()
+
+        print_color(f"Pattern: {pattern}", Fore.YELLOW)
+
         print_input_message(question)
 
         response = agent.invoke(
@@ -144,13 +122,13 @@ print("Total test instances:", len(results.index))
 results_path = sys.stdout.file_name.replace(".ansi", ".csv")  # FIXME: this is ugly and depends on the implementation of Logger
 results.to_csv(results_path, index=False)
 
-pattern_results = results.groupby(by="pattern").agg({"category": pd.Series.mode, "score": "mean"})
-pattern_results['count'] = results.groupby(by="pattern").size()
-pattern_results.to_csv(results_path.replace(".csv", "_patterns.csv"), index=True)
+pattern_results = results.groupby(by="pattern", sort=False).agg({"category": pd.Series.mode, "score": "mean"})
+pattern_results['count'] = results.groupby(by="pattern", sort=False).size()
+pattern_results.to_csv(results_path.replace(".csv", ".patterns.csv"), index=True)
 
-category_results = results.groupby(by="category").agg({"score": "mean"})
-category_results['count'] = results.groupby(by="category").size()
-category_results.to_csv(results_path.replace(".csv", "_categories.csv"), index=True)
+category_results = results.groupby(by="category", sort=False).agg({"score": "mean"})
+category_results['count'] = results.groupby(by="category", sort=False).size()
+category_results.to_csv(results_path.replace(".csv", ".categories.csv"), index=True)
 
 with pd.option_context('display.max_rows', None, 'display.max_columns', None):  # more options can be specified also
     print(pattern_results)

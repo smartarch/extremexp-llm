@@ -46,9 +46,20 @@ class SetQuestion(TestInstance):
         answer, _, _ = answer.partition("\n")
         answers = set(answer.replace(" ", "").split(","))
 
+        if len(self._correct_answer) == 0:
+            if answer.lower() == "none":
+                return 1
+            return 0
+
         # compute Jaccard similarity (size of intersection / size of union)
         intersection = answers.intersection(self._correct_answer)
         union = answers.union(self._correct_answer)
-        jaccard_similarity = len(intersection) / len(union) if len(union) > 0 else 1
+        jaccard_similarity = len(intersection) / len(union)
 
         return jaccard_similarity
+
+
+def instance_generator(category: str, test_instances_for_category: dict[str, list[TestInstance]]):
+    for pattern, test_instances in test_instances_for_category.items():
+            for test_instance in test_instances:
+                yield category, pattern, test_instance

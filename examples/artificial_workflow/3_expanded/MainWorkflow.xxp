@@ -16,22 +16,26 @@ workflow MainWorkflow {
       task Task8 {
         implementation "file://implementation_E.exe";
       }
+      task Task9 {
+        implementation "file://implementation_F.exe";
+      }
 
       // PARAMETERS
       param p = 4;
 
       // TASK CONNECTIONS
-      
+  
       START -> Task7;
 
-      Task7 ?-> END {
+      Task7 ?-> Task9 {
         condition "p > 1";
       }
 
       Task7 ?-> Task8 {
-        condition "otherwise";
+        condition "p < 10";
       }
       
+      Task9 -> END;
       Task8 -> END;
     }
 
