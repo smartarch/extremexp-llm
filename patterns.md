@@ -71,6 +71,29 @@ Example instance: "In workflow 'MLTrainingAndEvaluation', does 'MLModelTraining'
 
 ---
 
+### Next tasks in flow
+
+Rationale: Can the LLM understand flow links between tasks?
+
+Parameters:
+
+* $F$: flow type (e.g., control flow, data flow)
+* $W$: workflow name
+* $T_0$: task in $W$
+* $T_1, \dots, T_N$: tasks in $W$
+
+Architecture: Workflow $W$ with tasks $T_0, \dots, T_KN$ (and possibly other). There are links in flow $F$ from task $T_0$ to $T_1, \dots, T_N$.
+
+Question: In workflow $W$, which tasks come directly after $T_0$ in flow $F$?
+
+Reference answer: $T_1, \dots, T_N$
+
+Evaluation metric: Jaccard index
+
+Example instance: "In workflow 'MainWorkflow', which tasks come directly after 'Task2' in the control flow?", reference answer: { "Task1", "Task3" } (block of parallel tasks)
+
+---
+
 ### Flow cycle
 
 Rationale: Can the LLM find cycles in the flow?
