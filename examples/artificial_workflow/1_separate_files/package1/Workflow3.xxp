@@ -5,6 +5,7 @@ workflow Workflow3 {
   // TASKS
   define task Task7;
   define task Task8;
+  define task Task9;
 
   // PARAMETERS
   param p = 0;
@@ -13,14 +14,15 @@ workflow Workflow3 {
   
   START -> Task7;
 
-  Task7 ?-> END {
+  Task7 ?-> Task9 {
     condition "p > 1";
   }
 
   Task7 ?-> Task8 {
-    condition "otherwise";
+    condition "p < 10";
   }
   
+  Task9 -> END;
   Task8 -> END;
 
   // TASK CONFIGURATION

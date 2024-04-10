@@ -1,0 +1,6 @@
+pattern,category,score,count
+Flow cycle,structure,1.0,4
+List of tasks,structure,0.8,5
+Mutually exclusive conditional flow,behavior,0.5,2
+Next tasks in flow,structure,0.75,4
+Task links in flow,structure,0.5,4

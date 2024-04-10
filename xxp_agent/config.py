@@ -18,6 +18,7 @@ def get_prompt_template(config, **kwargs):
         return yaml_tools.get_prompt_template(config[MAIN_WORKFLOW], **kwargs)
     elif config[SPECIFICATION_TYPE] == SpecificationType.XXP_ASSEMBLED:
         return xxp_dsl_tools_assembled.get_prompt_template(config[MAIN_WORKFLOW], **kwargs)
+    raise ValueError("Unsupported specification type: " + config[SPECIFICATION_TYPE])
 
 def get_specification_tools(config, project_dir: Path):
     if config[SPECIFICATION_TYPE] == SpecificationType.XXP:
@@ -26,3 +27,4 @@ def get_specification_tools(config, project_dir: Path):
         return yaml_tools.YAMLWorkflowSpecificationTool(project_dir / config[SPECIFICATION_FOLDER])
     elif config[SPECIFICATION_TYPE] == SpecificationType.XXP_ASSEMBLED:
         return xxp_dsl_tools_assembled.DSLAssembledWorkflowSpecificationTool(project_dir / config[SPECIFICATION_FOLDER])
+    raise ValueError("Unsupported specification type: " + config[SPECIFICATION_TYPE])
