@@ -4,11 +4,7 @@
 
 1. Separate `xxp` files divided to packages (`examples/artificial_workflow/1_config.yaml`).
 2. Assembled `xxp` workflows -> information from parent workflow are copied to the assembled workflow, nested specification is separated to the subworkflow files, packages are not necessary anymore (`examples/artificial_workflow/2_config.yaml`).
-3. 1\. with list of all packages and workflows in the initial prompt.
-4. 2\. with list of all workflows in the initial prompt.
-5. Expanded workflow: one `xxp` file with nested subworkflows (`examples/artificial_workflow/5_config.yaml`).
-
-Note: Variants 3 and 4 are not implemented yet (and 1 and 2 perform well enough in this example, so 3 and 4 were not necessary).
+3. Expanded workflow: one `xxp` file with nested subworkflows (`examples/artificial_workflow/3_config.yaml`).
 
 ## Goal: List all Python tasks
 
@@ -45,7 +41,7 @@ Hallucinations = number of wrong results (non-existent tasks or tasks not in Pyt
 |---------|----|----|----|----|----|----------------| 
 | 1       | ✅ | ✅ | ✅ | ✅ | ✅ | 0 |
 | 2       | ✅ | ✅ | ✅ | ✅ | ✅ | 0 |
-| 5       | ✅ | ✅ | ☑️ | ✅ | ✅ | 0 |
+| 3       | ✅ | ✅ | ☑️ | ✅ | ✅ | 0 |
 
 ##### Notes:
 
@@ -60,7 +56,7 @@ Hallucinations = number of wrong results (non-existent tasks or tasks not in Pyt
 |-|-|-|-|-|-|-|
 |1|✅|✅|✅|✅|✅|✅|
 |2|✅|✅|➖|✅|✅|➖|
-|5|✅|➖|➖|➖|➖|➖|
+|3|✅|➖|➖|➖|➖|➖|
 
 ## Goal: identify errors
 
@@ -91,7 +87,7 @@ Report the cyclic control flow between `Task5` and `Task6`. The missing `END` mi
 |---------|----|---|
 | 1       | ☑️ | 1/4 + 3/5 |
 | 2       | ✅ | 5/6 |
-| 5       | ✅ | 4/4 |
+| 3       | ✅ | 4/4 |
 
 * Version1: From the reported errors, it seems that the Agent does not understand the inheritance of workflow specifications. Further investigation is needed whether this can be fixed by updating the prompt (including this information explicitly).
 
@@ -103,4 +99,4 @@ Report the cyclic control flow between `Task5` and `Task6`. The missing `END` mi
 |-|-|-|-|-|-|-|
 |1|✅|✅|✅|☑️|☑️|✅|
 |2|✅|✅|➖|✅|✅|➖|
-|5|✅|➖|➖|➖|➖|➖|
+|3|✅|➖|➖|➖|➖|➖|
