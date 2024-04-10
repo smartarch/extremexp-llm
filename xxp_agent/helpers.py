@@ -14,7 +14,8 @@ class Logger:
     def __init__(self, logs_dir: Path):
         self.stdout = sys.stdout
         os.makedirs(logs_dir, exist_ok=True)
-        self.file = open(f'{logs_dir}/{datetime.now().strftime("%Y-%m-%d-%H-%M-%S")}.ansi', "w")
+        self.file_name = f'{logs_dir}/{datetime.now().strftime("%Y-%m-%d-%H-%M-%S")}.ansi'
+        self.file = open(self.file_name, "w")
 
     def write(self, message):
         self.stdout.write(message)
