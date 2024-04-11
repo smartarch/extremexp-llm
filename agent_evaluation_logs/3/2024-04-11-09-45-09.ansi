@@ -1070,7 +1070,7 @@ Answer correctness: 0.000
 
 Configuration: 'specification_folder' updated to examples/artificial_workflow/3_expanded
 [33m
-Pattern: Task links in flow
+Pattern: Task after task
 [0m
 User input:
 [35m
@@ -1181,7 +1181,7 @@ In the control flow within `Task4` of `MainWorkflow`, `Task9` follows directly a
 Answer correctness: 0.000
 
 [33m
-Pattern: Task links in flow
+Pattern: Task after task
 [0m
 User input:
 [35m
@@ -1293,7 +1293,7 @@ Answer correctness: 0.000
 
 Configuration: 'specification_folder' updated to examples/automl_wrong_implementation/6_expanded_descriptions
 [33m
-Pattern: Task links in flow
+Pattern: Task after task
 [0m
 User input:
 [35m
@@ -1569,7 +1569,7 @@ In the control flow of the "MLTrainingAndEvaluation" task, "ModelTraining" occur
 Answer correctness: 1.000
 
 [33m
-Pattern: Task links in flow
+Pattern: Task after task
 [0m
 User input:
 [35m
@@ -3296,7 +3296,7 @@ Total test instances: 19
                                       category  score  count
 pattern                                                     
 List of tasks                        structure   0.80      5
-Task links in flow                   structure   0.25      4
+Task after task                   structure   0.25      4
 Next tasks in flow                   structure   0.75      4
 Flow cycle                           structure   0.75      4
 Mutually exclusive conditional flow   behavior   0.50      2

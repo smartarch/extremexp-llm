@@ -208,7 +208,7 @@ Total test instances: 3
                      category  score  count
 pattern                                    
 List of tasks       structure    1.0      2
-Task links in flow  structure    1.0      1
+Task after task  structure    1.0      1
 
            score  count
 category               

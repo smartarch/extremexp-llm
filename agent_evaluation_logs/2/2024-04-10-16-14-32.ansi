@@ -1237,7 +1237,7 @@ Flow cycle                           structure   1.00      4
 List of tasks                        structure   0.80      5
 Mutually exclusive conditional flow   behavior   0.50      2
 Next tasks in flow                   structure   0.75      4
-Task links in flow                   structure   0.50      4
+Task after task                   structure   0.50      4
 
               score  count
 category                  

@@ -29,7 +29,49 @@ Example instance: "List all tasks in workflow 'MLTrainingAndEvaluation' that hav
 
 ---
 
-### Task links in flow
+### Links in flow
+
+Rationale: Can the LLM understand flow links between tasks?
+
+Parameters:
+
+* $F$: flow type (e.g., control flow, data flow)
+* $W$: workflow name
+* $T_1, T_2$: tasks in $W$
+
+Architecture: Workflow $W$ with tasks $T_1, T_2$ (and possibly other), linked $T_1 \to T_2$ in flow $F$.
+
+Question: In workflow $W$, is there a flow $F$ link from $T_2$ to $T_1$?
+
+Reference answer: yes
+
+Evaluation metric: correctness
+
+Example instance: "In workflow 'MLTrainingAndEvaluation', is there a control flow link from 'MLModelTraining' to 'MLModelEvaluation'?"
+
+---
+
+Rationale: Can the LLM understand flow links between tasks? (negative test)
+
+Parameters:
+
+* $F$: flow type (e.g., control flow, data flow)
+* $W$: workflow name
+* $T_1, T_2$: tasks in $W$
+
+Architecture: Workflow $W$ with tasks $T_1, T_2$ (and possibly other). There is no link $T_1 \to T_2$ in flow $F$.
+
+Question: In workflow $W$, is there a flow $F$ link from $T_2$ to $T_1$?
+
+Reference answer: no
+
+Evaluation metric: correctness
+
+Example instance: "In workflow 'MLTrainingAndEvaluation', is there a control flow link from 'MLModelEvaluation' to 'MLModelTraining'?"
+
+---
+
+### Task after task
 
 Rationale: Can the LLM understand flow links between tasks?
 

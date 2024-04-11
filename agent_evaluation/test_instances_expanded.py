@@ -12,7 +12,15 @@ def test_instances(update_specification_tool_path):
             SetQuestion("Work with workflow 'FailurePredictionInManufacture'. List all subtasks directly in task 'MLTrainingAndEvaluation' that have a parameter (set via the 'param' keyword). Do not list tasks nested inside other tasks.", {"ModelEvaluation"}),
             SetQuestion("Work with workflow 'FailurePredictionInManufacture'. List all subtasks directly in task 'MLTrainingAndEvaluation' that have nested subtasks. Do not list tasks nested inside other tasks.", set()),
         ],
-        "Task links in flow": [
+        "Links in flow": [
+            update_specification_tool_path("artificial_workflow"),
+            YesNoQuestion("Work with workflow 'MainWorkflow'. In task 'Task4', is there a control flow link from 'Task10' to 'Task9'?", True),
+            YesNoQuestion("Work with workflow 'MainWorkflow'. In task 'Task4', is there a control flow link from 'Task9' to 'Task10'?", False),
+            update_specification_tool_path("automl_wrong_implementation"),
+            YesNoQuestion("Work with workflow 'FailurePredictionInManufacture'. In task 'MLTrainingAndEvaluation', is there a control flow link from 'ModelEvaluation' to 'ModelTraining'?", False),
+            YesNoQuestion("Work with workflow 'FailurePredictionInManufacture2'. In task 'MLTrainingAndEvaluation', is there a control flow link from 'ModelEvaluation' to 'ModelTraining'?", True),  # semantically incorrect order
+        ],
+        "Task after task": [
             update_specification_tool_path("artificial_workflow"),
             YesNoQuestion("Work with workflow 'MainWorkflow'. In task 'Task4', does 'Task9' follow directly after 'Task10' in the control flow?", True),
             YesNoQuestion("Work with workflow 'MainWorkflow'. In task 'Task4', does 'Task10' follow directly after 'Task9' in the control flow?", False),
