@@ -1,0 +1,20 @@
+category,pattern,score
+structure,List of tasks,0.8
+structure,List of tasks,0.5
+structure,List of tasks,1.0
+structure,List of tasks,1.0
+structure,List of tasks,0.0
+structure,Task links in flow,0.0
+structure,Task links in flow,1.0
+structure,Task links in flow,1.0
+structure,Task links in flow,0.0
+structure,Next tasks in flow,0.6666666666666666
+structure,Next tasks in flow,1.0
+structure,Next tasks in flow,0.5
+structure,Next tasks in flow,1.0
+structure,Flow cycle,1.0
+structure,Flow cycle,1.0
+structure,Flow cycle,1.0
+structure,Flow cycle,1.0
+behavior,Mutually exclusive conditional flow,1.0
+behavior,Mutually exclusive conditional flow,1.0

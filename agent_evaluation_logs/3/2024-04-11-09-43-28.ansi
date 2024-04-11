@@ -1,5 +1,5 @@
 Configuration file path: examples/artificial_workflow/3_config.yaml
-Configuration: {'logger_folder': 'xxp_agent_logs/artificial_workflow', 'model': 'gpt-4-0125-preview', 'specification_type': 'xxp_assembled', 'specification_folder': 'examples/artificial_workflow/5_expanded', 'main_workflow_name': 'MainWorkflow'}
+Configuration: {'logger_folder': 'xxp_agent_logs/artificial_workflow', 'model': 'gpt-4-0125-preview', 'specification_type': 'xxp_assembled', 'specification_folder': 'examples/artificial_workflow/3_expanded', 'main_workflow_name': 'MainWorkflow'}
 LLM model: gpt-4-0125-preview 
 
 [2m
@@ -18,7 +18,7 @@ workflow_specification: Get the specification of the workflow (or subworkflow). 
 
 Start of test.
 
-Configuration: 'specification_folder' updated to examples/artificial_workflow/5_expanded
+Configuration: 'specification_folder' updated to examples/artificial_workflow/3_expanded
 [33m
 Pattern: List of tasks
 [0m
@@ -33,14 +33,102 @@ List all tasks directly in workflow 'MainWorkflow'. Do not list tasks nested ins
 Invoking: `workflow_specification` with `{'workflow_name': 'MainWorkflow'}`
 
 
-[0m[36;1m[1;3mError: workflow 'MainWorkflow' not found. Available workflows: [][0m[32;1m[1;3mI'm unable to retrieve the specification for 'MainWorkflow' because it appears that the workflow does not exist in the current context or there might have been a mistake in the workflow name provided. Please ensure the workflow name is correct and try again.[0m
+[0m[36;1m[1;3mpackage package2;
+
+workflow MainWorkflow {
+  
+  // TASKS
+  task Task1 {
+    // TASKS
+    task Task5 {
+      implementation "file://implementation_C.py";
+    }
+    task Task6 {
+      // TASKS
+      task Task7 {
+        implementation "file://implementation_D.py";
+      }
+      task Task8 {
+        implementation "file://implementation_E.exe";
+      }
+      task Task9 {
+        implementation "file://implementation_F.exe";
+      }
+
+      // PARAMETERS
+      param p = 4;
+
+      // TASK CONNECTIONS
+  
+      START -> Task7;
+
+      Task7 ?-> Task9 {
+        condition "p > 1";
+      }
+
+      Task7 ?-> Task8 {
+        condition "p < 10";
+      }
+      
+      Task9 -> END;
+      Task8 -> END;
+    }
+
+    // TASK CONNECTIONS
+    
+    START -> Task5 -> Task6;
+    Task6 -> Task5;
+  }
+  task Task2 {
+    implementation "file://implementation_A.py";
+    param value = 0.2;
+  }
+  task Task3 {
+    implementation "file://implementation_B.py";
+  }
+  task Task4 {
+    // TASKS
+    task Task10 {
+      implementation "file://implementation_F.java";
+    }
+    task Task9 {
+      implementation "file://implementation_F.py";
+    }
+    task Task11 {
+      implementation "file://implementation_G.java";
+    }
+
+    // TASK CONNECTIONS
+    
+    START -> Task10 -> Task9 -> Task11 -> END;
+  }
+
+  // DATA
+  data InputData;
+
+  // TASK CONNECTIONS
+  
+  START -> Task2 -> PARALLEL_1;
+  PARALLEL_1 -> Task1 -> PARALLEL_END_1;
+  PARALLEL_1 -> Task3 -> Task4 -> PARALLEL_END_1;
+  PARALLEL_END_1 -> END;
+
+  // DATA CONNECTIONS
+
+  InputData --> Task2;
+}
+[0m[32;1m[1;3mTask1, Task2, Task3, Task4
+
+These tasks are listed directly under the MainWorkflow without being nested inside other tasks, as per the provided workflow specification.[0m
 
 [1m> Finished chain.[0m
 Agent reply:
 [36m
-I'm unable to retrieve the specification for 'MainWorkflow' because it appears that the workflow does not exist in the current context or there might have been a mistake in the workflow name provided. Please ensure the workflow name is correct and try again.
+Task1, Task2, Task3, Task4
+
+These tasks are listed directly under the MainWorkflow without being nested inside other tasks, as per the provided workflow specification.
 [0m
-Answer correctness: 0.000
+Answer correctness: 1.000
 
 [33m
 Pattern: List of tasks
@@ -56,14 +144,102 @@ List all tasks directly in workflow 'MainWorkflow' that have nested subtasks. Do
 Invoking: `workflow_specification` with `{'workflow_name': 'MainWorkflow'}`
 
 
-[0m[36;1m[1;3mError: workflow 'MainWorkflow' not found. Available workflows: [][0m[32;1m[1;3mIt appears there was an error in retrieving the specified workflow 'MainWorkflow', as it was not found in the available workflows. This could be due to a typo in the workflow name or the workflow not existing in the current context. Please verify the workflow name and try again.[0m
+[0m[36;1m[1;3mpackage package2;
+
+workflow MainWorkflow {
+  
+  // TASKS
+  task Task1 {
+    // TASKS
+    task Task5 {
+      implementation "file://implementation_C.py";
+    }
+    task Task6 {
+      // TASKS
+      task Task7 {
+        implementation "file://implementation_D.py";
+      }
+      task Task8 {
+        implementation "file://implementation_E.exe";
+      }
+      task Task9 {
+        implementation "file://implementation_F.exe";
+      }
+
+      // PARAMETERS
+      param p = 4;
+
+      // TASK CONNECTIONS
+  
+      START -> Task7;
+
+      Task7 ?-> Task9 {
+        condition "p > 1";
+      }
+
+      Task7 ?-> Task8 {
+        condition "p < 10";
+      }
+      
+      Task9 -> END;
+      Task8 -> END;
+    }
+
+    // TASK CONNECTIONS
+    
+    START -> Task5 -> Task6;
+    Task6 -> Task5;
+  }
+  task Task2 {
+    implementation "file://implementation_A.py";
+    param value = 0.2;
+  }
+  task Task3 {
+    implementation "file://implementation_B.py";
+  }
+  task Task4 {
+    // TASKS
+    task Task10 {
+      implementation "file://implementation_F.java";
+    }
+    task Task9 {
+      implementation "file://implementation_F.py";
+    }
+    task Task11 {
+      implementation "file://implementation_G.java";
+    }
+
+    // TASK CONNECTIONS
+    
+    START -> Task10 -> Task9 -> Task11 -> END;
+  }
+
+  // DATA
+  data InputData;
+
+  // TASK CONNECTIONS
+  
+  START -> Task2 -> PARALLEL_1;
+  PARALLEL_1 -> Task1 -> PARALLEL_END_1;
+  PARALLEL_1 -> Task3 -> Task4 -> PARALLEL_END_1;
+  PARALLEL_END_1 -> END;
+
+  // DATA CONNECTIONS
+
+  InputData --> Task2;
+}
+[0m[32;1m[1;3mTask1, Task4
+
+These tasks are directly listed in the 'MainWorkflow' and contain nested subtasks, as indicated by their specification details within the workflow definition.[0m
 
 [1m> Finished chain.[0m
 Agent reply:
 [36m
-It appears there was an error in retrieving the specified workflow 'MainWorkflow', as it was not found in the available workflows. This could be due to a typo in the workflow name or the workflow not existing in the current context. Please verify the workflow name and try again.
+Task1, Task4
+
+These tasks are directly listed in the 'MainWorkflow' and contain nested subtasks, as indicated by their specification details within the workflow definition.
 [0m
-Answer correctness: 0.000
+Answer correctness: 1.000
 
 Configuration: 'specification_folder' updated to examples/automl_wrong_implementation/6_expanded_descriptions
 [33m
@@ -331,14 +507,14 @@ workflow FailurePredictionInManufacture {
 }
 [0m[32;1m[1;3mHyperparameterProposal, MLModelValidation, BestHyperparameterSelection
 
-These are the direct subtasks within the 'HyperparameterOptimization' task, as outlined in the workflow specification. Each task is listed without delving into their nested subtasks.[0m
+These are the direct subtasks within the "HyperparameterOptimization" task in the "FailurePredictionInManufacture" workflow. They represent the steps of proposing hyperparameters, validating the machine learning model with those parameters, and selecting the best hyperparameters based on validation results.[0m
 
 [1m> Finished chain.[0m
 Agent reply:
 [36m
 HyperparameterProposal, MLModelValidation, BestHyperparameterSelection
 
-These are the direct subtasks within the 'HyperparameterOptimization' task, as outlined in the workflow specification. Each task is listed without delving into their nested subtasks.
+These are the direct subtasks within the "HyperparameterOptimization" task in the "FailurePredictionInManufacture" workflow. They represent the steps of proposing hyperparameters, validating the machine learning model with those parameters, and selecting the best hyperparameters based on validation results.
 [0m
 Answer correctness: 1.000
 
@@ -607,14 +783,14 @@ workflow FailurePredictionInManufacture {
 }
 [0m[32;1m[1;3mModelEvaluation
 
-The only task directly in "MLTrainingAndEvaluation" that has a parameter set via the 'param' keyword is "ModelEvaluation", which has the parameter "metrics" set to a list of evaluation metrics.[0m
+The task "ModelEvaluation" within "MLTrainingAndEvaluation" has a parameter set via the 'param' keyword, specifying the metrics to be used for evaluation.[0m
 
 [1m> Finished chain.[0m
 Agent reply:
 [36m
 ModelEvaluation
 
-The only task directly in "MLTrainingAndEvaluation" that has a parameter set via the 'param' keyword is "ModelEvaluation", which has the parameter "metrics" set to a list of evaluation metrics.
+The task "ModelEvaluation" within "MLTrainingAndEvaluation" has a parameter set via the 'param' keyword, specifying the metrics to be used for evaluation.
 [0m
 Answer correctness: 1.000
 
@@ -881,20 +1057,20 @@ workflow FailurePredictionInManufacture {
   TrainingData --> MLTrainingAndEvaluation --> MLModel;
   TestData --> MLTrainingAndEvaluation --> MLModelMetrics;
 }
-[0m[32;1m[1;3mFeatureExtraction, ModelTraining, ModelEvaluation
+[0m[32;1m[1;3mFeatureExtraction,ModelTraining,ModelEvaluation
 
-These tasks are directly in the 'MLTrainingAndEvaluation' task and do not have nested subtasks inside them.[0m
+These tasks are directly in 'MLTrainingAndEvaluation' with no further nested subtasks inside them.[0m
 
 [1m> Finished chain.[0m
 Agent reply:
 [36m
-FeatureExtraction, ModelTraining, ModelEvaluation
+FeatureExtraction,ModelTraining,ModelEvaluation
 
-These tasks are directly in the 'MLTrainingAndEvaluation' task and do not have nested subtasks inside them.
+These tasks are directly in 'MLTrainingAndEvaluation' with no further nested subtasks inside them.
 [0m
 Answer correctness: 0.000
 
-Configuration: 'specification_folder' updated to examples/artificial_workflow/5_expanded
+Configuration: 'specification_folder' updated to examples/artificial_workflow/3_expanded
 [33m
 Pattern: Task links in flow
 [0m
@@ -909,14 +1085,102 @@ Work with workflow 'MainWorkflow'. In task 'Task4', does 'Task9' follow directly
 Invoking: `workflow_specification` with `{'workflow_name': 'MainWorkflow'}`
 
 
-[0m[36;1m[1;3mError: workflow 'MainWorkflow' not found. Available workflows: [][0m[32;1m[1;3mIt seems there was an error retrieving the specification for 'MainWorkflow'. The workflow 'MainWorkflow' does not exist or is not available at this time. Please ensure the workflow name is correct and try again.[0m
+[0m[36;1m[1;3mpackage package2;
+
+workflow MainWorkflow {
+  
+  // TASKS
+  task Task1 {
+    // TASKS
+    task Task5 {
+      implementation "file://implementation_C.py";
+    }
+    task Task6 {
+      // TASKS
+      task Task7 {
+        implementation "file://implementation_D.py";
+      }
+      task Task8 {
+        implementation "file://implementation_E.exe";
+      }
+      task Task9 {
+        implementation "file://implementation_F.exe";
+      }
+
+      // PARAMETERS
+      param p = 4;
+
+      // TASK CONNECTIONS
+  
+      START -> Task7;
+
+      Task7 ?-> Task9 {
+        condition "p > 1";
+      }
+
+      Task7 ?-> Task8 {
+        condition "p < 10";
+      }
+      
+      Task9 -> END;
+      Task8 -> END;
+    }
+
+    // TASK CONNECTIONS
+    
+    START -> Task5 -> Task6;
+    Task6 -> Task5;
+  }
+  task Task2 {
+    implementation "file://implementation_A.py";
+    param value = 0.2;
+  }
+  task Task3 {
+    implementation "file://implementation_B.py";
+  }
+  task Task4 {
+    // TASKS
+    task Task10 {
+      implementation "file://implementation_F.java";
+    }
+    task Task9 {
+      implementation "file://implementation_F.py";
+    }
+    task Task11 {
+      implementation "file://implementation_G.java";
+    }
+
+    // TASK CONNECTIONS
+    
+    START -> Task10 -> Task9 -> Task11 -> END;
+  }
+
+  // DATA
+  data InputData;
+
+  // TASK CONNECTIONS
+  
+  START -> Task2 -> PARALLEL_1;
+  PARALLEL_1 -> Task1 -> PARALLEL_END_1;
+  PARALLEL_1 -> Task3 -> Task4 -> PARALLEL_END_1;
+  PARALLEL_END_1 -> END;
+
+  // DATA CONNECTIONS
+
+  InputData --> Task2;
+}
+[0m[32;1m[1;3myes
+
+In 'MainWorkflow', within 'Task4', 'Task9' follows directly after 'Task10' in the control flow as specified by the control flow "START -> Task10 -> Task9 -> Task11 -> END".[0m
 
 [1m> Finished chain.[0m
 Agent reply:
 [36m
-It seems there was an error retrieving the specification for 'MainWorkflow'. The workflow 'MainWorkflow' does not exist or is not available at this time. Please ensure the workflow name is correct and try again.
+yes
+
+In 'MainWorkflow', within 'Task4', 'Task9' follows directly after 'Task10' in the control flow as specified by the control flow "START -> Task10 -> Task9 -> Task11 -> END".
 [0m
-Answer correctness: 0.000
+Answer correctness: 1.000
 
 [33m
 Pattern: Task links in flow
@@ -932,12 +1196,100 @@ Work with workflow 'MainWorkflow'. In task 'Task4', does 'Task10' follow directl
 Invoking: `workflow_specification` with `{'workflow_name': 'MainWorkflow'}`
 
 
-[0m[36;1m[1;3mError: workflow 'MainWorkflow' not found. Available workflows: [][0m[32;1m[1;3mIt seems there was an error in retrieving the specification for 'MainWorkflow'. The error indicates that the workflow 'MainWorkflow' was not found. Therefore, I cannot provide an answer to your question about the control flow between 'Task9' and 'Task10' within 'Task4'. Please ensure the workflow name is correct or provide me with the correct workflow name to proceed.[0m
+[0m[36;1m[1;3mpackage package2;
+
+workflow MainWorkflow {
+  
+  // TASKS
+  task Task1 {
+    // TASKS
+    task Task5 {
+      implementation "file://implementation_C.py";
+    }
+    task Task6 {
+      // TASKS
+      task Task7 {
+        implementation "file://implementation_D.py";
+      }
+      task Task8 {
+        implementation "file://implementation_E.exe";
+      }
+      task Task9 {
+        implementation "file://implementation_F.exe";
+      }
+
+      // PARAMETERS
+      param p = 4;
+
+      // TASK CONNECTIONS
+  
+      START -> Task7;
+
+      Task7 ?-> Task9 {
+        condition "p > 1";
+      }
+
+      Task7 ?-> Task8 {
+        condition "p < 10";
+      }
+      
+      Task9 -> END;
+      Task8 -> END;
+    }
+
+    // TASK CONNECTIONS
+    
+    START -> Task5 -> Task6;
+    Task6 -> Task5;
+  }
+  task Task2 {
+    implementation "file://implementation_A.py";
+    param value = 0.2;
+  }
+  task Task3 {
+    implementation "file://implementation_B.py";
+  }
+  task Task4 {
+    // TASKS
+    task Task10 {
+      implementation "file://implementation_F.java";
+    }
+    task Task9 {
+      implementation "file://implementation_F.py";
+    }
+    task Task11 {
+      implementation "file://implementation_G.java";
+    }
+
+    // TASK CONNECTIONS
+    
+    START -> Task10 -> Task9 -> Task11 -> END;
+  }
+
+  // DATA
+  data InputData;
+
+  // TASK CONNECTIONS
+  
+  START -> Task2 -> PARALLEL_1;
+  PARALLEL_1 -> Task1 -> PARALLEL_END_1;
+  PARALLEL_1 -> Task3 -> Task4 -> PARALLEL_END_1;
+  PARALLEL_END_1 -> END;
+
+  // DATA CONNECTIONS
+
+  InputData --> Task2;
+}
+[0m[32;1m[1;3myes
+
+In the control flow of 'Task4', 'Task10' directly precedes 'Task9'.[0m
 
 [1m> Finished chain.[0m
 Agent reply:
 [36m
-It seems there was an error in retrieving the specification for 'MainWorkflow'. The error indicates that the workflow 'MainWorkflow' was not found. Therefore, I cannot provide an answer to your question about the control flow between 'Task9' and 'Task10' within 'Task4'. Please ensure the workflow name is correct or provide me with the correct workflow name to proceed.
+yes
+
+In the control flow of 'Task4', 'Task10' directly precedes 'Task9'.
 [0m
 Answer correctness: 0.000
 
@@ -1207,14 +1559,14 @@ workflow FailurePredictionInManufacture {
 }
 [0m[32;1m[1;3mno
 
-In the control flow of the `MLTrainingAndEvaluation` task, `ModelTraining` does not follow directly after `ModelEvaluation`. Instead, `ModelTraining` precedes `ModelEvaluation`.[0m
+ModelTraining precedes ModelEvaluation in the control flow within the MLTrainingAndEvaluation task.[0m
 
 [1m> Finished chain.[0m
 Agent reply:
 [36m
 no
 
-In the control flow of the `MLTrainingAndEvaluation` task, `ModelTraining` does not follow directly after `ModelEvaluation`. Instead, `ModelTraining` precedes `ModelEvaluation`.
+ModelTraining precedes ModelEvaluation in the control flow within the MLTrainingAndEvaluation task.
 [0m
 Answer correctness: 1.000
 
@@ -1483,18 +1835,18 @@ workflow FailurePredictionInManufacture {
 }
 [0m[32;1m[1;3mno
 
-In the control flow, 'ModelTraining' does not follow directly after 'ModelEvaluation'; it is actually the other way around, with 'ModelEvaluation' following 'ModelTraining'.[0m
+ModelEvaluation does not follow directly after ModelTraining in the control flow; instead, ModelTraining follows ModelEvaluation.[0m
 
 [1m> Finished chain.[0m
 Agent reply:
 [36m
 no
 
-In the control flow, 'ModelTraining' does not follow directly after 'ModelEvaluation'; it is actually the other way around, with 'ModelEvaluation' following 'ModelTraining'.
+ModelEvaluation does not follow directly after ModelTraining in the control flow; instead, ModelTraining follows ModelEvaluation.
 [0m
 Answer correctness: 0.000
 
-Configuration: 'specification_folder' updated to examples/artificial_workflow/5_expanded
+Configuration: 'specification_folder' updated to examples/artificial_workflow/3_expanded
 [33m
 Pattern: Next tasks in flow
 [0m
@@ -1509,14 +1861,102 @@ In workflow 'MainWorkflow', which tasks come directly after 'Task2' in the contr
 Invoking: `workflow_specification` with `{'workflow_name': 'MainWorkflow'}`
 
 
-[0m[36;1m[1;3mError: workflow 'MainWorkflow' not found. Available workflows: [][0m[32;1m[1;3mIt appears there has been an error, as the workflow 'MainWorkflow' was not found in the database. There might have been a typo in the name or an issue with the database query. Could you please verify the name of the workflow you are interested in?[0m
+[0m[36;1m[1;3mpackage package2;
+
+workflow MainWorkflow {
+  
+  // TASKS
+  task Task1 {
+    // TASKS
+    task Task5 {
+      implementation "file://implementation_C.py";
+    }
+    task Task6 {
+      // TASKS
+      task Task7 {
+        implementation "file://implementation_D.py";
+      }
+      task Task8 {
+        implementation "file://implementation_E.exe";
+      }
+      task Task9 {
+        implementation "file://implementation_F.exe";
+      }
+
+      // PARAMETERS
+      param p = 4;
+
+      // TASK CONNECTIONS
+  
+      START -> Task7;
+
+      Task7 ?-> Task9 {
+        condition "p > 1";
+      }
+
+      Task7 ?-> Task8 {
+        condition "p < 10";
+      }
+      
+      Task9 -> END;
+      Task8 -> END;
+    }
+
+    // TASK CONNECTIONS
+    
+    START -> Task5 -> Task6;
+    Task6 -> Task5;
+  }
+  task Task2 {
+    implementation "file://implementation_A.py";
+    param value = 0.2;
+  }
+  task Task3 {
+    implementation "file://implementation_B.py";
+  }
+  task Task4 {
+    // TASKS
+    task Task10 {
+      implementation "file://implementation_F.java";
+    }
+    task Task9 {
+      implementation "file://implementation_F.py";
+    }
+    task Task11 {
+      implementation "file://implementation_G.java";
+    }
+
+    // TASK CONNECTIONS
+    
+    START -> Task10 -> Task9 -> Task11 -> END;
+  }
+
+  // DATA
+  data InputData;
+
+  // TASK CONNECTIONS
+  
+  START -> Task2 -> PARALLEL_1;
+  PARALLEL_1 -> Task1 -> PARALLEL_END_1;
+  PARALLEL_1 -> Task3 -> Task4 -> PARALLEL_END_1;
+  PARALLEL_END_1 -> END;
+
+  // DATA CONNECTIONS
+
+  InputData --> Task2;
+}
+[0m[32;1m[1;3mTask1, Task3
+
+After 'Task2' in the control flow of 'MainWorkflow', the tasks that come directly after are 'Task1' and 'Task3'. This is determined by the control flow indicating a parallel branch starting with 'PARALLEL_1' after 'Task2', leading to both 'Task1' and 'Task3'.[0m
 
 [1m> Finished chain.[0m
 Agent reply:
 [36m
-It appears there has been an error, as the workflow 'MainWorkflow' was not found in the database. There might have been a typo in the name or an issue with the database query. Could you please verify the name of the workflow you are interested in?
+Task1, Task3
+
+After 'Task2' in the control flow of 'MainWorkflow', the tasks that come directly after are 'Task1' and 'Task3'. This is determined by the control flow indicating a parallel branch starting with 'PARALLEL_1' after 'Task2', leading to both 'Task1' and 'Task3'.
 [0m
-Answer correctness: 0.000
+Answer correctness: 1.000
 
 [33m
 Pattern: Next tasks in flow
@@ -1532,14 +1972,102 @@ In workflow 'MainWorkflow', which tasks come directly after 'Task7' in the contr
 Invoking: `workflow_specification` with `{'workflow_name': 'MainWorkflow'}`
 
 
-[0m[36;1m[1;3mError: workflow 'MainWorkflow' not found. Available workflows: [][0m[32;1m[1;3mIt appears there was an error retrieving the workflow 'MainWorkflow', as it was not found in the available workflows. This could be due to a typo in the workflow name or the workflow not existing in the current database. Please verify the workflow name and try again.[0m
+[0m[36;1m[1;3mpackage package2;
+
+workflow MainWorkflow {
+  
+  // TASKS
+  task Task1 {
+    // TASKS
+    task Task5 {
+      implementation "file://implementation_C.py";
+    }
+    task Task6 {
+      // TASKS
+      task Task7 {
+        implementation "file://implementation_D.py";
+      }
+      task Task8 {
+        implementation "file://implementation_E.exe";
+      }
+      task Task9 {
+        implementation "file://implementation_F.exe";
+      }
+
+      // PARAMETERS
+      param p = 4;
+
+      // TASK CONNECTIONS
+  
+      START -> Task7;
+
+      Task7 ?-> Task9 {
+        condition "p > 1";
+      }
+
+      Task7 ?-> Task8 {
+        condition "p < 10";
+      }
+      
+      Task9 -> END;
+      Task8 -> END;
+    }
+
+    // TASK CONNECTIONS
+    
+    START -> Task5 -> Task6;
+    Task6 -> Task5;
+  }
+  task Task2 {
+    implementation "file://implementation_A.py";
+    param value = 0.2;
+  }
+  task Task3 {
+    implementation "file://implementation_B.py";
+  }
+  task Task4 {
+    // TASKS
+    task Task10 {
+      implementation "file://implementation_F.java";
+    }
+    task Task9 {
+      implementation "file://implementation_F.py";
+    }
+    task Task11 {
+      implementation "file://implementation_G.java";
+    }
+
+    // TASK CONNECTIONS
+    
+    START -> Task10 -> Task9 -> Task11 -> END;
+  }
+
+  // DATA
+  data InputData;
+
+  // TASK CONNECTIONS
+  
+  START -> Task2 -> PARALLEL_1;
+  PARALLEL_1 -> Task1 -> PARALLEL_END_1;
+  PARALLEL_1 -> Task3 -> Task4 -> PARALLEL_END_1;
+  PARALLEL_END_1 -> END;
+
+  // DATA CONNECTIONS
+
+  InputData --> Task2;
+}
+[0m[32;1m[1;3mTask8, Task9
+
+Task7 has two conditional control flows leading to Task8 and Task9, depending on the conditions related to parameter 'p'.[0m
 
 [1m> Finished chain.[0m
 Agent reply:
 [36m
-It appears there was an error retrieving the workflow 'MainWorkflow', as it was not found in the available workflows. This could be due to a typo in the workflow name or the workflow not existing in the current database. Please verify the workflow name and try again.
+Task8, Task9
+
+Task7 has two conditional control flows leading to Task8 and Task9, depending on the conditions related to parameter 'p'.
 [0m
-Answer correctness: 0.000
+Answer correctness: 1.000
 
 [33m
 Pattern: Next tasks in flow
@@ -1555,14 +2083,102 @@ In workflow 'MainWorkflow', which tasks come directly after 'Task3' in the contr
 Invoking: `workflow_specification` with `{'workflow_name': 'MainWorkflow'}`
 
 
-[0m[36;1m[1;3mError: workflow 'MainWorkflow' not found. Available workflows: [][0m[32;1m[1;3mIt appears there was an issue retrieving the 'MainWorkflow'. There are no workflows available to query. Please ensure the correct workflow name is provided or confirm if the workflow exists.[0m
+[0m[36;1m[1;3mpackage package2;
+
+workflow MainWorkflow {
+  
+  // TASKS
+  task Task1 {
+    // TASKS
+    task Task5 {
+      implementation "file://implementation_C.py";
+    }
+    task Task6 {
+      // TASKS
+      task Task7 {
+        implementation "file://implementation_D.py";
+      }
+      task Task8 {
+        implementation "file://implementation_E.exe";
+      }
+      task Task9 {
+        implementation "file://implementation_F.exe";
+      }
+
+      // PARAMETERS
+      param p = 4;
+
+      // TASK CONNECTIONS
+  
+      START -> Task7;
+
+      Task7 ?-> Task9 {
+        condition "p > 1";
+      }
+
+      Task7 ?-> Task8 {
+        condition "p < 10";
+      }
+      
+      Task9 -> END;
+      Task8 -> END;
+    }
+
+    // TASK CONNECTIONS
+    
+    START -> Task5 -> Task6;
+    Task6 -> Task5;
+  }
+  task Task2 {
+    implementation "file://implementation_A.py";
+    param value = 0.2;
+  }
+  task Task3 {
+    implementation "file://implementation_B.py";
+  }
+  task Task4 {
+    // TASKS
+    task Task10 {
+      implementation "file://implementation_F.java";
+    }
+    task Task9 {
+      implementation "file://implementation_F.py";
+    }
+    task Task11 {
+      implementation "file://implementation_G.java";
+    }
+
+    // TASK CONNECTIONS
+    
+    START -> Task10 -> Task9 -> Task11 -> END;
+  }
+
+  // DATA
+  data InputData;
+
+  // TASK CONNECTIONS
+  
+  START -> Task2 -> PARALLEL_1;
+  PARALLEL_1 -> Task1 -> PARALLEL_END_1;
+  PARALLEL_1 -> Task3 -> Task4 -> PARALLEL_END_1;
+  PARALLEL_END_1 -> END;
+
+  // DATA CONNECTIONS
+
+  InputData --> Task2;
+}
+[0m[32;1m[1;3mTask4
+
+Task4 is the only task that comes directly after Task3 in the control flow within the 'MainWorkflow'.[0m
 
 [1m> Finished chain.[0m
 Agent reply:
 [36m
-It appears there was an issue retrieving the 'MainWorkflow'. There are no workflows available to query. Please ensure the correct workflow name is provided or confirm if the workflow exists.
+Task4
+
+Task4 is the only task that comes directly after Task3 in the control flow within the 'MainWorkflow'.
 [0m
-Answer correctness: 0.000
+Answer correctness: 1.000
 
 [33m
 Pattern: Next tasks in flow
@@ -1578,16 +2194,104 @@ In workflow 'MainWorkflow', which tasks come directly after 'Task9' in the contr
 Invoking: `workflow_specification` with `{'workflow_name': 'MainWorkflow'}`
 
 
-[0m[36;1m[1;3mError: workflow 'MainWorkflow' not found. Available workflows: [][0m[32;1m[1;3mIt seems there was an error retrieving the 'MainWorkflow'. The system could not find any workflow by that name. Could you please check the name of the workflow and let me know if there might be another name or typo?[0m
+[0m[36;1m[1;3mpackage package2;
+
+workflow MainWorkflow {
+  
+  // TASKS
+  task Task1 {
+    // TASKS
+    task Task5 {
+      implementation "file://implementation_C.py";
+    }
+    task Task6 {
+      // TASKS
+      task Task7 {
+        implementation "file://implementation_D.py";
+      }
+      task Task8 {
+        implementation "file://implementation_E.exe";
+      }
+      task Task9 {
+        implementation "file://implementation_F.exe";
+      }
+
+      // PARAMETERS
+      param p = 4;
+
+      // TASK CONNECTIONS
+  
+      START -> Task7;
+
+      Task7 ?-> Task9 {
+        condition "p > 1";
+      }
+
+      Task7 ?-> Task8 {
+        condition "p < 10";
+      }
+      
+      Task9 -> END;
+      Task8 -> END;
+    }
+
+    // TASK CONNECTIONS
+    
+    START -> Task5 -> Task6;
+    Task6 -> Task5;
+  }
+  task Task2 {
+    implementation "file://implementation_A.py";
+    param value = 0.2;
+  }
+  task Task3 {
+    implementation "file://implementation_B.py";
+  }
+  task Task4 {
+    // TASKS
+    task Task10 {
+      implementation "file://implementation_F.java";
+    }
+    task Task9 {
+      implementation "file://implementation_F.py";
+    }
+    task Task11 {
+      implementation "file://implementation_G.java";
+    }
+
+    // TASK CONNECTIONS
+    
+    START -> Task10 -> Task9 -> Task11 -> END;
+  }
+
+  // DATA
+  data InputData;
+
+  // TASK CONNECTIONS
+  
+  START -> Task2 -> PARALLEL_1;
+  PARALLEL_1 -> Task1 -> PARALLEL_END_1;
+  PARALLEL_1 -> Task3 -> Task4 -> PARALLEL_END_1;
+  PARALLEL_END_1 -> END;
+
+  // DATA CONNECTIONS
+
+  InputData --> Task2;
+}
+[0m[32;1m[1;3mTask11
+
+The tasks that come directly after 'Task9' in the control flow within the 'MainWorkflow' are determined by analyzing the workflow specification. Specifically, in the 'MainWorkflow', there are two instances of 'Task9' within different subworkflows. However, when considering the direct control flow in the top-level workflow, 'Task9' from 'Task4' subworkflow directly proceeds to 'Task11'.[0m
 
 [1m> Finished chain.[0m
 Agent reply:
 [36m
-It seems there was an error retrieving the 'MainWorkflow'. The system could not find any workflow by that name. Could you please check the name of the workflow and let me know if there might be another name or typo?
-[0m
-Answer correctness: 0.000
+Task11
 
-Configuration: 'specification_folder' updated to examples/artificial_workflow/5_expanded
+The tasks that come directly after 'Task9' in the control flow within the 'MainWorkflow' are determined by analyzing the workflow specification. Specifically, in the 'MainWorkflow', there are two instances of 'Task9' within different subworkflows. However, when considering the direct control flow in the top-level workflow, 'Task9' from 'Task4' subworkflow directly proceeds to 'Task11'.
+[0m
+Answer correctness: 1.000
+
+Configuration: 'specification_folder' updated to examples/artificial_workflow/3_expanded
 [33m
 Pattern: Flow cycle
 [0m
@@ -1602,14 +2306,102 @@ In task 'Task1' from workflow 'MainWorkflow', is there a cycle in the control fl
 Invoking: `workflow_specification` with `{'workflow_name': 'MainWorkflow'}`
 
 
-[0m[36;1m[1;3mError: workflow 'MainWorkflow' not found. Available workflows: [][0m[32;1m[1;3mIt appears that there was an error because the workflow 'MainWorkflow' could not be found, and no workflows are available. Therefore, I cannot determine if there is a cycle in the control flow of 'Task1' from 'MainWorkflow'. Please provide the correct name of the workflow or any additional information that might help in finding the workflow specification.[0m
+[0m[36;1m[1;3mpackage package2;
+
+workflow MainWorkflow {
+  
+  // TASKS
+  task Task1 {
+    // TASKS
+    task Task5 {
+      implementation "file://implementation_C.py";
+    }
+    task Task6 {
+      // TASKS
+      task Task7 {
+        implementation "file://implementation_D.py";
+      }
+      task Task8 {
+        implementation "file://implementation_E.exe";
+      }
+      task Task9 {
+        implementation "file://implementation_F.exe";
+      }
+
+      // PARAMETERS
+      param p = 4;
+
+      // TASK CONNECTIONS
+  
+      START -> Task7;
+
+      Task7 ?-> Task9 {
+        condition "p > 1";
+      }
+
+      Task7 ?-> Task8 {
+        condition "p < 10";
+      }
+      
+      Task9 -> END;
+      Task8 -> END;
+    }
+
+    // TASK CONNECTIONS
+    
+    START -> Task5 -> Task6;
+    Task6 -> Task5;
+  }
+  task Task2 {
+    implementation "file://implementation_A.py";
+    param value = 0.2;
+  }
+  task Task3 {
+    implementation "file://implementation_B.py";
+  }
+  task Task4 {
+    // TASKS
+    task Task10 {
+      implementation "file://implementation_F.java";
+    }
+    task Task9 {
+      implementation "file://implementation_F.py";
+    }
+    task Task11 {
+      implementation "file://implementation_G.java";
+    }
+
+    // TASK CONNECTIONS
+    
+    START -> Task10 -> Task9 -> Task11 -> END;
+  }
+
+  // DATA
+  data InputData;
+
+  // TASK CONNECTIONS
+  
+  START -> Task2 -> PARALLEL_1;
+  PARALLEL_1 -> Task1 -> PARALLEL_END_1;
+  PARALLEL_1 -> Task3 -> Task4 -> PARALLEL_END_1;
+  PARALLEL_END_1 -> END;
+
+  // DATA CONNECTIONS
+
+  InputData --> Task2;
+}
+[0m[32;1m[1;3myes
+
+The control flow within Task1 shows a direct cycle, with control flow going from START -> Task5 -> Task6 and then back from Task6 to Task5.[0m
 
 [1m> Finished chain.[0m
 Agent reply:
 [36m
-It appears that there was an error because the workflow 'MainWorkflow' could not be found, and no workflows are available. Therefore, I cannot determine if there is a cycle in the control flow of 'Task1' from 'MainWorkflow'. Please provide the correct name of the workflow or any additional information that might help in finding the workflow specification.
+yes
+
+The control flow within Task1 shows a direct cycle, with control flow going from START -> Task5 -> Task6 and then back from Task6 to Task5.
 [0m
-Answer correctness: 0.000
+Answer correctness: 1.000
 
 [33m
 Pattern: Flow cycle
@@ -1625,14 +2417,100 @@ In workflow 'MainWorkflow', is there a cycle in the control flow directly in the
 Invoking: `workflow_specification` with `{'workflow_name': 'MainWorkflow'}`
 
 
-[0m[36;1m[1;3mError: workflow 'MainWorkflow' not found. Available workflows: [][0m[32;1m[1;3mno
-The workflow 'MainWorkflow' does not exist, so there cannot be a cycle in its control flow.[0m
+[0m[36;1m[1;3mpackage package2;
+
+workflow MainWorkflow {
+  
+  // TASKS
+  task Task1 {
+    // TASKS
+    task Task5 {
+      implementation "file://implementation_C.py";
+    }
+    task Task6 {
+      // TASKS
+      task Task7 {
+        implementation "file://implementation_D.py";
+      }
+      task Task8 {
+        implementation "file://implementation_E.exe";
+      }
+      task Task9 {
+        implementation "file://implementation_F.exe";
+      }
+
+      // PARAMETERS
+      param p = 4;
+
+      // TASK CONNECTIONS
+  
+      START -> Task7;
+
+      Task7 ?-> Task9 {
+        condition "p > 1";
+      }
+
+      Task7 ?-> Task8 {
+        condition "p < 10";
+      }
+      
+      Task9 -> END;
+      Task8 -> END;
+    }
+
+    // TASK CONNECTIONS
+    
+    START -> Task5 -> Task6;
+    Task6 -> Task5;
+  }
+  task Task2 {
+    implementation "file://implementation_A.py";
+    param value = 0.2;
+  }
+  task Task3 {
+    implementation "file://implementation_B.py";
+  }
+  task Task4 {
+    // TASKS
+    task Task10 {
+      implementation "file://implementation_F.java";
+    }
+    task Task9 {
+      implementation "file://implementation_F.py";
+    }
+    task Task11 {
+      implementation "file://implementation_G.java";
+    }
+
+    // TASK CONNECTIONS
+    
+    START -> Task10 -> Task9 -> Task11 -> END;
+  }
+
+  // DATA
+  data InputData;
+
+  // TASK CONNECTIONS
+  
+  START -> Task2 -> PARALLEL_1;
+  PARALLEL_1 -> Task1 -> PARALLEL_END_1;
+  PARALLEL_1 -> Task3 -> Task4 -> PARALLEL_END_1;
+  PARALLEL_END_1 -> END;
+
+  // DATA CONNECTIONS
+
+  InputData --> Task2;
+}
+[0m[32;1m[1;3mno
+
+The control flow in 'MainWorkflow' progresses linearly from one task to another without looping back to a previous task.[0m
 
 [1m> Finished chain.[0m
 Agent reply:
 [36m
 no
-The workflow 'MainWorkflow' does not exist, so there cannot be a cycle in its control flow.
+
+The control flow in 'MainWorkflow' progresses linearly from one task to another without looping back to a previous task.
 [0m
 Answer correctness: 1.000
 
@@ -1650,14 +2528,102 @@ In task 'Task6' from workflow 'MainWorkflow', is there a cycle in the control fl
 Invoking: `workflow_specification` with `{'workflow_name': 'MainWorkflow'}`
 
 
-[0m[36;1m[1;3mError: workflow 'MainWorkflow' not found. Available workflows: [][0m[32;1m[1;3mIt seems there was an error because the workflow 'MainWorkflow' could not be found, and no available workflows are listed. This might be due to a typo in the workflow name or an issue with the data provided. Could you please confirm the name of the workflow you're inquiring about?[0m
+[0m[36;1m[1;3mpackage package2;
+
+workflow MainWorkflow {
+  
+  // TASKS
+  task Task1 {
+    // TASKS
+    task Task5 {
+      implementation "file://implementation_C.py";
+    }
+    task Task6 {
+      // TASKS
+      task Task7 {
+        implementation "file://implementation_D.py";
+      }
+      task Task8 {
+        implementation "file://implementation_E.exe";
+      }
+      task Task9 {
+        implementation "file://implementation_F.exe";
+      }
+
+      // PARAMETERS
+      param p = 4;
+
+      // TASK CONNECTIONS
+  
+      START -> Task7;
+
+      Task7 ?-> Task9 {
+        condition "p > 1";
+      }
+
+      Task7 ?-> Task8 {
+        condition "p < 10";
+      }
+      
+      Task9 -> END;
+      Task8 -> END;
+    }
+
+    // TASK CONNECTIONS
+    
+    START -> Task5 -> Task6;
+    Task6 -> Task5;
+  }
+  task Task2 {
+    implementation "file://implementation_A.py";
+    param value = 0.2;
+  }
+  task Task3 {
+    implementation "file://implementation_B.py";
+  }
+  task Task4 {
+    // TASKS
+    task Task10 {
+      implementation "file://implementation_F.java";
+    }
+    task Task9 {
+      implementation "file://implementation_F.py";
+    }
+    task Task11 {
+      implementation "file://implementation_G.java";
+    }
+
+    // TASK CONNECTIONS
+    
+    START -> Task10 -> Task9 -> Task11 -> END;
+  }
+
+  // DATA
+  data InputData;
+
+  // TASK CONNECTIONS
+  
+  START -> Task2 -> PARALLEL_1;
+  PARALLEL_1 -> Task1 -> PARALLEL_END_1;
+  PARALLEL_1 -> Task3 -> Task4 -> PARALLEL_END_1;
+  PARALLEL_END_1 -> END;
+
+  // DATA CONNECTIONS
+
+  InputData --> Task2;
+}
+[0m[32;1m[1;3mno
+
+Task6 does not contain a cycle in its control flow. The control flow within Task6 moves linearly from Task7 to either Task8 or Task9 based on conditions, and then to the end without looping back.[0m
 
 [1m> Finished chain.[0m
 Agent reply:
 [36m
-It seems there was an error because the workflow 'MainWorkflow' could not be found, and no available workflows are listed. This might be due to a typo in the workflow name or an issue with the data provided. Could you please confirm the name of the workflow you're inquiring about?
+no
+
+Task6 does not contain a cycle in its control flow. The control flow within Task6 moves linearly from Task7 to either Task8 or Task9 based on conditions, and then to the end without looping back.
 [0m
-Answer correctness: 0.000
+Answer correctness: 1.000
 
 Configuration: 'specification_folder' updated to examples/automl_wrong_implementation/6_expanded_descriptions
 [33m
@@ -1925,18 +2891,18 @@ workflow FailurePredictionInManufacture {
 }
 [0m[32;1m[1;3myes
 
-The task `HyperparameterOptimization` includes a cycle in the control flow between `HyperparameterProposal`, `MLModelValidation`, and back to `HyperparameterProposal`. This loop continues until a stop condition is met, which then moves the flow to `BestHyperparameterSelection`.[0m
+The control flow within the 'HyperparameterOptimization' task includes a cycle where 'MLModelValidation' leads back to 'HyperparameterProposal', creating a loop that continues until a stop condition is met.[0m
 
 [1m> Finished chain.[0m
 Agent reply:
 [36m
 yes
 
-The task `HyperparameterOptimization` includes a cycle in the control flow between `HyperparameterProposal`, `MLModelValidation`, and back to `HyperparameterProposal`. This loop continues until a stop condition is met, which then moves the flow to `BestHyperparameterSelection`.
+The control flow within the 'HyperparameterOptimization' task includes a cycle where 'MLModelValidation' leads back to 'HyperparameterProposal', creating a loop that continues until a stop condition is met.
 [0m
 Answer correctness: 1.000
 
-Configuration: 'specification_folder' updated to examples/artificial_workflow/5_expanded
+Configuration: 'specification_folder' updated to examples/artificial_workflow/3_expanded
 [33m
 Pattern: Mutually exclusive conditional flow
 [0m
@@ -1951,14 +2917,102 @@ In workflow 'MainWorkflow', are conditional links in control flow from 'Task7' m
 Invoking: `workflow_specification` with `{'workflow_name': 'MainWorkflow'}`
 
 
-[0m[36;1m[1;3mError: workflow 'MainWorkflow' not found. Available workflows: [][0m[32;1m[1;3mIt seems there has been a mistake, as there's no 'MainWorkflow' available in the current context. Could you please provide the correct name of the workflow you're referring to?[0m
+[0m[36;1m[1;3mpackage package2;
+
+workflow MainWorkflow {
+  
+  // TASKS
+  task Task1 {
+    // TASKS
+    task Task5 {
+      implementation "file://implementation_C.py";
+    }
+    task Task6 {
+      // TASKS
+      task Task7 {
+        implementation "file://implementation_D.py";
+      }
+      task Task8 {
+        implementation "file://implementation_E.exe";
+      }
+      task Task9 {
+        implementation "file://implementation_F.exe";
+      }
+
+      // PARAMETERS
+      param p = 4;
+
+      // TASK CONNECTIONS
+  
+      START -> Task7;
+
+      Task7 ?-> Task9 {
+        condition "p > 1";
+      }
+
+      Task7 ?-> Task8 {
+        condition "p < 10";
+      }
+      
+      Task9 -> END;
+      Task8 -> END;
+    }
+
+    // TASK CONNECTIONS
+    
+    START -> Task5 -> Task6;
+    Task6 -> Task5;
+  }
+  task Task2 {
+    implementation "file://implementation_A.py";
+    param value = 0.2;
+  }
+  task Task3 {
+    implementation "file://implementation_B.py";
+  }
+  task Task4 {
+    // TASKS
+    task Task10 {
+      implementation "file://implementation_F.java";
+    }
+    task Task9 {
+      implementation "file://implementation_F.py";
+    }
+    task Task11 {
+      implementation "file://implementation_G.java";
+    }
+
+    // TASK CONNECTIONS
+    
+    START -> Task10 -> Task9 -> Task11 -> END;
+  }
+
+  // DATA
+  data InputData;
+
+  // TASK CONNECTIONS
+  
+  START -> Task2 -> PARALLEL_1;
+  PARALLEL_1 -> Task1 -> PARALLEL_END_1;
+  PARALLEL_1 -> Task3 -> Task4 -> PARALLEL_END_1;
+  PARALLEL_END_1 -> END;
+
+  // DATA CONNECTIONS
+
+  InputData --> Task2;
+}
+[0m[32;1m[1;3mno
+
+The conditions "p > 1" and "p < 10" for the conditional control flow from 'Task7' are not mutually exclusive, as there is an overlap in the range of values that satisfy both conditions (e.g., any value of p between 2 and 9 inclusive).[0m
 
 [1m> Finished chain.[0m
 Agent reply:
 [36m
-It seems there has been a mistake, as there's no 'MainWorkflow' available in the current context. Could you please provide the correct name of the workflow you're referring to?
+no
+
+The conditions "p > 1" and "p < 10" for the conditional control flow from 'Task7' are not mutually exclusive, as there is an overlap in the range of values that satisfy both conditions (e.g., any value of p between 2 and 9 inclusive).
 [0m
-Answer correctness: 0.000
+Answer correctness: 1.000
 
 Configuration: 'specification_folder' updated to examples/automl_wrong_implementation/6_expanded_descriptions
 [33m
@@ -2226,14 +3280,14 @@ workflow FailurePredictionInManufacture {
 }
 [0m[32;1m[1;3mno
 
-The conditional control flows from 'HyperparameterProposal' are not mutually exclusive. One condition leads to 'BestHyperparameterSelection' when a stop condition is met (e.g., model is good enough or iteration limit reached), and the other leads to 'MLModelValidation' otherwise. After 'MLModelValidation', control flow returns to 'HyperparameterProposal' for potentially more iterations, indicating that these conditions represent a loop rather than mutually exclusive paths.[0m
+The conditional links from "HyperparameterProposal" are not mutually exclusive because both conditions ("stop condition" and "otherwise") can potentially be met during different iterations of the proposal process. The workflow loops back to "HyperparameterProposal" after "MLModelValidation" until a "stop condition" is met, indicating that the conditions lead to different paths based on the evaluation of the model metrics, but are part of a repetitive decision-making process rather than being strictly exclusive at any given iteration.[0m
 
 [1m> Finished chain.[0m
 Agent reply:
 [36m
 no
 
-The conditional control flows from 'HyperparameterProposal' are not mutually exclusive. One condition leads to 'BestHyperparameterSelection' when a stop condition is met (e.g., model is good enough or iteration limit reached), and the other leads to 'MLModelValidation' otherwise. After 'MLModelValidation', control flow returns to 'HyperparameterProposal' for potentially more iterations, indicating that these conditions represent a loop rather than mutually exclusive paths.
+The conditional links from "HyperparameterProposal" are not mutually exclusive because both conditions ("stop condition" and "otherwise") can potentially be met during different iterations of the proposal process. The workflow loops back to "HyperparameterProposal" after "MLModelValidation" until a "stop condition" is met, indicating that the conditions lead to different paths based on the evaluation of the model metrics, but are part of a repetitive decision-making process rather than being strictly exclusive at any given iteration.
 [0m
 Answer correctness: 0.000
 
@@ -2243,13 +3297,13 @@ End of test.
 Total test instances: 19
                                       category  score  count
 pattern                                                     
-Flow cycle                           structure   0.50      4
-List of tasks                        structure   0.40      5
-Mutually exclusive conditional flow   behavior   0.00      2
-Next tasks in flow                   structure   0.00      4
-Task links in flow                   structure   0.25      4
+List of tasks                        structure    0.8      5
+Task links in flow                   structure    0.5      4
+Next tasks in flow                   structure    1.0      4
+Flow cycle                           structure    1.0      4
+Mutually exclusive conditional flow   behavior    0.5      2
 
               score  count
 category                  
-behavior   0.000000      2
-structure  0.294118     17
+structure  0.823529     17
+behavior   0.500000      2

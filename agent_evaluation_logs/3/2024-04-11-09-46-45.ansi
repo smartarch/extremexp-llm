@@ -1,0 +1,3303 @@
+Configuration file path: examples/artificial_workflow/3_config.yaml
+Configuration: {'logger_folder': 'xxp_agent_logs/artificial_workflow', 'model': 'gpt-4-0125-preview', 'specification_type': 'xxp_assembled', 'specification_folder': 'examples/artificial_workflow/3_expanded', 'main_workflow_name': 'MainWorkflow'}
+LLM model: gpt-4-0125-preview 
+
+[2m
+This script uses multiline input. Press Ctrl+D (Linux) or Ctrl+Z (Windows) on an empty line to end input message.
+[0m
+Prompt template:
+[35m
+SystemMessage(content='Your goal is to help the user with analyzing results of an experiment and suggest improvements to the experiment itself.\n\nThe experiment is defined by a workflow, which is an activity diagram consisting of several tasks with a data flow among them. Each of the tasks can be composed of a subworkflow and you can use tools to obtain the specification of the subworkflow.\n\nThe workflow is specified using a DSL:\narrows "->" represent control flow\narrows with question mark “?->” represent conditional control flow\ndashed arrows "-->" represent data flow\n\nThink in steps and use the available tools. Use the tools if you need specification of a workflow or a task, list the results collected during the experiment, etc. If the information cannot be obtained using the tools, ask the user. Always gather all the necessary information before submitting your final answer.\n')
+HumanMessagePromptTemplate(prompt=PromptTemplate(input_variables=['input'], template='{input}'))
+MessagesPlaceholder(variable_name='agent_scratchpad')
+[0m
+Tools:
+[35m
+workflow_specification: Get the specification of the workflow (or subworkflow). Note that the workflow specification can contain references to subworkflows. To fully understand the whole workflow, it might be necessary to also obtain the specification of the subworkflows.
+[0m
+
+Start of test.
+
+Configuration: 'specification_folder' updated to examples/artificial_workflow/3_expanded
+[33m
+Pattern: List of tasks
+[0m
+User input:
+[35m
+List all tasks directly in workflow 'MainWorkflow'. Do not list tasks nested inside other tasks. On the first line of your response, write a comma separated list of values and nothing else. On the second, write a short justification of the answer.
+[0m
+
+
+[1m> Entering new AgentExecutor chain...[0m
+[32;1m[1;3m
+Invoking: `workflow_specification` with `{'workflow_name': 'MainWorkflow'}`
+
+
+[0m[36;1m[1;3mpackage package2;
+
+workflow MainWorkflow {
+  
+  // TASKS
+  task Task1 {
+    // TASKS
+    task Task5 {
+      implementation "file://implementation_C.py";
+    }
+    task Task6 {
+      // TASKS
+      task Task7 {
+        implementation "file://implementation_D.py";
+      }
+      task Task8 {
+        implementation "file://implementation_E.exe";
+      }
+      task Task9 {
+        implementation "file://implementation_F.exe";
+      }
+
+      // PARAMETERS
+      param p = 4;
+
+      // TASK CONNECTIONS
+  
+      START -> Task7;
+
+      Task7 ?-> Task9 {
+        condition "p > 1";
+      }
+
+      Task7 ?-> Task8 {
+        condition "p < 10";
+      }
+      
+      Task9 -> END;
+      Task8 -> END;
+    }
+
+    // TASK CONNECTIONS
+    
+    START -> Task5 -> Task6;
+    Task6 -> Task5;
+  }
+  task Task2 {
+    implementation "file://implementation_A.py";
+    param value = 0.2;
+  }
+  task Task3 {
+    implementation "file://implementation_B.py";
+  }
+  task Task4 {
+    // TASKS
+    task Task10 {
+      implementation "file://implementation_F.java";
+    }
+    task Task9 {
+      implementation "file://implementation_F.py";
+    }
+    task Task11 {
+      implementation "file://implementation_G.java";
+    }
+
+    // TASK CONNECTIONS
+    
+    START -> Task10 -> Task9 -> Task11 -> END;
+  }
+
+  // DATA
+  data InputData;
+
+  // TASK CONNECTIONS
+  
+  START -> Task2 -> PARALLEL_1;
+  PARALLEL_1 -> Task1 -> PARALLEL_END_1;
+  PARALLEL_1 -> Task3 -> Task4 -> PARALLEL_END_1;
+  PARALLEL_END_1 -> END;
+
+  // DATA CONNECTIONS
+
+  InputData --> Task2;
+}
+[0m[32;1m[1;3mTask1, Task2, Task3, Task4
+
+These are the tasks listed directly in the 'MainWorkflow' without being nested inside other tasks. Tasks such as Task5, Task6, Task7, Task8, Task9, Task10, and Task11 are nested inside these main tasks and not directly in 'MainWorkflow'.[0m
+
+[1m> Finished chain.[0m
+Agent reply:
+[36m
+Task1, Task2, Task3, Task4
+
+These are the tasks listed directly in the 'MainWorkflow' without being nested inside other tasks. Tasks such as Task5, Task6, Task7, Task8, Task9, Task10, and Task11 are nested inside these main tasks and not directly in 'MainWorkflow'.
+[0m
+Answer correctness: 1.000
+
+[33m
+Pattern: List of tasks
+[0m
+User input:
+[35m
+List all tasks directly in workflow 'MainWorkflow' that have nested subtasks. Do not list tasks nested inside other tasks. On the first line of your response, write a comma separated list of values and nothing else. On the second, write a short justification of the answer.
+[0m
+
+
+[1m> Entering new AgentExecutor chain...[0m
+[32;1m[1;3m
+Invoking: `workflow_specification` with `{'workflow_name': 'MainWorkflow'}`
+
+
+[0m[36;1m[1;3mpackage package2;
+
+workflow MainWorkflow {
+  
+  // TASKS
+  task Task1 {
+    // TASKS
+    task Task5 {
+      implementation "file://implementation_C.py";
+    }
+    task Task6 {
+      // TASKS
+      task Task7 {
+        implementation "file://implementation_D.py";
+      }
+      task Task8 {
+        implementation "file://implementation_E.exe";
+      }
+      task Task9 {
+        implementation "file://implementation_F.exe";
+      }
+
+      // PARAMETERS
+      param p = 4;
+
+      // TASK CONNECTIONS
+  
+      START -> Task7;
+
+      Task7 ?-> Task9 {
+        condition "p > 1";
+      }
+
+      Task7 ?-> Task8 {
+        condition "p < 10";
+      }
+      
+      Task9 -> END;
+      Task8 -> END;
+    }
+
+    // TASK CONNECTIONS
+    
+    START -> Task5 -> Task6;
+    Task6 -> Task5;
+  }
+  task Task2 {
+    implementation "file://implementation_A.py";
+    param value = 0.2;
+  }
+  task Task3 {
+    implementation "file://implementation_B.py";
+  }
+  task Task4 {
+    // TASKS
+    task Task10 {
+      implementation "file://implementation_F.java";
+    }
+    task Task9 {
+      implementation "file://implementation_F.py";
+    }
+    task Task11 {
+      implementation "file://implementation_G.java";
+    }
+
+    // TASK CONNECTIONS
+    
+    START -> Task10 -> Task9 -> Task11 -> END;
+  }
+
+  // DATA
+  data InputData;
+
+  // TASK CONNECTIONS
+  
+  START -> Task2 -> PARALLEL_1;
+  PARALLEL_1 -> Task1 -> PARALLEL_END_1;
+  PARALLEL_1 -> Task3 -> Task4 -> PARALLEL_END_1;
+  PARALLEL_END_1 -> END;
+
+  // DATA CONNECTIONS
+
+  InputData --> Task2;
+}
+[0m[32;1m[1;3mTask1, Task4
+These tasks are listed because they contain nested subtasks within their definitions, as described in the provided workflow specification.[0m
+
+[1m> Finished chain.[0m
+Agent reply:
+[36m
+Task1, Task4
+These tasks are listed because they contain nested subtasks within their definitions, as described in the provided workflow specification.
+[0m
+Answer correctness: 1.000
+
+Configuration: 'specification_folder' updated to examples/automl_wrong_implementation/6_expanded_descriptions
+[33m
+Pattern: List of tasks
+[0m
+User input:
+[35m
+Work with workflow 'FailurePredictionInManufacture'. List all subtasks directly in task 'HyperparameterOptimization'. Do not list tasks nested inside other tasks. On the first line of your response, write a comma separated list of values and nothing else. On the second, write a short justification of the answer.
+[0m
+
+
+[1m> Entering new AgentExecutor chain...[0m
+[32;1m[1;3m
+Invoking: `workflow_specification` with `{'workflow_name': 'FailurePredictionInManufacture'}`
+
+
+[0m[36;1m[1;3mpackage automl_ideko;
+
+workflow FailurePredictionInManufacture {
+  description "AutoML for selecting a model to perform prediction of machine failures (binary classification).";
+
+  // TASKS
+  task DataRetrieval {
+    description "Loads the data from the predictive_maintenance.csv file and drops the unnecessary data.";
+    implementation "file://ideko_data_retreival.py";
+  }
+  task TrainTestSplit {
+    description "Randomly splits the data into training and test sets.";
+    implementation "file://random_train_test_split.py";
+    param test_size = 0.2;
+  }
+  task HyperparameterOptimization {
+    description "Uses grid search to explore hyperparameter configurations and asks the user to select the best one.";
+    
+    // TASKS
+    task HyperparameterProposal {
+      description "Repeatedly proposes hyperparameter configurations until a stop condition is met (based on the metrics of the current ML model).";
+      implementation "file://grid_search.py";
+    }
+    task MLModelValidation {
+      description "Trains and evaluates the ML model with the proposed hyperparameter configuration.";
+      
+      // TASKS
+      task TrainTestSplit {
+        description "Randomly splits the data into training and test sets.";
+        implementation "file://random_train_test_split.py";
+        param test_size = 0.2;
+      }
+      task MLTrainingAndEvaluation {
+        description "Training and evaluation of the ML model with the given hyperparameters.";
+        
+        // TASKS
+        task FeatureExtraction {
+          description "Extracts features from the input data.";
+          implementation "file://ideko_feature_extraction.py";
+        }
+        task ModelTraining {
+          description "Trains the regression ML model with the given hyperparameters.";
+          implementation "file://regression_training.py";
+        }
+        task ModelEvaluation {
+          description "Evaluates the trained ML model using regression metrics.";
+          implementation "file://regression_evaluation.py";
+          param metrics = ["accuracy", "precision", "recall", "f1", "num_of_params"];
+        }
+
+        // INPUT DATA
+        define data Hyperparameters;  // ML algorithm and its parameters
+        define data TrainingData;
+        define data TestData = ValidationData;
+
+        // INNER DATA
+        define data TrainingFeatures {
+          schema "file://Features.schema";
+        }
+        define data TestFeatures {
+          schema "file://Features.schema";
+        }
+
+        // OUTPUT DATA
+        define data MLModel;
+        define data MLModelMetrics {
+          schema "file://MLModelMetrics.schema";
+        }
+
+        // TASK CONNECTIONS
+        
+        START -> FeatureExtraction -> ModelTraining -> ModelEvaluation -> END;
+
+        // DATA CONNECTIONS
+
+        // feature extraction
+        TrainingData --> FeatureExtraction --> TrainingFeatures;
+        TestData --> FeatureExtraction --> TestFeatures;
+        Hyperparameters --> FeatureExtraction;
+
+        // model training
+        Hyperparameters --> ModelTraining;
+        TrainingFeatures --> ModelTraining --> MLModel;
+
+        // model evaluation
+        MLModel --> ModelEvaluation;
+        TestFeatures --> ModelEvaluation --> MLModelMetrics;
+      }
+
+      // DATA
+      define data InputData;
+      define data Hyperparameters;
+
+      define data TrainingData;
+      define data ValidationData;
+      
+      define data MLModelMetrics;
+
+      // TASK CONNECTIONS
+      
+      START -> TrainTestSplit -> MLTrainingAndEvaluation -> END;
+
+      // DATA CONNECTIONS
+
+      // input data preprocessing and train-test split
+      InputData --> TrainTestSplit;
+      TrainTestSplit --> TrainingData;
+      TrainTestSplit --> ValidationData;
+
+      // model training and evaluation
+      Hyperparameters --> MLTrainingAndEvaluation;
+      TrainingData --> MLTrainingAndEvaluation;
+      ValidationData --> MLTrainingAndEvaluation --> MLModelMetrics;  
+    }
+    task BestHyperparameterSelection {
+      description "Asks the user to select the best hyperparameter configuration.";
+      implementation "file://user_hyperparameter_selection.py";
+    }
+    
+    // DATA
+    define data TrainingData;
+    
+    define data Hyperparameters;  // ML algorithm and its parameters
+    define data MLModelMetrics {
+      schema "file://MLModelMetrics.schema";
+    }
+
+    define data BestHyperparameters; // output
+
+    // TASK CONNECTIONS
+    
+    START -> HyperparameterProposal;
+
+    HyperparameterProposal ?-> BestHyperparameterSelection {
+      condition "stop condition"; // e.g., model is good enough, iteration limit reached, ...
+    }
+
+    HyperparameterProposal ?-> MLModelValidation {
+      condition "otherwise";
+    }
+
+    MLModelValidation -> HyperparameterProposal;
+
+    BestHyperparameterSelection -> END;
+
+    // DATA CONNECTIONS
+
+    // hyperparameter selection
+    HyperparameterProposal --> Hyperparameters;
+
+    // model training and evaluation
+    Hyperparameters --> MLModelValidation;
+    TrainingData --> MLModelValidation --> MLModelMetrics;
+    MLModelMetrics --> HyperparameterProposal; // possibility to stop proposing hyperparameters if model is good enough
+
+    // best hyperparameter selection
+    MLModelMetrics --> BestHyperparameterSelection;
+    BestHyperparameterSelection --> BestHyperparameters;
+
+    param hyperparameters_grid = "file://hyperparameters_grid.json";
+  }
+  task MLTrainingAndEvaluation {
+    description "Final training and evaluation of the ML model with the best hyperparameters.";
+    
+    // TASKS
+    task FeatureExtraction {
+      description "Extracts features from the input data.";
+      implementation "file://ideko_feature_extraction.py";
+    }
+    task ModelTraining {
+      description "Trains the regression ML model with the given hyperparameters.";
+      implementation "file://regression_training.py";
+    }
+    task ModelEvaluation {
+      description "Evaluates the trained ML model using regression metrics.";
+      implementation "file://regression_evaluation.py";
+      param metrics = ["accuracy", "precision", "recall", "f1", "num_of_params"];
+    }
+
+    // INPUT DATA
+    define data Hyperparameters;  // ML algorithm and its parameters
+    define data TrainingData;
+    define data TestData;
+
+    // INNER DATA
+    define data TrainingFeatures {
+      schema "file://Features.schema";
+    }
+    define data TestFeatures {
+      schema "file://Features.schema";
+    }
+
+    // OUTPUT DATA
+    define data MLModel;
+    define data MLModelMetrics {
+      schema "file://MLModelMetrics.schema";
+    }
+
+    // TASK CONNECTIONS
+    
+    START -> FeatureExtraction -> ModelTraining -> ModelEvaluation -> END;
+
+    // DATA CONNECTIONS
+
+    // feature extraction
+    TrainingData --> FeatureExtraction --> TrainingFeatures;
+    TestData --> FeatureExtraction --> TestFeatures;
+    Hyperparameters --> FeatureExtraction;
+
+    // model training
+    Hyperparameters --> ModelTraining;
+    TrainingFeatures --> ModelTraining --> MLModel;
+
+    // model evaluation
+    MLModel --> ModelEvaluation;
+    TestFeatures --> ModelEvaluation --> MLModelMetrics;
+  }
+
+  // DATA
+  define data InputData;
+  define data RetrievedData;
+
+  define data TrainingData;
+  define data TestData;
+  
+  define data BestHyperparameters;
+  define data MLModel;
+  define data MLModelMetrics;
+
+  // TASK CONNECTIONS
+  
+  START -> DataRetrieval -> TrainTestSplit -> HyperparameterOptimization -> MLTrainingAndEvaluation -> END;
+
+  // DATA CONNECTIONS
+
+  // input data preprocessing and train-test split
+  InputData --> DataRetrieval --> RetrievedData;
+  RetrievedData --> TrainTestSplit;
+  TrainTestSplit --> TrainingData;
+  TrainTestSplit --> TestData;
+
+  // hyperparameter optimization
+  TrainingData --> HyperparameterOptimization --> BestHyperparameters;
+
+  // final model training and evaluation
+  BestHyperparameters --> MLTrainingAndEvaluation; 
+  TrainingData --> MLTrainingAndEvaluation --> MLModel;
+  TestData --> MLTrainingAndEvaluation --> MLModelMetrics;
+}
+[0m[32;1m[1;3mHyperparameterProposal, MLModelValidation, BestHyperparameterSelection
+
+These tasks are directly listed within the "HyperparameterOptimization" task, without being nested inside other tasks.[0m
+
+[1m> Finished chain.[0m
+Agent reply:
+[36m
+HyperparameterProposal, MLModelValidation, BestHyperparameterSelection
+
+These tasks are directly listed within the "HyperparameterOptimization" task, without being nested inside other tasks.
+[0m
+Answer correctness: 1.000
+
+[33m
+Pattern: List of tasks
+[0m
+User input:
+[35m
+Work with workflow 'FailurePredictionInManufacture'. List all subtasks directly in task 'MLTrainingAndEvaluation' that have a parameter (set via the 'param' keyword). Do not list tasks nested inside other tasks. On the first line of your response, write a comma separated list of values and nothing else. On the second, write a short justification of the answer.
+[0m
+
+
+[1m> Entering new AgentExecutor chain...[0m
+[32;1m[1;3m
+Invoking: `workflow_specification` with `{'workflow_name': 'FailurePredictionInManufacture'}`
+
+
+[0m[36;1m[1;3mpackage automl_ideko;
+
+workflow FailurePredictionInManufacture {
+  description "AutoML for selecting a model to perform prediction of machine failures (binary classification).";
+
+  // TASKS
+  task DataRetrieval {
+    description "Loads the data from the predictive_maintenance.csv file and drops the unnecessary data.";
+    implementation "file://ideko_data_retreival.py";
+  }
+  task TrainTestSplit {
+    description "Randomly splits the data into training and test sets.";
+    implementation "file://random_train_test_split.py";
+    param test_size = 0.2;
+  }
+  task HyperparameterOptimization {
+    description "Uses grid search to explore hyperparameter configurations and asks the user to select the best one.";
+    
+    // TASKS
+    task HyperparameterProposal {
+      description "Repeatedly proposes hyperparameter configurations until a stop condition is met (based on the metrics of the current ML model).";
+      implementation "file://grid_search.py";
+    }
+    task MLModelValidation {
+      description "Trains and evaluates the ML model with the proposed hyperparameter configuration.";
+      
+      // TASKS
+      task TrainTestSplit {
+        description "Randomly splits the data into training and test sets.";
+        implementation "file://random_train_test_split.py";
+        param test_size = 0.2;
+      }
+      task MLTrainingAndEvaluation {
+        description "Training and evaluation of the ML model with the given hyperparameters.";
+        
+        // TASKS
+        task FeatureExtraction {
+          description "Extracts features from the input data.";
+          implementation "file://ideko_feature_extraction.py";
+        }
+        task ModelTraining {
+          description "Trains the regression ML model with the given hyperparameters.";
+          implementation "file://regression_training.py";
+        }
+        task ModelEvaluation {
+          description "Evaluates the trained ML model using regression metrics.";
+          implementation "file://regression_evaluation.py";
+          param metrics = ["accuracy", "precision", "recall", "f1", "num_of_params"];
+        }
+
+        // INPUT DATA
+        define data Hyperparameters;  // ML algorithm and its parameters
+        define data TrainingData;
+        define data TestData = ValidationData;
+
+        // INNER DATA
+        define data TrainingFeatures {
+          schema "file://Features.schema";
+        }
+        define data TestFeatures {
+          schema "file://Features.schema";
+        }
+
+        // OUTPUT DATA
+        define data MLModel;
+        define data MLModelMetrics {
+          schema "file://MLModelMetrics.schema";
+        }
+
+        // TASK CONNECTIONS
+        
+        START -> FeatureExtraction -> ModelTraining -> ModelEvaluation -> END;
+
+        // DATA CONNECTIONS
+
+        // feature extraction
+        TrainingData --> FeatureExtraction --> TrainingFeatures;
+        TestData --> FeatureExtraction --> TestFeatures;
+        Hyperparameters --> FeatureExtraction;
+
+        // model training
+        Hyperparameters --> ModelTraining;
+        TrainingFeatures --> ModelTraining --> MLModel;
+
+        // model evaluation
+        MLModel --> ModelEvaluation;
+        TestFeatures --> ModelEvaluation --> MLModelMetrics;
+      }
+
+      // DATA
+      define data InputData;
+      define data Hyperparameters;
+
+      define data TrainingData;
+      define data ValidationData;
+      
+      define data MLModelMetrics;
+
+      // TASK CONNECTIONS
+      
+      START -> TrainTestSplit -> MLTrainingAndEvaluation -> END;
+
+      // DATA CONNECTIONS
+
+      // input data preprocessing and train-test split
+      InputData --> TrainTestSplit;
+      TrainTestSplit --> TrainingData;
+      TrainTestSplit --> ValidationData;
+
+      // model training and evaluation
+      Hyperparameters --> MLTrainingAndEvaluation;
+      TrainingData --> MLTrainingAndEvaluation;
+      ValidationData --> MLTrainingAndEvaluation --> MLModelMetrics;  
+    }
+    task BestHyperparameterSelection {
+      description "Asks the user to select the best hyperparameter configuration.";
+      implementation "file://user_hyperparameter_selection.py";
+    }
+    
+    // DATA
+    define data TrainingData;
+    
+    define data Hyperparameters;  // ML algorithm and its parameters
+    define data MLModelMetrics {
+      schema "file://MLModelMetrics.schema";
+    }
+
+    define data BestHyperparameters; // output
+
+    // TASK CONNECTIONS
+    
+    START -> HyperparameterProposal;
+
+    HyperparameterProposal ?-> BestHyperparameterSelection {
+      condition "stop condition"; // e.g., model is good enough, iteration limit reached, ...
+    }
+
+    HyperparameterProposal ?-> MLModelValidation {
+      condition "otherwise";
+    }
+
+    MLModelValidation -> HyperparameterProposal;
+
+    BestHyperparameterSelection -> END;
+
+    // DATA CONNECTIONS
+
+    // hyperparameter selection
+    HyperparameterProposal --> Hyperparameters;
+
+    // model training and evaluation
+    Hyperparameters --> MLModelValidation;
+    TrainingData --> MLModelValidation --> MLModelMetrics;
+    MLModelMetrics --> HyperparameterProposal; // possibility to stop proposing hyperparameters if model is good enough
+
+    // best hyperparameter selection
+    MLModelMetrics --> BestHyperparameterSelection;
+    BestHyperparameterSelection --> BestHyperparameters;
+
+    param hyperparameters_grid = "file://hyperparameters_grid.json";
+  }
+  task MLTrainingAndEvaluation {
+    description "Final training and evaluation of the ML model with the best hyperparameters.";
+    
+    // TASKS
+    task FeatureExtraction {
+      description "Extracts features from the input data.";
+      implementation "file://ideko_feature_extraction.py";
+    }
+    task ModelTraining {
+      description "Trains the regression ML model with the given hyperparameters.";
+      implementation "file://regression_training.py";
+    }
+    task ModelEvaluation {
+      description "Evaluates the trained ML model using regression metrics.";
+      implementation "file://regression_evaluation.py";
+      param metrics = ["accuracy", "precision", "recall", "f1", "num_of_params"];
+    }
+
+    // INPUT DATA
+    define data Hyperparameters;  // ML algorithm and its parameters
+    define data TrainingData;
+    define data TestData;
+
+    // INNER DATA
+    define data TrainingFeatures {
+      schema "file://Features.schema";
+    }
+    define data TestFeatures {
+      schema "file://Features.schema";
+    }
+
+    // OUTPUT DATA
+    define data MLModel;
+    define data MLModelMetrics {
+      schema "file://MLModelMetrics.schema";
+    }
+
+    // TASK CONNECTIONS
+    
+    START -> FeatureExtraction -> ModelTraining -> ModelEvaluation -> END;
+
+    // DATA CONNECTIONS
+
+    // feature extraction
+    TrainingData --> FeatureExtraction --> TrainingFeatures;
+    TestData --> FeatureExtraction --> TestFeatures;
+    Hyperparameters --> FeatureExtraction;
+
+    // model training
+    Hyperparameters --> ModelTraining;
+    TrainingFeatures --> ModelTraining --> MLModel;
+
+    // model evaluation
+    MLModel --> ModelEvaluation;
+    TestFeatures --> ModelEvaluation --> MLModelMetrics;
+  }
+
+  // DATA
+  define data InputData;
+  define data RetrievedData;
+
+  define data TrainingData;
+  define data TestData;
+  
+  define data BestHyperparameters;
+  define data MLModel;
+  define data MLModelMetrics;
+
+  // TASK CONNECTIONS
+  
+  START -> DataRetrieval -> TrainTestSplit -> HyperparameterOptimization -> MLTrainingAndEvaluation -> END;
+
+  // DATA CONNECTIONS
+
+  // input data preprocessing and train-test split
+  InputData --> DataRetrieval --> RetrievedData;
+  RetrievedData --> TrainTestSplit;
+  TrainTestSplit --> TrainingData;
+  TrainTestSplit --> TestData;
+
+  // hyperparameter optimization
+  TrainingData --> HyperparameterOptimization --> BestHyperparameters;
+
+  // final model training and evaluation
+  BestHyperparameters --> MLTrainingAndEvaluation; 
+  TrainingData --> MLTrainingAndEvaluation --> MLModel;
+  TestData --> MLTrainingAndEvaluation --> MLModelMetrics;
+}
+[0m[32;1m[1;3mModelEvaluation
+
+The task "ModelEvaluation" within "MLTrainingAndEvaluation" has a parameter set via the 'param' keyword, specifying metrics such as "accuracy", "precision", "recall", "f1", "num_of_params".[0m
+
+[1m> Finished chain.[0m
+Agent reply:
+[36m
+ModelEvaluation
+
+The task "ModelEvaluation" within "MLTrainingAndEvaluation" has a parameter set via the 'param' keyword, specifying metrics such as "accuracy", "precision", "recall", "f1", "num_of_params".
+[0m
+Answer correctness: 1.000
+
+[33m
+Pattern: List of tasks
+[0m
+User input:
+[35m
+Work with workflow 'FailurePredictionInManufacture'. List all subtasks directly in task 'MLTrainingAndEvaluation' that have nested subtasks. Do not list tasks nested inside other tasks. On the first line of your response, write a comma separated list of values and nothing else. On the second, write a short justification of the answer.
+[0m
+
+
+[1m> Entering new AgentExecutor chain...[0m
+[32;1m[1;3m
+Invoking: `workflow_specification` with `{'workflow_name': 'FailurePredictionInManufacture'}`
+
+
+[0m[36;1m[1;3mpackage automl_ideko;
+
+workflow FailurePredictionInManufacture {
+  description "AutoML for selecting a model to perform prediction of machine failures (binary classification).";
+
+  // TASKS
+  task DataRetrieval {
+    description "Loads the data from the predictive_maintenance.csv file and drops the unnecessary data.";
+    implementation "file://ideko_data_retreival.py";
+  }
+  task TrainTestSplit {
+    description "Randomly splits the data into training and test sets.";
+    implementation "file://random_train_test_split.py";
+    param test_size = 0.2;
+  }
+  task HyperparameterOptimization {
+    description "Uses grid search to explore hyperparameter configurations and asks the user to select the best one.";
+    
+    // TASKS
+    task HyperparameterProposal {
+      description "Repeatedly proposes hyperparameter configurations until a stop condition is met (based on the metrics of the current ML model).";
+      implementation "file://grid_search.py";
+    }
+    task MLModelValidation {
+      description "Trains and evaluates the ML model with the proposed hyperparameter configuration.";
+      
+      // TASKS
+      task TrainTestSplit {
+        description "Randomly splits the data into training and test sets.";
+        implementation "file://random_train_test_split.py";
+        param test_size = 0.2;
+      }
+      task MLTrainingAndEvaluation {
+        description "Training and evaluation of the ML model with the given hyperparameters.";
+        
+        // TASKS
+        task FeatureExtraction {
+          description "Extracts features from the input data.";
+          implementation "file://ideko_feature_extraction.py";
+        }
+        task ModelTraining {
+          description "Trains the regression ML model with the given hyperparameters.";
+          implementation "file://regression_training.py";
+        }
+        task ModelEvaluation {
+          description "Evaluates the trained ML model using regression metrics.";
+          implementation "file://regression_evaluation.py";
+          param metrics = ["accuracy", "precision", "recall", "f1", "num_of_params"];
+        }
+
+        // INPUT DATA
+        define data Hyperparameters;  // ML algorithm and its parameters
+        define data TrainingData;
+        define data TestData = ValidationData;
+
+        // INNER DATA
+        define data TrainingFeatures {
+          schema "file://Features.schema";
+        }
+        define data TestFeatures {
+          schema "file://Features.schema";
+        }
+
+        // OUTPUT DATA
+        define data MLModel;
+        define data MLModelMetrics {
+          schema "file://MLModelMetrics.schema";
+        }
+
+        // TASK CONNECTIONS
+        
+        START -> FeatureExtraction -> ModelTraining -> ModelEvaluation -> END;
+
+        // DATA CONNECTIONS
+
+        // feature extraction
+        TrainingData --> FeatureExtraction --> TrainingFeatures;
+        TestData --> FeatureExtraction --> TestFeatures;
+        Hyperparameters --> FeatureExtraction;
+
+        // model training
+        Hyperparameters --> ModelTraining;
+        TrainingFeatures --> ModelTraining --> MLModel;
+
+        // model evaluation
+        MLModel --> ModelEvaluation;
+        TestFeatures --> ModelEvaluation --> MLModelMetrics;
+      }
+
+      // DATA
+      define data InputData;
+      define data Hyperparameters;
+
+      define data TrainingData;
+      define data ValidationData;
+      
+      define data MLModelMetrics;
+
+      // TASK CONNECTIONS
+      
+      START -> TrainTestSplit -> MLTrainingAndEvaluation -> END;
+
+      // DATA CONNECTIONS
+
+      // input data preprocessing and train-test split
+      InputData --> TrainTestSplit;
+      TrainTestSplit --> TrainingData;
+      TrainTestSplit --> ValidationData;
+
+      // model training and evaluation
+      Hyperparameters --> MLTrainingAndEvaluation;
+      TrainingData --> MLTrainingAndEvaluation;
+      ValidationData --> MLTrainingAndEvaluation --> MLModelMetrics;  
+    }
+    task BestHyperparameterSelection {
+      description "Asks the user to select the best hyperparameter configuration.";
+      implementation "file://user_hyperparameter_selection.py";
+    }
+    
+    // DATA
+    define data TrainingData;
+    
+    define data Hyperparameters;  // ML algorithm and its parameters
+    define data MLModelMetrics {
+      schema "file://MLModelMetrics.schema";
+    }
+
+    define data BestHyperparameters; // output
+
+    // TASK CONNECTIONS
+    
+    START -> HyperparameterProposal;
+
+    HyperparameterProposal ?-> BestHyperparameterSelection {
+      condition "stop condition"; // e.g., model is good enough, iteration limit reached, ...
+    }
+
+    HyperparameterProposal ?-> MLModelValidation {
+      condition "otherwise";
+    }
+
+    MLModelValidation -> HyperparameterProposal;
+
+    BestHyperparameterSelection -> END;
+
+    // DATA CONNECTIONS
+
+    // hyperparameter selection
+    HyperparameterProposal --> Hyperparameters;
+
+    // model training and evaluation
+    Hyperparameters --> MLModelValidation;
+    TrainingData --> MLModelValidation --> MLModelMetrics;
+    MLModelMetrics --> HyperparameterProposal; // possibility to stop proposing hyperparameters if model is good enough
+
+    // best hyperparameter selection
+    MLModelMetrics --> BestHyperparameterSelection;
+    BestHyperparameterSelection --> BestHyperparameters;
+
+    param hyperparameters_grid = "file://hyperparameters_grid.json";
+  }
+  task MLTrainingAndEvaluation {
+    description "Final training and evaluation of the ML model with the best hyperparameters.";
+    
+    // TASKS
+    task FeatureExtraction {
+      description "Extracts features from the input data.";
+      implementation "file://ideko_feature_extraction.py";
+    }
+    task ModelTraining {
+      description "Trains the regression ML model with the given hyperparameters.";
+      implementation "file://regression_training.py";
+    }
+    task ModelEvaluation {
+      description "Evaluates the trained ML model using regression metrics.";
+      implementation "file://regression_evaluation.py";
+      param metrics = ["accuracy", "precision", "recall", "f1", "num_of_params"];
+    }
+
+    // INPUT DATA
+    define data Hyperparameters;  // ML algorithm and its parameters
+    define data TrainingData;
+    define data TestData;
+
+    // INNER DATA
+    define data TrainingFeatures {
+      schema "file://Features.schema";
+    }
+    define data TestFeatures {
+      schema "file://Features.schema";
+    }
+
+    // OUTPUT DATA
+    define data MLModel;
+    define data MLModelMetrics {
+      schema "file://MLModelMetrics.schema";
+    }
+
+    // TASK CONNECTIONS
+    
+    START -> FeatureExtraction -> ModelTraining -> ModelEvaluation -> END;
+
+    // DATA CONNECTIONS
+
+    // feature extraction
+    TrainingData --> FeatureExtraction --> TrainingFeatures;
+    TestData --> FeatureExtraction --> TestFeatures;
+    Hyperparameters --> FeatureExtraction;
+
+    // model training
+    Hyperparameters --> ModelTraining;
+    TrainingFeatures --> ModelTraining --> MLModel;
+
+    // model evaluation
+    MLModel --> ModelEvaluation;
+    TestFeatures --> ModelEvaluation --> MLModelMetrics;
+  }
+
+  // DATA
+  define data InputData;
+  define data RetrievedData;
+
+  define data TrainingData;
+  define data TestData;
+  
+  define data BestHyperparameters;
+  define data MLModel;
+  define data MLModelMetrics;
+
+  // TASK CONNECTIONS
+  
+  START -> DataRetrieval -> TrainTestSplit -> HyperparameterOptimization -> MLTrainingAndEvaluation -> END;
+
+  // DATA CONNECTIONS
+
+  // input data preprocessing and train-test split
+  InputData --> DataRetrieval --> RetrievedData;
+  RetrievedData --> TrainTestSplit;
+  TrainTestSplit --> TrainingData;
+  TrainTestSplit --> TestData;
+
+  // hyperparameter optimization
+  TrainingData --> HyperparameterOptimization --> BestHyperparameters;
+
+  // final model training and evaluation
+  BestHyperparameters --> MLTrainingAndEvaluation; 
+  TrainingData --> MLTrainingAndEvaluation --> MLModel;
+  TestData --> MLTrainingAndEvaluation --> MLModelMetrics;
+}
+[0m[32;1m[1;3mFeatureExtraction, ModelTraining, ModelEvaluation
+
+These tasks are directly under the 'MLTrainingAndEvaluation' task and do not contain any nested subtasks within them.[0m
+
+[1m> Finished chain.[0m
+Agent reply:
+[36m
+FeatureExtraction, ModelTraining, ModelEvaluation
+
+These tasks are directly under the 'MLTrainingAndEvaluation' task and do not contain any nested subtasks within them.
+[0m
+Answer correctness: 0.000
+
+Configuration: 'specification_folder' updated to examples/artificial_workflow/3_expanded
+[33m
+Pattern: Task links in flow
+[0m
+User input:
+[35m
+Work with workflow 'MainWorkflow'. In task 'Task4', does 'Task9' follow directly after 'Task10' in the control flow? On the first line of your response, write either "yes" or "no" and nothing else. On the second, write a short justification of the answer.
+[0m
+
+
+[1m> Entering new AgentExecutor chain...[0m
+[32;1m[1;3m
+Invoking: `workflow_specification` with `{'workflow_name': 'MainWorkflow'}`
+
+
+[0m[36;1m[1;3mpackage package2;
+
+workflow MainWorkflow {
+  
+  // TASKS
+  task Task1 {
+    // TASKS
+    task Task5 {
+      implementation "file://implementation_C.py";
+    }
+    task Task6 {
+      // TASKS
+      task Task7 {
+        implementation "file://implementation_D.py";
+      }
+      task Task8 {
+        implementation "file://implementation_E.exe";
+      }
+      task Task9 {
+        implementation "file://implementation_F.exe";
+      }
+
+      // PARAMETERS
+      param p = 4;
+
+      // TASK CONNECTIONS
+  
+      START -> Task7;
+
+      Task7 ?-> Task9 {
+        condition "p > 1";
+      }
+
+      Task7 ?-> Task8 {
+        condition "p < 10";
+      }
+      
+      Task9 -> END;
+      Task8 -> END;
+    }
+
+    // TASK CONNECTIONS
+    
+    START -> Task5 -> Task6;
+    Task6 -> Task5;
+  }
+  task Task2 {
+    implementation "file://implementation_A.py";
+    param value = 0.2;
+  }
+  task Task3 {
+    implementation "file://implementation_B.py";
+  }
+  task Task4 {
+    // TASKS
+    task Task10 {
+      implementation "file://implementation_F.java";
+    }
+    task Task9 {
+      implementation "file://implementation_F.py";
+    }
+    task Task11 {
+      implementation "file://implementation_G.java";
+    }
+
+    // TASK CONNECTIONS
+    
+    START -> Task10 -> Task9 -> Task11 -> END;
+  }
+
+  // DATA
+  data InputData;
+
+  // TASK CONNECTIONS
+  
+  START -> Task2 -> PARALLEL_1;
+  PARALLEL_1 -> Task1 -> PARALLEL_END_1;
+  PARALLEL_1 -> Task3 -> Task4 -> PARALLEL_END_1;
+  PARALLEL_END_1 -> END;
+
+  // DATA CONNECTIONS
+
+  InputData --> Task2;
+}
+[0m[32;1m[1;3myes
+In the control flow within Task4, Task9 follows directly after Task10.[0m
+
+[1m> Finished chain.[0m
+Agent reply:
+[36m
+yes
+In the control flow within Task4, Task9 follows directly after Task10.
+[0m
+Answer correctness: 1.000
+
+[33m
+Pattern: Task links in flow
+[0m
+User input:
+[35m
+Work with workflow 'MainWorkflow'. In task 'Task4', does 'Task10' follow directly after 'Task9' in the control flow? On the first line of your response, write either "yes" or "no" and nothing else. On the second, write a short justification of the answer.
+[0m
+
+
+[1m> Entering new AgentExecutor chain...[0m
+[32;1m[1;3m
+Invoking: `workflow_specification` with `{'workflow_name': 'MainWorkflow'}`
+
+
+[0m[36;1m[1;3mpackage package2;
+
+workflow MainWorkflow {
+  
+  // TASKS
+  task Task1 {
+    // TASKS
+    task Task5 {
+      implementation "file://implementation_C.py";
+    }
+    task Task6 {
+      // TASKS
+      task Task7 {
+        implementation "file://implementation_D.py";
+      }
+      task Task8 {
+        implementation "file://implementation_E.exe";
+      }
+      task Task9 {
+        implementation "file://implementation_F.exe";
+      }
+
+      // PARAMETERS
+      param p = 4;
+
+      // TASK CONNECTIONS
+  
+      START -> Task7;
+
+      Task7 ?-> Task9 {
+        condition "p > 1";
+      }
+
+      Task7 ?-> Task8 {
+        condition "p < 10";
+      }
+      
+      Task9 -> END;
+      Task8 -> END;
+    }
+
+    // TASK CONNECTIONS
+    
+    START -> Task5 -> Task6;
+    Task6 -> Task5;
+  }
+  task Task2 {
+    implementation "file://implementation_A.py";
+    param value = 0.2;
+  }
+  task Task3 {
+    implementation "file://implementation_B.py";
+  }
+  task Task4 {
+    // TASKS
+    task Task10 {
+      implementation "file://implementation_F.java";
+    }
+    task Task9 {
+      implementation "file://implementation_F.py";
+    }
+    task Task11 {
+      implementation "file://implementation_G.java";
+    }
+
+    // TASK CONNECTIONS
+    
+    START -> Task10 -> Task9 -> Task11 -> END;
+  }
+
+  // DATA
+  data InputData;
+
+  // TASK CONNECTIONS
+  
+  START -> Task2 -> PARALLEL_1;
+  PARALLEL_1 -> Task1 -> PARALLEL_END_1;
+  PARALLEL_1 -> Task3 -> Task4 -> PARALLEL_END_1;
+  PARALLEL_END_1 -> END;
+
+  // DATA CONNECTIONS
+
+  InputData --> Task2;
+}
+[0m[32;1m[1;3myes
+
+Task10 directly precedes Task9 in the control flow within Task4 of the MainWorkflow.[0m
+
+[1m> Finished chain.[0m
+Agent reply:
+[36m
+yes
+
+Task10 directly precedes Task9 in the control flow within Task4 of the MainWorkflow.
+[0m
+Answer correctness: 0.000
+
+Configuration: 'specification_folder' updated to examples/automl_wrong_implementation/6_expanded_descriptions
+[33m
+Pattern: Task links in flow
+[0m
+User input:
+[35m
+Work with workflow 'FailurePredictionInManufacture'. In task 'MLTrainingAndEvaluation', does 'ModelTraining' follow directly after 'ModelEvaluation' in the control flow? On the first line of your response, write either "yes" or "no" and nothing else. On the second, write a short justification of the answer.
+[0m
+
+
+[1m> Entering new AgentExecutor chain...[0m
+[32;1m[1;3m
+Invoking: `workflow_specification` with `{'workflow_name': 'FailurePredictionInManufacture'}`
+
+
+[0m[36;1m[1;3mpackage automl_ideko;
+
+workflow FailurePredictionInManufacture {
+  description "AutoML for selecting a model to perform prediction of machine failures (binary classification).";
+
+  // TASKS
+  task DataRetrieval {
+    description "Loads the data from the predictive_maintenance.csv file and drops the unnecessary data.";
+    implementation "file://ideko_data_retreival.py";
+  }
+  task TrainTestSplit {
+    description "Randomly splits the data into training and test sets.";
+    implementation "file://random_train_test_split.py";
+    param test_size = 0.2;
+  }
+  task HyperparameterOptimization {
+    description "Uses grid search to explore hyperparameter configurations and asks the user to select the best one.";
+    
+    // TASKS
+    task HyperparameterProposal {
+      description "Repeatedly proposes hyperparameter configurations until a stop condition is met (based on the metrics of the current ML model).";
+      implementation "file://grid_search.py";
+    }
+    task MLModelValidation {
+      description "Trains and evaluates the ML model with the proposed hyperparameter configuration.";
+      
+      // TASKS
+      task TrainTestSplit {
+        description "Randomly splits the data into training and test sets.";
+        implementation "file://random_train_test_split.py";
+        param test_size = 0.2;
+      }
+      task MLTrainingAndEvaluation {
+        description "Training and evaluation of the ML model with the given hyperparameters.";
+        
+        // TASKS
+        task FeatureExtraction {
+          description "Extracts features from the input data.";
+          implementation "file://ideko_feature_extraction.py";
+        }
+        task ModelTraining {
+          description "Trains the regression ML model with the given hyperparameters.";
+          implementation "file://regression_training.py";
+        }
+        task ModelEvaluation {
+          description "Evaluates the trained ML model using regression metrics.";
+          implementation "file://regression_evaluation.py";
+          param metrics = ["accuracy", "precision", "recall", "f1", "num_of_params"];
+        }
+
+        // INPUT DATA
+        define data Hyperparameters;  // ML algorithm and its parameters
+        define data TrainingData;
+        define data TestData = ValidationData;
+
+        // INNER DATA
+        define data TrainingFeatures {
+          schema "file://Features.schema";
+        }
+        define data TestFeatures {
+          schema "file://Features.schema";
+        }
+
+        // OUTPUT DATA
+        define data MLModel;
+        define data MLModelMetrics {
+          schema "file://MLModelMetrics.schema";
+        }
+
+        // TASK CONNECTIONS
+        
+        START -> FeatureExtraction -> ModelTraining -> ModelEvaluation -> END;
+
+        // DATA CONNECTIONS
+
+        // feature extraction
+        TrainingData --> FeatureExtraction --> TrainingFeatures;
+        TestData --> FeatureExtraction --> TestFeatures;
+        Hyperparameters --> FeatureExtraction;
+
+        // model training
+        Hyperparameters --> ModelTraining;
+        TrainingFeatures --> ModelTraining --> MLModel;
+
+        // model evaluation
+        MLModel --> ModelEvaluation;
+        TestFeatures --> ModelEvaluation --> MLModelMetrics;
+      }
+
+      // DATA
+      define data InputData;
+      define data Hyperparameters;
+
+      define data TrainingData;
+      define data ValidationData;
+      
+      define data MLModelMetrics;
+
+      // TASK CONNECTIONS
+      
+      START -> TrainTestSplit -> MLTrainingAndEvaluation -> END;
+
+      // DATA CONNECTIONS
+
+      // input data preprocessing and train-test split
+      InputData --> TrainTestSplit;
+      TrainTestSplit --> TrainingData;
+      TrainTestSplit --> ValidationData;
+
+      // model training and evaluation
+      Hyperparameters --> MLTrainingAndEvaluation;
+      TrainingData --> MLTrainingAndEvaluation;
+      ValidationData --> MLTrainingAndEvaluation --> MLModelMetrics;  
+    }
+    task BestHyperparameterSelection {
+      description "Asks the user to select the best hyperparameter configuration.";
+      implementation "file://user_hyperparameter_selection.py";
+    }
+    
+    // DATA
+    define data TrainingData;
+    
+    define data Hyperparameters;  // ML algorithm and its parameters
+    define data MLModelMetrics {
+      schema "file://MLModelMetrics.schema";
+    }
+
+    define data BestHyperparameters; // output
+
+    // TASK CONNECTIONS
+    
+    START -> HyperparameterProposal;
+
+    HyperparameterProposal ?-> BestHyperparameterSelection {
+      condition "stop condition"; // e.g., model is good enough, iteration limit reached, ...
+    }
+
+    HyperparameterProposal ?-> MLModelValidation {
+      condition "otherwise";
+    }
+
+    MLModelValidation -> HyperparameterProposal;
+
+    BestHyperparameterSelection -> END;
+
+    // DATA CONNECTIONS
+
+    // hyperparameter selection
+    HyperparameterProposal --> Hyperparameters;
+
+    // model training and evaluation
+    Hyperparameters --> MLModelValidation;
+    TrainingData --> MLModelValidation --> MLModelMetrics;
+    MLModelMetrics --> HyperparameterProposal; // possibility to stop proposing hyperparameters if model is good enough
+
+    // best hyperparameter selection
+    MLModelMetrics --> BestHyperparameterSelection;
+    BestHyperparameterSelection --> BestHyperparameters;
+
+    param hyperparameters_grid = "file://hyperparameters_grid.json";
+  }
+  task MLTrainingAndEvaluation {
+    description "Final training and evaluation of the ML model with the best hyperparameters.";
+    
+    // TASKS
+    task FeatureExtraction {
+      description "Extracts features from the input data.";
+      implementation "file://ideko_feature_extraction.py";
+    }
+    task ModelTraining {
+      description "Trains the regression ML model with the given hyperparameters.";
+      implementation "file://regression_training.py";
+    }
+    task ModelEvaluation {
+      description "Evaluates the trained ML model using regression metrics.";
+      implementation "file://regression_evaluation.py";
+      param metrics = ["accuracy", "precision", "recall", "f1", "num_of_params"];
+    }
+
+    // INPUT DATA
+    define data Hyperparameters;  // ML algorithm and its parameters
+    define data TrainingData;
+    define data TestData;
+
+    // INNER DATA
+    define data TrainingFeatures {
+      schema "file://Features.schema";
+    }
+    define data TestFeatures {
+      schema "file://Features.schema";
+    }
+
+    // OUTPUT DATA
+    define data MLModel;
+    define data MLModelMetrics {
+      schema "file://MLModelMetrics.schema";
+    }
+
+    // TASK CONNECTIONS
+    
+    START -> FeatureExtraction -> ModelTraining -> ModelEvaluation -> END;
+
+    // DATA CONNECTIONS
+
+    // feature extraction
+    TrainingData --> FeatureExtraction --> TrainingFeatures;
+    TestData --> FeatureExtraction --> TestFeatures;
+    Hyperparameters --> FeatureExtraction;
+
+    // model training
+    Hyperparameters --> ModelTraining;
+    TrainingFeatures --> ModelTraining --> MLModel;
+
+    // model evaluation
+    MLModel --> ModelEvaluation;
+    TestFeatures --> ModelEvaluation --> MLModelMetrics;
+  }
+
+  // DATA
+  define data InputData;
+  define data RetrievedData;
+
+  define data TrainingData;
+  define data TestData;
+  
+  define data BestHyperparameters;
+  define data MLModel;
+  define data MLModelMetrics;
+
+  // TASK CONNECTIONS
+  
+  START -> DataRetrieval -> TrainTestSplit -> HyperparameterOptimization -> MLTrainingAndEvaluation -> END;
+
+  // DATA CONNECTIONS
+
+  // input data preprocessing and train-test split
+  InputData --> DataRetrieval --> RetrievedData;
+  RetrievedData --> TrainTestSplit;
+  TrainTestSplit --> TrainingData;
+  TrainTestSplit --> TestData;
+
+  // hyperparameter optimization
+  TrainingData --> HyperparameterOptimization --> BestHyperparameters;
+
+  // final model training and evaluation
+  BestHyperparameters --> MLTrainingAndEvaluation; 
+  TrainingData --> MLTrainingAndEvaluation --> MLModel;
+  TestData --> MLTrainingAndEvaluation --> MLModelMetrics;
+}
+[0m[32;1m[1;3mno
+
+ModelTraining does not follow directly after ModelEvaluation in the control flow; it precedes it.[0m
+
+[1m> Finished chain.[0m
+Agent reply:
+[36m
+no
+
+ModelTraining does not follow directly after ModelEvaluation in the control flow; it precedes it.
+[0m
+Answer correctness: 1.000
+
+[33m
+Pattern: Task links in flow
+[0m
+User input:
+[35m
+Work with workflow 'FailurePredictionInManufacture2'. In task 'MLTrainingAndEvaluation', does 'ModelTraining' follow directly after 'ModelEvaluation' in the control flow? On the first line of your response, write either "yes" or "no" and nothing else. On the second, write a short justification of the answer.
+[0m
+
+
+[1m> Entering new AgentExecutor chain...[0m
+[32;1m[1;3m
+Invoking: `workflow_specification` with `{'workflow_name': 'FailurePredictionInManufacture2'}`
+
+
+[0m[36;1m[1;3mpackage automl_ideko;
+
+workflow FailurePredictionInManufacture {
+  description "AutoML for selecting a model to perform prediction of machine failures (binary classification).";
+
+  // TASKS
+  task DataRetrieval {
+    description "Loads the data from the predictive_maintenance.csv file and drops the unnecessary data.";
+    implementation "file://ideko_data_retreival.py";
+  }
+  task TrainTestSplit {
+    description "Randomly splits the data into training and test sets.";
+    implementation "file://random_train_test_split.py";
+    param test_size = 0.2;
+  }
+  task HyperparameterOptimization {
+    description "Uses grid search to explore hyperparameter configurations and asks the user to select the best one.";
+    
+    // TASKS
+    task HyperparameterProposal {
+      description "Repeatedly proposes hyperparameter configurations until a stop condition is met (based on the metrics of the current ML model).";
+      implementation "file://grid_search.py";
+    }
+    task MLModelValidation {
+      description "Trains and evaluates the ML model with the proposed hyperparameter configuration.";
+      
+      // TASKS
+      task TrainTestSplit {
+        description "Randomly splits the data into training and test sets.";
+        implementation "file://random_train_test_split.py";
+        param test_size = 0.2;
+      }
+      task MLTrainingAndEvaluation {
+        description "Training and evaluation of the ML model with the given hyperparameters.";
+        
+        // TASKS
+        task FeatureExtraction {
+          description "Extracts features from the input data.";
+          implementation "file://ideko_feature_extraction.py";
+        }
+        task ModelTraining {
+          description "Trains the regression ML model with the given hyperparameters.";
+          implementation "file://regression_training.py";
+        }
+        task ModelEvaluation {
+          description "Evaluates the trained ML model using regression metrics.";
+          implementation "file://regression_evaluation.py";
+          param metrics = ["accuracy", "precision", "recall", "f1", "num_of_params"];
+        }
+
+        // INPUT DATA
+        define data Hyperparameters;  // ML algorithm and its parameters
+        define data TrainingData;
+        define data TestData = ValidationData;
+
+        // INNER DATA
+        define data TrainingFeatures {
+          schema "file://Features.schema";
+        }
+        define data TestFeatures {
+          schema "file://Features.schema";
+        }
+
+        // OUTPUT DATA
+        define data MLModel;
+        define data MLModelMetrics {
+          schema "file://MLModelMetrics.schema";
+        }
+
+        // TASK CONNECTIONS
+        
+        START -> FeatureExtraction -> ModelEvaluation -> ModelTraining -> END;
+
+        // DATA CONNECTIONS
+
+        // feature extraction
+        TrainingData --> FeatureExtraction --> TrainingFeatures;
+        TestData --> FeatureExtraction --> TestFeatures;
+        Hyperparameters --> FeatureExtraction;
+
+        // model training
+        Hyperparameters --> ModelTraining;
+        TrainingFeatures --> ModelTraining --> MLModel;
+
+        // model evaluation
+        MLModel --> ModelEvaluation;
+        TestFeatures --> ModelEvaluation --> MLModelMetrics;
+      }
+
+      // DATA
+      define data InputData;
+      define data Hyperparameters;
+
+      define data TrainingData;
+      define data ValidationData;
+      
+      define data MLModelMetrics;
+
+      // TASK CONNECTIONS
+      
+      START -> TrainTestSplit -> MLTrainingAndEvaluation -> END;
+
+      // DATA CONNECTIONS
+
+      // input data preprocessing and train-test split
+      InputData --> TrainTestSplit;
+      TrainTestSplit --> TrainingData;
+      TrainTestSplit --> ValidationData;
+
+      // model training and evaluation
+      Hyperparameters --> MLTrainingAndEvaluation;
+      TrainingData --> MLTrainingAndEvaluation;
+      ValidationData --> MLTrainingAndEvaluation --> MLModelMetrics;  
+    }
+    task BestHyperparameterSelection {
+      description "Asks the user to select the best hyperparameter configuration.";
+      implementation "file://user_hyperparameter_selection.py";
+    }
+    
+    // DATA
+    define data TrainingData;
+    
+    define data Hyperparameters;  // ML algorithm and its parameters
+    define data MLModelMetrics {
+      schema "file://MLModelMetrics.schema";
+    }
+
+    define data BestHyperparameters; // output
+
+    // TASK CONNECTIONS
+    
+    START -> HyperparameterProposal;
+
+    HyperparameterProposal ?-> BestHyperparameterSelection {
+      condition "stop condition"; // e.g., model is good enough, iteration limit reached, ...
+    }
+
+    HyperparameterProposal ?-> MLModelValidation {
+      condition "otherwise";
+    }
+
+    MLModelValidation -> HyperparameterProposal;
+
+    BestHyperparameterSelection -> END;
+
+    // DATA CONNECTIONS
+
+    // hyperparameter selection
+    HyperparameterProposal --> Hyperparameters;
+
+    // model training and evaluation
+    Hyperparameters --> MLModelValidation;
+    TrainingData --> MLModelValidation --> MLModelMetrics;
+    MLModelMetrics --> HyperparameterProposal; // possibility to stop proposing hyperparameters if model is good enough
+
+    // best hyperparameter selection
+    MLModelMetrics --> BestHyperparameterSelection;
+    BestHyperparameterSelection --> BestHyperparameters;
+
+    param hyperparameters_grid = "file://hyperparameters_grid.json";
+  }
+  task MLTrainingAndEvaluation {
+    description "Final training and evaluation of the ML model with the best hyperparameters.";
+    
+    // TASKS
+    task FeatureExtraction {
+      description "Extracts features from the input data.";
+      implementation "file://ideko_feature_extraction.py";
+    }
+    task ModelTraining {
+      description "Trains the regression ML model with the given hyperparameters.";
+      implementation "file://regression_training.py";
+    }
+    task ModelEvaluation {
+      description "Evaluates the trained ML model using regression metrics.";
+      implementation "file://regression_evaluation.py";
+      param metrics = ["accuracy", "precision", "recall", "f1", "num_of_params"];
+    }
+
+    // INPUT DATA
+    define data Hyperparameters;  // ML algorithm and its parameters
+    define data TrainingData;
+    define data TestData;
+
+    // INNER DATA
+    define data TrainingFeatures {
+      schema "file://Features.schema";
+    }
+    define data TestFeatures {
+      schema "file://Features.schema";
+    }
+
+    // OUTPUT DATA
+    define data MLModel;
+    define data MLModelMetrics {
+      schema "file://MLModelMetrics.schema";
+    }
+
+    // TASK CONNECTIONS
+    
+    START -> FeatureExtraction -> ModelEvaluation -> ModelTraining -> END;
+
+    // DATA CONNECTIONS
+
+    // feature extraction
+    TrainingData --> FeatureExtraction --> TrainingFeatures;
+    TestData --> FeatureExtraction --> TestFeatures;
+    Hyperparameters --> FeatureExtraction;
+
+    // model training
+    Hyperparameters --> ModelTraining;
+    TrainingFeatures --> ModelTraining --> MLModel;
+
+    // model evaluation
+    MLModel --> ModelEvaluation;
+    TestFeatures --> ModelEvaluation --> MLModelMetrics;
+  }
+
+  // DATA
+  define data InputData;
+  define data RetrievedData;
+
+  define data TrainingData;
+  define data TestData;
+  
+  define data BestHyperparameters;
+  define data MLModel;
+  define data MLModelMetrics;
+
+  // TASK CONNECTIONS
+  
+  START -> DataRetrieval -> TrainTestSplit -> HyperparameterOptimization -> MLTrainingAndEvaluation -> END;
+
+  // DATA CONNECTIONS
+
+  // input data preprocessing and train-test split
+  InputData --> DataRetrieval --> RetrievedData;
+  RetrievedData --> TrainTestSplit;
+  TrainTestSplit --> TrainingData;
+  TrainTestSplit --> TestData;
+
+  // hyperparameter optimization
+  TrainingData --> HyperparameterOptimization --> BestHyperparameters;
+
+  // final model training and evaluation
+  BestHyperparameters --> MLTrainingAndEvaluation; 
+  TrainingData --> MLTrainingAndEvaluation --> MLModel;
+  TestData --> MLTrainingAndEvaluation --> MLModelMetrics;
+}
+[0m[32;1m[1;3mno
+
+In the control flow, 'ModelEvaluation' does not directly follow 'ModelTraining'; it precedes 'ModelTraining'.[0m
+
+[1m> Finished chain.[0m
+Agent reply:
+[36m
+no
+
+In the control flow, 'ModelEvaluation' does not directly follow 'ModelTraining'; it precedes 'ModelTraining'.
+[0m
+Answer correctness: 0.000
+
+Configuration: 'specification_folder' updated to examples/artificial_workflow/3_expanded
+[33m
+Pattern: Next tasks in flow
+[0m
+User input:
+[35m
+In workflow 'MainWorkflow', which tasks come directly after 'Task2' in the control flow? On the first line of your response, write a comma separated list of values and nothing else. On the second, write a short justification of the answer.
+[0m
+
+
+[1m> Entering new AgentExecutor chain...[0m
+[32;1m[1;3m
+Invoking: `workflow_specification` with `{'workflow_name': 'MainWorkflow'}`
+
+
+[0m[36;1m[1;3mpackage package2;
+
+workflow MainWorkflow {
+  
+  // TASKS
+  task Task1 {
+    // TASKS
+    task Task5 {
+      implementation "file://implementation_C.py";
+    }
+    task Task6 {
+      // TASKS
+      task Task7 {
+        implementation "file://implementation_D.py";
+      }
+      task Task8 {
+        implementation "file://implementation_E.exe";
+      }
+      task Task9 {
+        implementation "file://implementation_F.exe";
+      }
+
+      // PARAMETERS
+      param p = 4;
+
+      // TASK CONNECTIONS
+  
+      START -> Task7;
+
+      Task7 ?-> Task9 {
+        condition "p > 1";
+      }
+
+      Task7 ?-> Task8 {
+        condition "p < 10";
+      }
+      
+      Task9 -> END;
+      Task8 -> END;
+    }
+
+    // TASK CONNECTIONS
+    
+    START -> Task5 -> Task6;
+    Task6 -> Task5;
+  }
+  task Task2 {
+    implementation "file://implementation_A.py";
+    param value = 0.2;
+  }
+  task Task3 {
+    implementation "file://implementation_B.py";
+  }
+  task Task4 {
+    // TASKS
+    task Task10 {
+      implementation "file://implementation_F.java";
+    }
+    task Task9 {
+      implementation "file://implementation_F.py";
+    }
+    task Task11 {
+      implementation "file://implementation_G.java";
+    }
+
+    // TASK CONNECTIONS
+    
+    START -> Task10 -> Task9 -> Task11 -> END;
+  }
+
+  // DATA
+  data InputData;
+
+  // TASK CONNECTIONS
+  
+  START -> Task2 -> PARALLEL_1;
+  PARALLEL_1 -> Task1 -> PARALLEL_END_1;
+  PARALLEL_1 -> Task3 -> Task4 -> PARALLEL_END_1;
+  PARALLEL_END_1 -> END;
+
+  // DATA CONNECTIONS
+
+  InputData --> Task2;
+}
+[0m[32;1m[1;3mTask1, Task3
+
+After 'Task2' in the workflow 'MainWorkflow', the control flow divides into a parallel execution path where 'Task1' and 'Task3' are executed concurrently.[0m
+
+[1m> Finished chain.[0m
+Agent reply:
+[36m
+Task1, Task3
+
+After 'Task2' in the workflow 'MainWorkflow', the control flow divides into a parallel execution path where 'Task1' and 'Task3' are executed concurrently.
+[0m
+Answer correctness: 1.000
+
+[33m
+Pattern: Next tasks in flow
+[0m
+User input:
+[35m
+In workflow 'MainWorkflow', which tasks come directly after 'Task7' in the control flow? On the first line of your response, write a comma separated list of values and nothing else. On the second, write a short justification of the answer.
+[0m
+
+
+[1m> Entering new AgentExecutor chain...[0m
+[32;1m[1;3m
+Invoking: `workflow_specification` with `{'workflow_name': 'MainWorkflow'}`
+
+
+[0m[36;1m[1;3mpackage package2;
+
+workflow MainWorkflow {
+  
+  // TASKS
+  task Task1 {
+    // TASKS
+    task Task5 {
+      implementation "file://implementation_C.py";
+    }
+    task Task6 {
+      // TASKS
+      task Task7 {
+        implementation "file://implementation_D.py";
+      }
+      task Task8 {
+        implementation "file://implementation_E.exe";
+      }
+      task Task9 {
+        implementation "file://implementation_F.exe";
+      }
+
+      // PARAMETERS
+      param p = 4;
+
+      // TASK CONNECTIONS
+  
+      START -> Task7;
+
+      Task7 ?-> Task9 {
+        condition "p > 1";
+      }
+
+      Task7 ?-> Task8 {
+        condition "p < 10";
+      }
+      
+      Task9 -> END;
+      Task8 -> END;
+    }
+
+    // TASK CONNECTIONS
+    
+    START -> Task5 -> Task6;
+    Task6 -> Task5;
+  }
+  task Task2 {
+    implementation "file://implementation_A.py";
+    param value = 0.2;
+  }
+  task Task3 {
+    implementation "file://implementation_B.py";
+  }
+  task Task4 {
+    // TASKS
+    task Task10 {
+      implementation "file://implementation_F.java";
+    }
+    task Task9 {
+      implementation "file://implementation_F.py";
+    }
+    task Task11 {
+      implementation "file://implementation_G.java";
+    }
+
+    // TASK CONNECTIONS
+    
+    START -> Task10 -> Task9 -> Task11 -> END;
+  }
+
+  // DATA
+  data InputData;
+
+  // TASK CONNECTIONS
+  
+  START -> Task2 -> PARALLEL_1;
+  PARALLEL_1 -> Task1 -> PARALLEL_END_1;
+  PARALLEL_1 -> Task3 -> Task4 -> PARALLEL_END_1;
+  PARALLEL_END_1 -> END;
+
+  // DATA CONNECTIONS
+
+  InputData --> Task2;
+}
+[0m[32;1m[1;3mTask8, Task9
+
+Task7 is followed by conditional control flows to Task8 and Task9 based on the conditions specified in the workflow.[0m
+
+[1m> Finished chain.[0m
+Agent reply:
+[36m
+Task8, Task9
+
+Task7 is followed by conditional control flows to Task8 and Task9 based on the conditions specified in the workflow.
+[0m
+Answer correctness: 1.000
+
+[33m
+Pattern: Next tasks in flow
+[0m
+User input:
+[35m
+In workflow 'MainWorkflow', which tasks come directly after 'Task3' in the control flow? On the first line of your response, write a comma separated list of values and nothing else. On the second, write a short justification of the answer.
+[0m
+
+
+[1m> Entering new AgentExecutor chain...[0m
+[32;1m[1;3m
+Invoking: `workflow_specification` with `{'workflow_name': 'MainWorkflow'}`
+
+
+[0m[36;1m[1;3mpackage package2;
+
+workflow MainWorkflow {
+  
+  // TASKS
+  task Task1 {
+    // TASKS
+    task Task5 {
+      implementation "file://implementation_C.py";
+    }
+    task Task6 {
+      // TASKS
+      task Task7 {
+        implementation "file://implementation_D.py";
+      }
+      task Task8 {
+        implementation "file://implementation_E.exe";
+      }
+      task Task9 {
+        implementation "file://implementation_F.exe";
+      }
+
+      // PARAMETERS
+      param p = 4;
+
+      // TASK CONNECTIONS
+  
+      START -> Task7;
+
+      Task7 ?-> Task9 {
+        condition "p > 1";
+      }
+
+      Task7 ?-> Task8 {
+        condition "p < 10";
+      }
+      
+      Task9 -> END;
+      Task8 -> END;
+    }
+
+    // TASK CONNECTIONS
+    
+    START -> Task5 -> Task6;
+    Task6 -> Task5;
+  }
+  task Task2 {
+    implementation "file://implementation_A.py";
+    param value = 0.2;
+  }
+  task Task3 {
+    implementation "file://implementation_B.py";
+  }
+  task Task4 {
+    // TASKS
+    task Task10 {
+      implementation "file://implementation_F.java";
+    }
+    task Task9 {
+      implementation "file://implementation_F.py";
+    }
+    task Task11 {
+      implementation "file://implementation_G.java";
+    }
+
+    // TASK CONNECTIONS
+    
+    START -> Task10 -> Task9 -> Task11 -> END;
+  }
+
+  // DATA
+  data InputData;
+
+  // TASK CONNECTIONS
+  
+  START -> Task2 -> PARALLEL_1;
+  PARALLEL_1 -> Task1 -> PARALLEL_END_1;
+  PARALLEL_1 -> Task3 -> Task4 -> PARALLEL_END_1;
+  PARALLEL_END_1 -> END;
+
+  // DATA CONNECTIONS
+
+  InputData --> Task2;
+}
+[0m[32;1m[1;3mTask4
+
+Task4 is the task that comes directly after Task3 in the control flow within the MainWorkflow.[0m
+
+[1m> Finished chain.[0m
+Agent reply:
+[36m
+Task4
+
+Task4 is the task that comes directly after Task3 in the control flow within the MainWorkflow.
+[0m
+Answer correctness: 1.000
+
+[33m
+Pattern: Next tasks in flow
+[0m
+User input:
+[35m
+In workflow 'MainWorkflow', which tasks come directly after 'Task9' in the control flow? On the first line of your response, write a comma separated list of values and nothing else. On the second, write a short justification of the answer.
+[0m
+
+
+[1m> Entering new AgentExecutor chain...[0m
+[32;1m[1;3m
+Invoking: `workflow_specification` with `{'workflow_name': 'MainWorkflow'}`
+
+
+[0m[36;1m[1;3mpackage package2;
+
+workflow MainWorkflow {
+  
+  // TASKS
+  task Task1 {
+    // TASKS
+    task Task5 {
+      implementation "file://implementation_C.py";
+    }
+    task Task6 {
+      // TASKS
+      task Task7 {
+        implementation "file://implementation_D.py";
+      }
+      task Task8 {
+        implementation "file://implementation_E.exe";
+      }
+      task Task9 {
+        implementation "file://implementation_F.exe";
+      }
+
+      // PARAMETERS
+      param p = 4;
+
+      // TASK CONNECTIONS
+  
+      START -> Task7;
+
+      Task7 ?-> Task9 {
+        condition "p > 1";
+      }
+
+      Task7 ?-> Task8 {
+        condition "p < 10";
+      }
+      
+      Task9 -> END;
+      Task8 -> END;
+    }
+
+    // TASK CONNECTIONS
+    
+    START -> Task5 -> Task6;
+    Task6 -> Task5;
+  }
+  task Task2 {
+    implementation "file://implementation_A.py";
+    param value = 0.2;
+  }
+  task Task3 {
+    implementation "file://implementation_B.py";
+  }
+  task Task4 {
+    // TASKS
+    task Task10 {
+      implementation "file://implementation_F.java";
+    }
+    task Task9 {
+      implementation "file://implementation_F.py";
+    }
+    task Task11 {
+      implementation "file://implementation_G.java";
+    }
+
+    // TASK CONNECTIONS
+    
+    START -> Task10 -> Task9 -> Task11 -> END;
+  }
+
+  // DATA
+  data InputData;
+
+  // TASK CONNECTIONS
+  
+  START -> Task2 -> PARALLEL_1;
+  PARALLEL_1 -> Task1 -> PARALLEL_END_1;
+  PARALLEL_1 -> Task3 -> Task4 -> PARALLEL_END_1;
+  PARALLEL_END_1 -> END;
+
+  // DATA CONNECTIONS
+
+  InputData --> Task2;
+}
+[0m[32;1m[1;3mTask11
+
+Task11 comes directly after Task9 in the control flow within Task4 in the 'MainWorkflow'.[0m
+
+[1m> Finished chain.[0m
+Agent reply:
+[36m
+Task11
+
+Task11 comes directly after Task9 in the control flow within Task4 in the 'MainWorkflow'.
+[0m
+Answer correctness: 1.000
+
+Configuration: 'specification_folder' updated to examples/artificial_workflow/3_expanded
+[33m
+Pattern: Flow cycle
+[0m
+User input:
+[35m
+In task 'Task1' from workflow 'MainWorkflow', is there a cycle in the control flow? On the first line of your response, write either "yes" or "no" and nothing else. On the second, write a short justification of the answer.
+[0m
+
+
+[1m> Entering new AgentExecutor chain...[0m
+[32;1m[1;3m
+Invoking: `workflow_specification` with `{'workflow_name': 'MainWorkflow'}`
+
+
+[0m[36;1m[1;3mpackage package2;
+
+workflow MainWorkflow {
+  
+  // TASKS
+  task Task1 {
+    // TASKS
+    task Task5 {
+      implementation "file://implementation_C.py";
+    }
+    task Task6 {
+      // TASKS
+      task Task7 {
+        implementation "file://implementation_D.py";
+      }
+      task Task8 {
+        implementation "file://implementation_E.exe";
+      }
+      task Task9 {
+        implementation "file://implementation_F.exe";
+      }
+
+      // PARAMETERS
+      param p = 4;
+
+      // TASK CONNECTIONS
+  
+      START -> Task7;
+
+      Task7 ?-> Task9 {
+        condition "p > 1";
+      }
+
+      Task7 ?-> Task8 {
+        condition "p < 10";
+      }
+      
+      Task9 -> END;
+      Task8 -> END;
+    }
+
+    // TASK CONNECTIONS
+    
+    START -> Task5 -> Task6;
+    Task6 -> Task5;
+  }
+  task Task2 {
+    implementation "file://implementation_A.py";
+    param value = 0.2;
+  }
+  task Task3 {
+    implementation "file://implementation_B.py";
+  }
+  task Task4 {
+    // TASKS
+    task Task10 {
+      implementation "file://implementation_F.java";
+    }
+    task Task9 {
+      implementation "file://implementation_F.py";
+    }
+    task Task11 {
+      implementation "file://implementation_G.java";
+    }
+
+    // TASK CONNECTIONS
+    
+    START -> Task10 -> Task9 -> Task11 -> END;
+  }
+
+  // DATA
+  data InputData;
+
+  // TASK CONNECTIONS
+  
+  START -> Task2 -> PARALLEL_1;
+  PARALLEL_1 -> Task1 -> PARALLEL_END_1;
+  PARALLEL_1 -> Task3 -> Task4 -> PARALLEL_END_1;
+  PARALLEL_END_1 -> END;
+
+  // DATA CONNECTIONS
+
+  InputData --> Task2;
+}
+[0m[32;1m[1;3myes
+
+The control flow within Task1 forms a cycle as it directs from `START` to `Task5`, then to `Task6`, and loops back from `Task6` to `Task5`.[0m
+
+[1m> Finished chain.[0m
+Agent reply:
+[36m
+yes
+
+The control flow within Task1 forms a cycle as it directs from `START` to `Task5`, then to `Task6`, and loops back from `Task6` to `Task5`.
+[0m
+Answer correctness: 1.000
+
+[33m
+Pattern: Flow cycle
+[0m
+User input:
+[35m
+In workflow 'MainWorkflow', is there a cycle in the control flow directly in the workflow (not inside any of the subtasks)? On the first line of your response, write either "yes" or "no" and nothing else. On the second, write a short justification of the answer.
+[0m
+
+
+[1m> Entering new AgentExecutor chain...[0m
+[32;1m[1;3m
+Invoking: `workflow_specification` with `{'workflow_name': 'MainWorkflow'}`
+
+
+[0m[36;1m[1;3mpackage package2;
+
+workflow MainWorkflow {
+  
+  // TASKS
+  task Task1 {
+    // TASKS
+    task Task5 {
+      implementation "file://implementation_C.py";
+    }
+    task Task6 {
+      // TASKS
+      task Task7 {
+        implementation "file://implementation_D.py";
+      }
+      task Task8 {
+        implementation "file://implementation_E.exe";
+      }
+      task Task9 {
+        implementation "file://implementation_F.exe";
+      }
+
+      // PARAMETERS
+      param p = 4;
+
+      // TASK CONNECTIONS
+  
+      START -> Task7;
+
+      Task7 ?-> Task9 {
+        condition "p > 1";
+      }
+
+      Task7 ?-> Task8 {
+        condition "p < 10";
+      }
+      
+      Task9 -> END;
+      Task8 -> END;
+    }
+
+    // TASK CONNECTIONS
+    
+    START -> Task5 -> Task6;
+    Task6 -> Task5;
+  }
+  task Task2 {
+    implementation "file://implementation_A.py";
+    param value = 0.2;
+  }
+  task Task3 {
+    implementation "file://implementation_B.py";
+  }
+  task Task4 {
+    // TASKS
+    task Task10 {
+      implementation "file://implementation_F.java";
+    }
+    task Task9 {
+      implementation "file://implementation_F.py";
+    }
+    task Task11 {
+      implementation "file://implementation_G.java";
+    }
+
+    // TASK CONNECTIONS
+    
+    START -> Task10 -> Task9 -> Task11 -> END;
+  }
+
+  // DATA
+  data InputData;
+
+  // TASK CONNECTIONS
+  
+  START -> Task2 -> PARALLEL_1;
+  PARALLEL_1 -> Task1 -> PARALLEL_END_1;
+  PARALLEL_1 -> Task3 -> Task4 -> PARALLEL_END_1;
+  PARALLEL_END_1 -> END;
+
+  // DATA CONNECTIONS
+
+  InputData --> Task2;
+}
+[0m[32;1m[1;3mno
+The workflow specification does not show any direct cycles in the control flow within the 'MainWorkflow'. Tasks are structured in sequences and parallel flows without any task calling back to a previous task in the same workflow.[0m
+
+[1m> Finished chain.[0m
+Agent reply:
+[36m
+no
+The workflow specification does not show any direct cycles in the control flow within the 'MainWorkflow'. Tasks are structured in sequences and parallel flows without any task calling back to a previous task in the same workflow.
+[0m
+Answer correctness: 1.000
+
+[33m
+Pattern: Flow cycle
+[0m
+User input:
+[35m
+In task 'Task6' from workflow 'MainWorkflow', is there a cycle in the control flow? On the first line of your response, write either "yes" or "no" and nothing else. On the second, write a short justification of the answer.
+[0m
+
+
+[1m> Entering new AgentExecutor chain...[0m
+[32;1m[1;3m
+Invoking: `workflow_specification` with `{'workflow_name': 'MainWorkflow'}`
+
+
+[0m[36;1m[1;3mpackage package2;
+
+workflow MainWorkflow {
+  
+  // TASKS
+  task Task1 {
+    // TASKS
+    task Task5 {
+      implementation "file://implementation_C.py";
+    }
+    task Task6 {
+      // TASKS
+      task Task7 {
+        implementation "file://implementation_D.py";
+      }
+      task Task8 {
+        implementation "file://implementation_E.exe";
+      }
+      task Task9 {
+        implementation "file://implementation_F.exe";
+      }
+
+      // PARAMETERS
+      param p = 4;
+
+      // TASK CONNECTIONS
+  
+      START -> Task7;
+
+      Task7 ?-> Task9 {
+        condition "p > 1";
+      }
+
+      Task7 ?-> Task8 {
+        condition "p < 10";
+      }
+      
+      Task9 -> END;
+      Task8 -> END;
+    }
+
+    // TASK CONNECTIONS
+    
+    START -> Task5 -> Task6;
+    Task6 -> Task5;
+  }
+  task Task2 {
+    implementation "file://implementation_A.py";
+    param value = 0.2;
+  }
+  task Task3 {
+    implementation "file://implementation_B.py";
+  }
+  task Task4 {
+    // TASKS
+    task Task10 {
+      implementation "file://implementation_F.java";
+    }
+    task Task9 {
+      implementation "file://implementation_F.py";
+    }
+    task Task11 {
+      implementation "file://implementation_G.java";
+    }
+
+    // TASK CONNECTIONS
+    
+    START -> Task10 -> Task9 -> Task11 -> END;
+  }
+
+  // DATA
+  data InputData;
+
+  // TASK CONNECTIONS
+  
+  START -> Task2 -> PARALLEL_1;
+  PARALLEL_1 -> Task1 -> PARALLEL_END_1;
+  PARALLEL_1 -> Task3 -> Task4 -> PARALLEL_END_1;
+  PARALLEL_END_1 -> END;
+
+  // DATA CONNECTIONS
+
+  InputData --> Task2;
+}
+[0m[32;1m[1;3mno
+
+There is a cycle in the control flow within `Task1`, specifically between `Task6` and `Task5`, but not within the control flow of `Task6` itself.[0m
+
+[1m> Finished chain.[0m
+Agent reply:
+[36m
+no
+
+There is a cycle in the control flow within `Task1`, specifically between `Task6` and `Task5`, but not within the control flow of `Task6` itself.
+[0m
+Answer correctness: 1.000
+
+Configuration: 'specification_folder' updated to examples/automl_wrong_implementation/6_expanded_descriptions
+[33m
+Pattern: Flow cycle
+[0m
+User input:
+[35m
+In task 'HyperparameterOptimization' from workflow 'FailurePredictionInManufacture', is there a cycle in the control flow? On the first line of your response, write either "yes" or "no" and nothing else. On the second, write a short justification of the answer.
+[0m
+
+
+[1m> Entering new AgentExecutor chain...[0m
+[32;1m[1;3m
+Invoking: `workflow_specification` with `{'workflow_name': 'FailurePredictionInManufacture'}`
+
+
+[0m[36;1m[1;3mpackage automl_ideko;
+
+workflow FailurePredictionInManufacture {
+  description "AutoML for selecting a model to perform prediction of machine failures (binary classification).";
+
+  // TASKS
+  task DataRetrieval {
+    description "Loads the data from the predictive_maintenance.csv file and drops the unnecessary data.";
+    implementation "file://ideko_data_retreival.py";
+  }
+  task TrainTestSplit {
+    description "Randomly splits the data into training and test sets.";
+    implementation "file://random_train_test_split.py";
+    param test_size = 0.2;
+  }
+  task HyperparameterOptimization {
+    description "Uses grid search to explore hyperparameter configurations and asks the user to select the best one.";
+    
+    // TASKS
+    task HyperparameterProposal {
+      description "Repeatedly proposes hyperparameter configurations until a stop condition is met (based on the metrics of the current ML model).";
+      implementation "file://grid_search.py";
+    }
+    task MLModelValidation {
+      description "Trains and evaluates the ML model with the proposed hyperparameter configuration.";
+      
+      // TASKS
+      task TrainTestSplit {
+        description "Randomly splits the data into training and test sets.";
+        implementation "file://random_train_test_split.py";
+        param test_size = 0.2;
+      }
+      task MLTrainingAndEvaluation {
+        description "Training and evaluation of the ML model with the given hyperparameters.";
+        
+        // TASKS
+        task FeatureExtraction {
+          description "Extracts features from the input data.";
+          implementation "file://ideko_feature_extraction.py";
+        }
+        task ModelTraining {
+          description "Trains the regression ML model with the given hyperparameters.";
+          implementation "file://regression_training.py";
+        }
+        task ModelEvaluation {
+          description "Evaluates the trained ML model using regression metrics.";
+          implementation "file://regression_evaluation.py";
+          param metrics = ["accuracy", "precision", "recall", "f1", "num_of_params"];
+        }
+
+        // INPUT DATA
+        define data Hyperparameters;  // ML algorithm and its parameters
+        define data TrainingData;
+        define data TestData = ValidationData;
+
+        // INNER DATA
+        define data TrainingFeatures {
+          schema "file://Features.schema";
+        }
+        define data TestFeatures {
+          schema "file://Features.schema";
+        }
+
+        // OUTPUT DATA
+        define data MLModel;
+        define data MLModelMetrics {
+          schema "file://MLModelMetrics.schema";
+        }
+
+        // TASK CONNECTIONS
+        
+        START -> FeatureExtraction -> ModelTraining -> ModelEvaluation -> END;
+
+        // DATA CONNECTIONS
+
+        // feature extraction
+        TrainingData --> FeatureExtraction --> TrainingFeatures;
+        TestData --> FeatureExtraction --> TestFeatures;
+        Hyperparameters --> FeatureExtraction;
+
+        // model training
+        Hyperparameters --> ModelTraining;
+        TrainingFeatures --> ModelTraining --> MLModel;
+
+        // model evaluation
+        MLModel --> ModelEvaluation;
+        TestFeatures --> ModelEvaluation --> MLModelMetrics;
+      }
+
+      // DATA
+      define data InputData;
+      define data Hyperparameters;
+
+      define data TrainingData;
+      define data ValidationData;
+      
+      define data MLModelMetrics;
+
+      // TASK CONNECTIONS
+      
+      START -> TrainTestSplit -> MLTrainingAndEvaluation -> END;
+
+      // DATA CONNECTIONS
+
+      // input data preprocessing and train-test split
+      InputData --> TrainTestSplit;
+      TrainTestSplit --> TrainingData;
+      TrainTestSplit --> ValidationData;
+
+      // model training and evaluation
+      Hyperparameters --> MLTrainingAndEvaluation;
+      TrainingData --> MLTrainingAndEvaluation;
+      ValidationData --> MLTrainingAndEvaluation --> MLModelMetrics;  
+    }
+    task BestHyperparameterSelection {
+      description "Asks the user to select the best hyperparameter configuration.";
+      implementation "file://user_hyperparameter_selection.py";
+    }
+    
+    // DATA
+    define data TrainingData;
+    
+    define data Hyperparameters;  // ML algorithm and its parameters
+    define data MLModelMetrics {
+      schema "file://MLModelMetrics.schema";
+    }
+
+    define data BestHyperparameters; // output
+
+    // TASK CONNECTIONS
+    
+    START -> HyperparameterProposal;
+
+    HyperparameterProposal ?-> BestHyperparameterSelection {
+      condition "stop condition"; // e.g., model is good enough, iteration limit reached, ...
+    }
+
+    HyperparameterProposal ?-> MLModelValidation {
+      condition "otherwise";
+    }
+
+    MLModelValidation -> HyperparameterProposal;
+
+    BestHyperparameterSelection -> END;
+
+    // DATA CONNECTIONS
+
+    // hyperparameter selection
+    HyperparameterProposal --> Hyperparameters;
+
+    // model training and evaluation
+    Hyperparameters --> MLModelValidation;
+    TrainingData --> MLModelValidation --> MLModelMetrics;
+    MLModelMetrics --> HyperparameterProposal; // possibility to stop proposing hyperparameters if model is good enough
+
+    // best hyperparameter selection
+    MLModelMetrics --> BestHyperparameterSelection;
+    BestHyperparameterSelection --> BestHyperparameters;
+
+    param hyperparameters_grid = "file://hyperparameters_grid.json";
+  }
+  task MLTrainingAndEvaluation {
+    description "Final training and evaluation of the ML model with the best hyperparameters.";
+    
+    // TASKS
+    task FeatureExtraction {
+      description "Extracts features from the input data.";
+      implementation "file://ideko_feature_extraction.py";
+    }
+    task ModelTraining {
+      description "Trains the regression ML model with the given hyperparameters.";
+      implementation "file://regression_training.py";
+    }
+    task ModelEvaluation {
+      description "Evaluates the trained ML model using regression metrics.";
+      implementation "file://regression_evaluation.py";
+      param metrics = ["accuracy", "precision", "recall", "f1", "num_of_params"];
+    }
+
+    // INPUT DATA
+    define data Hyperparameters;  // ML algorithm and its parameters
+    define data TrainingData;
+    define data TestData;
+
+    // INNER DATA
+    define data TrainingFeatures {
+      schema "file://Features.schema";
+    }
+    define data TestFeatures {
+      schema "file://Features.schema";
+    }
+
+    // OUTPUT DATA
+    define data MLModel;
+    define data MLModelMetrics {
+      schema "file://MLModelMetrics.schema";
+    }
+
+    // TASK CONNECTIONS
+    
+    START -> FeatureExtraction -> ModelTraining -> ModelEvaluation -> END;
+
+    // DATA CONNECTIONS
+
+    // feature extraction
+    TrainingData --> FeatureExtraction --> TrainingFeatures;
+    TestData --> FeatureExtraction --> TestFeatures;
+    Hyperparameters --> FeatureExtraction;
+
+    // model training
+    Hyperparameters --> ModelTraining;
+    TrainingFeatures --> ModelTraining --> MLModel;
+
+    // model evaluation
+    MLModel --> ModelEvaluation;
+    TestFeatures --> ModelEvaluation --> MLModelMetrics;
+  }
+
+  // DATA
+  define data InputData;
+  define data RetrievedData;
+
+  define data TrainingData;
+  define data TestData;
+  
+  define data BestHyperparameters;
+  define data MLModel;
+  define data MLModelMetrics;
+
+  // TASK CONNECTIONS
+  
+  START -> DataRetrieval -> TrainTestSplit -> HyperparameterOptimization -> MLTrainingAndEvaluation -> END;
+
+  // DATA CONNECTIONS
+
+  // input data preprocessing and train-test split
+  InputData --> DataRetrieval --> RetrievedData;
+  RetrievedData --> TrainTestSplit;
+  TrainTestSplit --> TrainingData;
+  TrainTestSplit --> TestData;
+
+  // hyperparameter optimization
+  TrainingData --> HyperparameterOptimization --> BestHyperparameters;
+
+  // final model training and evaluation
+  BestHyperparameters --> MLTrainingAndEvaluation; 
+  TrainingData --> MLTrainingAndEvaluation --> MLModel;
+  TestData --> MLTrainingAndEvaluation --> MLModelMetrics;
+}
+[0m[32;1m[1;3myes
+
+The "HyperparameterOptimization" task shows a cycle in the control flow between "HyperparameterProposal", "MLModelValidation", and back to "HyperparameterProposal". This loop continues until a stopping condition is met, which then leads to the "BestHyperparameterSelection" task.[0m
+
+[1m> Finished chain.[0m
+Agent reply:
+[36m
+yes
+
+The "HyperparameterOptimization" task shows a cycle in the control flow between "HyperparameterProposal", "MLModelValidation", and back to "HyperparameterProposal". This loop continues until a stopping condition is met, which then leads to the "BestHyperparameterSelection" task.
+[0m
+Answer correctness: 1.000
+
+Configuration: 'specification_folder' updated to examples/artificial_workflow/3_expanded
+[33m
+Pattern: Mutually exclusive conditional flow
+[0m
+User input:
+[35m
+In workflow 'MainWorkflow', are conditional links in control flow from 'Task7' mutually exclusive? On the first line of your response, write either "yes" or "no" and nothing else. On the second, write a short justification of the answer.
+[0m
+
+
+[1m> Entering new AgentExecutor chain...[0m
+[32;1m[1;3m
+Invoking: `workflow_specification` with `{'workflow_name': 'MainWorkflow'}`
+
+
+[0m[36;1m[1;3mpackage package2;
+
+workflow MainWorkflow {
+  
+  // TASKS
+  task Task1 {
+    // TASKS
+    task Task5 {
+      implementation "file://implementation_C.py";
+    }
+    task Task6 {
+      // TASKS
+      task Task7 {
+        implementation "file://implementation_D.py";
+      }
+      task Task8 {
+        implementation "file://implementation_E.exe";
+      }
+      task Task9 {
+        implementation "file://implementation_F.exe";
+      }
+
+      // PARAMETERS
+      param p = 4;
+
+      // TASK CONNECTIONS
+  
+      START -> Task7;
+
+      Task7 ?-> Task9 {
+        condition "p > 1";
+      }
+
+      Task7 ?-> Task8 {
+        condition "p < 10";
+      }
+      
+      Task9 -> END;
+      Task8 -> END;
+    }
+
+    // TASK CONNECTIONS
+    
+    START -> Task5 -> Task6;
+    Task6 -> Task5;
+  }
+  task Task2 {
+    implementation "file://implementation_A.py";
+    param value = 0.2;
+  }
+  task Task3 {
+    implementation "file://implementation_B.py";
+  }
+  task Task4 {
+    // TASKS
+    task Task10 {
+      implementation "file://implementation_F.java";
+    }
+    task Task9 {
+      implementation "file://implementation_F.py";
+    }
+    task Task11 {
+      implementation "file://implementation_G.java";
+    }
+
+    // TASK CONNECTIONS
+    
+    START -> Task10 -> Task9 -> Task11 -> END;
+  }
+
+  // DATA
+  data InputData;
+
+  // TASK CONNECTIONS
+  
+  START -> Task2 -> PARALLEL_1;
+  PARALLEL_1 -> Task1 -> PARALLEL_END_1;
+  PARALLEL_1 -> Task3 -> Task4 -> PARALLEL_END_1;
+  PARALLEL_END_1 -> END;
+
+  // DATA CONNECTIONS
+
+  InputData --> Task2;
+}
+[0m[32;1m[1;3myes
+
+Both conditions from Task7 ("p > 1" and "p < 10") can be true at the same time, yet they target mutually exclusive tasks (Task9 and Task8), implying that only one of the conditions can lead to its task execution at a time given the same context.[0m
+
+[1m> Finished chain.[0m
+Agent reply:
+[36m
+yes
+
+Both conditions from Task7 ("p > 1" and "p < 10") can be true at the same time, yet they target mutually exclusive tasks (Task9 and Task8), implying that only one of the conditions can lead to its task execution at a time given the same context.
+[0m
+Answer correctness: 0.000
+
+Configuration: 'specification_folder' updated to examples/automl_wrong_implementation/6_expanded_descriptions
+[33m
+Pattern: Mutually exclusive conditional flow
+[0m
+User input:
+[35m
+In workflow 'FailurePredictionInManufacture', are conditional links in control flow from 'HyperparameterProposal' mutually exclusive? On the first line of your response, write either "yes" or "no" and nothing else. On the second, write a short justification of the answer.
+[0m
+
+
+[1m> Entering new AgentExecutor chain...[0m
+[32;1m[1;3m
+Invoking: `workflow_specification` with `{'workflow_name': 'FailurePredictionInManufacture'}`
+
+
+[0m[36;1m[1;3mpackage automl_ideko;
+
+workflow FailurePredictionInManufacture {
+  description "AutoML for selecting a model to perform prediction of machine failures (binary classification).";
+
+  // TASKS
+  task DataRetrieval {
+    description "Loads the data from the predictive_maintenance.csv file and drops the unnecessary data.";
+    implementation "file://ideko_data_retreival.py";
+  }
+  task TrainTestSplit {
+    description "Randomly splits the data into training and test sets.";
+    implementation "file://random_train_test_split.py";
+    param test_size = 0.2;
+  }
+  task HyperparameterOptimization {
+    description "Uses grid search to explore hyperparameter configurations and asks the user to select the best one.";
+    
+    // TASKS
+    task HyperparameterProposal {
+      description "Repeatedly proposes hyperparameter configurations until a stop condition is met (based on the metrics of the current ML model).";
+      implementation "file://grid_search.py";
+    }
+    task MLModelValidation {
+      description "Trains and evaluates the ML model with the proposed hyperparameter configuration.";
+      
+      // TASKS
+      task TrainTestSplit {
+        description "Randomly splits the data into training and test sets.";
+        implementation "file://random_train_test_split.py";
+        param test_size = 0.2;
+      }
+      task MLTrainingAndEvaluation {
+        description "Training and evaluation of the ML model with the given hyperparameters.";
+        
+        // TASKS
+        task FeatureExtraction {
+          description "Extracts features from the input data.";
+          implementation "file://ideko_feature_extraction.py";
+        }
+        task ModelTraining {
+          description "Trains the regression ML model with the given hyperparameters.";
+          implementation "file://regression_training.py";
+        }
+        task ModelEvaluation {
+          description "Evaluates the trained ML model using regression metrics.";
+          implementation "file://regression_evaluation.py";
+          param metrics = ["accuracy", "precision", "recall", "f1", "num_of_params"];
+        }
+
+        // INPUT DATA
+        define data Hyperparameters;  // ML algorithm and its parameters
+        define data TrainingData;
+        define data TestData = ValidationData;
+
+        // INNER DATA
+        define data TrainingFeatures {
+          schema "file://Features.schema";
+        }
+        define data TestFeatures {
+          schema "file://Features.schema";
+        }
+
+        // OUTPUT DATA
+        define data MLModel;
+        define data MLModelMetrics {
+          schema "file://MLModelMetrics.schema";
+        }
+
+        // TASK CONNECTIONS
+        
+        START -> FeatureExtraction -> ModelTraining -> ModelEvaluation -> END;
+
+        // DATA CONNECTIONS
+
+        // feature extraction
+        TrainingData --> FeatureExtraction --> TrainingFeatures;
+        TestData --> FeatureExtraction --> TestFeatures;
+        Hyperparameters --> FeatureExtraction;
+
+        // model training
+        Hyperparameters --> ModelTraining;
+        TrainingFeatures --> ModelTraining --> MLModel;
+
+        // model evaluation
+        MLModel --> ModelEvaluation;
+        TestFeatures --> ModelEvaluation --> MLModelMetrics;
+      }
+
+      // DATA
+      define data InputData;
+      define data Hyperparameters;
+
+      define data TrainingData;
+      define data ValidationData;
+      
+      define data MLModelMetrics;
+
+      // TASK CONNECTIONS
+      
+      START -> TrainTestSplit -> MLTrainingAndEvaluation -> END;
+
+      // DATA CONNECTIONS
+
+      // input data preprocessing and train-test split
+      InputData --> TrainTestSplit;
+      TrainTestSplit --> TrainingData;
+      TrainTestSplit --> ValidationData;
+
+      // model training and evaluation
+      Hyperparameters --> MLTrainingAndEvaluation;
+      TrainingData --> MLTrainingAndEvaluation;
+      ValidationData --> MLTrainingAndEvaluation --> MLModelMetrics;  
+    }
+    task BestHyperparameterSelection {
+      description "Asks the user to select the best hyperparameter configuration.";
+      implementation "file://user_hyperparameter_selection.py";
+    }
+    
+    // DATA
+    define data TrainingData;
+    
+    define data Hyperparameters;  // ML algorithm and its parameters
+    define data MLModelMetrics {
+      schema "file://MLModelMetrics.schema";
+    }
+
+    define data BestHyperparameters; // output
+
+    // TASK CONNECTIONS
+    
+    START -> HyperparameterProposal;
+
+    HyperparameterProposal ?-> BestHyperparameterSelection {
+      condition "stop condition"; // e.g., model is good enough, iteration limit reached, ...
+    }
+
+    HyperparameterProposal ?-> MLModelValidation {
+      condition "otherwise";
+    }
+
+    MLModelValidation -> HyperparameterProposal;
+
+    BestHyperparameterSelection -> END;
+
+    // DATA CONNECTIONS
+
+    // hyperparameter selection
+    HyperparameterProposal --> Hyperparameters;
+
+    // model training and evaluation
+    Hyperparameters --> MLModelValidation;
+    TrainingData --> MLModelValidation --> MLModelMetrics;
+    MLModelMetrics --> HyperparameterProposal; // possibility to stop proposing hyperparameters if model is good enough
+
+    // best hyperparameter selection
+    MLModelMetrics --> BestHyperparameterSelection;
+    BestHyperparameterSelection --> BestHyperparameters;
+
+    param hyperparameters_grid = "file://hyperparameters_grid.json";
+  }
+  task MLTrainingAndEvaluation {
+    description "Final training and evaluation of the ML model with the best hyperparameters.";
+    
+    // TASKS
+    task FeatureExtraction {
+      description "Extracts features from the input data.";
+      implementation "file://ideko_feature_extraction.py";
+    }
+    task ModelTraining {
+      description "Trains the regression ML model with the given hyperparameters.";
+      implementation "file://regression_training.py";
+    }
+    task ModelEvaluation {
+      description "Evaluates the trained ML model using regression metrics.";
+      implementation "file://regression_evaluation.py";
+      param metrics = ["accuracy", "precision", "recall", "f1", "num_of_params"];
+    }
+
+    // INPUT DATA
+    define data Hyperparameters;  // ML algorithm and its parameters
+    define data TrainingData;
+    define data TestData;
+
+    // INNER DATA
+    define data TrainingFeatures {
+      schema "file://Features.schema";
+    }
+    define data TestFeatures {
+      schema "file://Features.schema";
+    }
+
+    // OUTPUT DATA
+    define data MLModel;
+    define data MLModelMetrics {
+      schema "file://MLModelMetrics.schema";
+    }
+
+    // TASK CONNECTIONS
+    
+    START -> FeatureExtraction -> ModelTraining -> ModelEvaluation -> END;
+
+    // DATA CONNECTIONS
+
+    // feature extraction
+    TrainingData --> FeatureExtraction --> TrainingFeatures;
+    TestData --> FeatureExtraction --> TestFeatures;
+    Hyperparameters --> FeatureExtraction;
+
+    // model training
+    Hyperparameters --> ModelTraining;
+    TrainingFeatures --> ModelTraining --> MLModel;
+
+    // model evaluation
+    MLModel --> ModelEvaluation;
+    TestFeatures --> ModelEvaluation --> MLModelMetrics;
+  }
+
+  // DATA
+  define data InputData;
+  define data RetrievedData;
+
+  define data TrainingData;
+  define data TestData;
+  
+  define data BestHyperparameters;
+  define data MLModel;
+  define data MLModelMetrics;
+
+  // TASK CONNECTIONS
+  
+  START -> DataRetrieval -> TrainTestSplit -> HyperparameterOptimization -> MLTrainingAndEvaluation -> END;
+
+  // DATA CONNECTIONS
+
+  // input data preprocessing and train-test split
+  InputData --> DataRetrieval --> RetrievedData;
+  RetrievedData --> TrainTestSplit;
+  TrainTestSplit --> TrainingData;
+  TrainTestSplit --> TestData;
+
+  // hyperparameter optimization
+  TrainingData --> HyperparameterOptimization --> BestHyperparameters;
+
+  // final model training and evaluation
+  BestHyperparameters --> MLTrainingAndEvaluation; 
+  TrainingData --> MLTrainingAndEvaluation --> MLModel;
+  TestData --> MLTrainingAndEvaluation --> MLModelMetrics;
+}
+[0m[32;1m[1;3myes
+
+The conditional links from 'HyperparameterProposal' are not mutually exclusive as the workflow specifies conditional transitions to either 'BestHyperparameterSelection' or 'MLModelValidation' based on different conditions, but it allows for a loop back from 'MLModelValidation' to 'HyperparameterProposal', indicating that these paths are part of an iterative process rather than exclusive options.[0m
+
+[1m> Finished chain.[0m
+Agent reply:
+[36m
+yes
+
+The conditional links from 'HyperparameterProposal' are not mutually exclusive as the workflow specifies conditional transitions to either 'BestHyperparameterSelection' or 'MLModelValidation' based on different conditions, but it allows for a loop back from 'MLModelValidation' to 'HyperparameterProposal', indicating that these paths are part of an iterative process rather than exclusive options.
+[0m
+Answer correctness: 1.000
+
+
+End of test.
+
+Total test instances: 19
+                                      category  score  count
+pattern                                                     
+List of tasks                        structure    0.8      5
+Task links in flow                   structure    0.5      4
+Next tasks in flow                   structure    1.0      4
+Flow cycle                           structure    1.0      4
+Mutually exclusive conditional flow   behavior    0.5      2
+
+              score  count
+category                  
+structure  0.823529     17
+behavior   0.500000      2
