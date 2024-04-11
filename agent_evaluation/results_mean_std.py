@@ -57,8 +57,8 @@ def compute_statistics(files):
 if __name__ == "__main__":
 
     files = []
-    # glob = "3/*.patterns.csv"
-    glob = "3/*.categories.csv"
+    # glob = "chain_of_thought/1/*.patterns.csv"
+    glob = "chain_of_thought/1/*.categories.csv"
     files = list((Path(__file__).parent.parent / "agent_evaluation_logs").glob(glob))
 
     # Expects file paths to CSV files as command-line arguments

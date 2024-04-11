@@ -1,6 +1,6 @@
 package automl;
 
-workflow MLTrainingAndEvaluation {
+workflow MLTrainingAndEvaluation2 {
   description "Training and evaluation of the ML model with the given hyperparameters.";
 
   // TASKS
