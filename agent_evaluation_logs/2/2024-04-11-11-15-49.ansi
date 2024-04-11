@@ -1,0 +1,293 @@
+Configuration file path: examples/artificial_workflow/2_config.yaml
+Configuration: {'logger_folder': 'xxp_agent_logs/artificial_workflow', 'model': 'gpt-4-0125-preview', 'specification_type': 'xxp_assembled', 'specification_folder': 'examples/artificial_workflow/2_assembled', 'main_workflow_name': 'MainWorkflow'}
+LLM model: gpt-4-0125-preview 
+
+[2m
+This script uses multiline input. Press Ctrl+D (Linux) or Ctrl+Z (Windows) on an empty line to end input message.
+[0m
+Prompt template:
+[35m
+SystemMessage(content='Your goal is to help the user with analyzing results of an experiment and suggest improvements to the experiment itself.\n\nThe experiment is defined by a workflow, which is an activity diagram consisting of several tasks with a data flow among them. Each of the tasks can be composed of a subworkflow and you can use tools to obtain the specification of the subworkflow.\n\nThe workflow is specified using a DSL:\narrows "->" represent control flow\narrows with question mark “?->” represent conditional control flow\ndashed arrows "-->" represent data flow\n\nThink in steps and use the available tools. Use the tools if you need specification of a workflow or a task, list the results collected during the experiment, etc. If the information cannot be obtained using the tools, ask the user. Always gather all the necessary information before submitting your final answer.\n')
+HumanMessagePromptTemplate(prompt=PromptTemplate(input_variables=['input'], template='{input}'))
+MessagesPlaceholder(variable_name='agent_scratchpad')
+[0m
+Tools:
+[35m
+workflow_specification: Get the specification of the workflow (or subworkflow). Note that the workflow specification can contain references to subworkflows. To fully understand the whole workflow, it might be necessary to also obtain the specification of the subworkflows.
+[0m
+
+Start of test.
+
+Configuration: 'specification_folder' updated to examples/artificial_workflow/2_assembled
+[33m
+Pattern: Links in flow
+[0m
+User input:
+[35m
+In workflow 'SubWorkflow', is there a control flow link from 'Task10' to 'Task9'? On the first line of your response, write either "yes" or "no" and nothing else. On the second, write a short justification of the answer.
+[0m
+
+
+[1m> Entering new AgentExecutor chain...[0m
+[32;1m[1;3m
+Invoking: `workflow_specification` with `{'workflow_name': 'SubWorkflow'}`
+
+
+[0m[36;1m[1;3mpackage package2;
+
+workflow SubWorkflow {
+
+  // TASKS
+  task Task10 {
+    implementation "file://implementation_F.java";
+  }
+  task Task9 {
+    implementation "file://implementation_F.py";
+  }
+  task Task11 {
+    implementation "file://implementation_G.java";
+  }
+
+  // TASK CONNECTIONS
+  
+  START -> Task10 -> Task9 -> Task11 -> END;  
+}
+[0m[32;1m[1;3mno
+There is a direct control flow link from 'Task10' to 'Task9', indicating a sequence where 'Task10' precedes 'Task9'.[0m
+
+[1m> Finished chain.[0m
+Agent reply:
+[36m
+no
+There is a direct control flow link from 'Task10' to 'Task9', indicating a sequence where 'Task10' precedes 'Task9'.
+[0m
+Answer correctness: 0.000
+
+[33m
+Pattern: Links in flow
+[0m
+User input:
+[35m
+In workflow 'SubWorkflow', is there a control flow link from 'Task9' to 'Task10'? On the first line of your response, write either "yes" or "no" and nothing else. On the second, write a short justification of the answer.
+[0m
+
+
+[1m> Entering new AgentExecutor chain...[0m
+[32;1m[1;3m
+Invoking: `workflow_specification` with `{'workflow_name': 'SubWorkflow'}`
+
+
+[0m[36;1m[1;3mpackage package2;
+
+workflow SubWorkflow {
+
+  // TASKS
+  task Task10 {
+    implementation "file://implementation_F.java";
+  }
+  task Task9 {
+    implementation "file://implementation_F.py";
+  }
+  task Task11 {
+    implementation "file://implementation_G.java";
+  }
+
+  // TASK CONNECTIONS
+  
+  START -> Task10 -> Task9 -> Task11 -> END;  
+}
+[0m[32;1m[1;3mno
+
+The control flow link goes from 'Task10' to 'Task9', not from 'Task9' to 'Task10'.[0m
+
+[1m> Finished chain.[0m
+Agent reply:
+[36m
+no
+
+The control flow link goes from 'Task10' to 'Task9', not from 'Task9' to 'Task10'.
+[0m
+Answer correctness: 1.000
+
+Configuration: 'specification_folder' updated to examples/automl_wrong_implementation/5_assembled_descriptions
+[33m
+Pattern: Links in flow
+[0m
+User input:
+[35m
+In workflow 'MLTrainingAndEvaluation', is there a control flow link from 'ModelEvaluation' to 'ModelTraining'? On the first line of your response, write either "yes" or "no" and nothing else. On the second, write a short justification of the answer.
+[0m
+
+
+[1m> Entering new AgentExecutor chain...[0m
+[32;1m[1;3m
+Invoking: `workflow_specification` with `{'workflow_name': 'MLTrainingAndEvaluation'}`
+
+
+[0m[36;1m[1;3mpackage automl_ideko;
+
+workflow MLTrainingAndEvaluation {
+  description "Training and evaluation of the regression ML model with the given hyperparameters.";
+  
+  // TASKS
+  task FeatureExtraction {
+    description "Extracts features from the input data.";
+    implementation "file://ideko_feature_extraction.py";
+  }
+  task ModelTraining {
+    description "Trains the regression ML model with the given hyperparameters.";
+    implementation "file://regression_training.py";
+  }
+  task ModelEvaluation {
+    description "Evaluates the trained ML model using regression metrics.";
+    implementation "file://regression_evaluation.py";
+    param metrics = ["accuracy", "precision", "recall", "f1", "num_of_params"];
+  }
+
+  // INPUT DATA
+  define data Hyperparameters;  // ML algorithm and its parameters
+  define data TrainingData;
+  define data TestData;
+
+  // INNER DATA
+  define data TrainingFeatures {
+    schema "file://Features.schema";
+  }
+  define data TestFeatures {
+    schema "file://Features.schema";
+  }
+
+  // OUTPUT DATA
+  define data MLModel;
+  define data MLModelMetrics {
+    schema "file://MLModelMetrics.schema";
+  }
+
+  // TASK CONNECTIONS
+  
+  START -> FeatureExtraction -> ModelTraining -> ModelEvaluation -> END;
+
+  // DATA CONNECTIONS
+
+  // feature extraction
+  TrainingData --> FeatureExtraction --> TrainingFeatures;
+  TestData --> FeatureExtraction --> TestFeatures;
+  Hyperparameters --> FeatureExtraction;
+
+  // model training
+  Hyperparameters --> ModelTraining;
+  TrainingFeatures --> ModelTraining --> MLModel;
+
+  // model evaluation
+  MLModel --> ModelEvaluation;
+  TestFeatures --> ModelEvaluation --> MLModelMetrics;
+}
+[0m[32;1m[1;3mno
+
+There is no control flow link from 'ModelEvaluation' to 'ModelTraining' in the specified workflow; the control flow proceeds linearly from 'FeatureExtraction' to 'ModelTraining', and then to 'ModelEvaluation', terminating with 'END'.[0m
+
+[1m> Finished chain.[0m
+Agent reply:
+[36m
+no
+
+There is no control flow link from 'ModelEvaluation' to 'ModelTraining' in the specified workflow; the control flow proceeds linearly from 'FeatureExtraction' to 'ModelTraining', and then to 'ModelEvaluation', terminating with 'END'.
+[0m
+Answer correctness: 1.000
+
+[33m
+Pattern: Links in flow
+[0m
+User input:
+[35m
+In workflow 'MLTrainingAndEvaluation2', is there a control flow link from 'ModelEvaluation' to 'ModelTraining'? On the first line of your response, write either "yes" or "no" and nothing else. On the second, write a short justification of the answer.
+[0m
+
+
+[1m> Entering new AgentExecutor chain...[0m
+[32;1m[1;3m
+Invoking: `workflow_specification` with `{'workflow_name': 'MLTrainingAndEvaluation2'}`
+
+
+[0m[36;1m[1;3mpackage automl_ideko;
+
+workflow MLTrainingAndEvaluation2 {
+  description "Training and evaluation of the regression ML model with the given hyperparameters.";
+  
+  // TASKS
+  task FeatureExtraction {
+    description "Extracts features from the input data.";
+    implementation "file://ideko_feature_extraction.py";
+  }
+  task ModelTraining {
+    description "Trains the classification ML model with the given hyperparameters.";
+    implementation "file://classification_training.py";
+  }
+  task ModelEvaluation {
+    description "Evaluates the trained ML model using classification metrics.";
+    implementation "file://classification_evaluation.py";
+    param metrics = ["accuracy", "precision", "recall", "f1", "num_of_params"];
+  }
+
+  // INPUT DATA
+  define data Hyperparameters;  // ML algorithm and its parameters
+  define data TrainingData;
+  define data TestData;
+
+  // INNER DATA
+  define data TrainingFeatures {
+    schema "file://Features.schema";
+  }
+  define data TestFeatures {
+    schema "file://Features.schema";
+  }
+
+  // OUTPUT DATA
+  define data MLModel;
+  define data MLModelMetrics {
+    schema "file://MLModelMetrics.schema";
+  }
+
+  // TASK CONNECTIONS
+  
+  START -> FeatureExtraction -> ModelEvaluation -> ModelTraining -> END;
+
+  // DATA CONNECTIONS
+
+  // feature extraction
+  TrainingData --> FeatureExtraction --> TrainingFeatures;
+  TestData --> FeatureExtraction --> TestFeatures;
+  Hyperparameters --> FeatureExtraction;
+
+  // model training
+  Hyperparameters --> ModelTraining;
+  TrainingFeatures --> ModelTraining --> MLModel;
+
+  // model evaluation
+  MLModel --> ModelEvaluation;
+  TestFeatures --> ModelEvaluation --> MLModelMetrics;
+}
+[0m[32;1m[1;3myes
+
+The control flow in the workflow explicitly connects 'ModelEvaluation' to 'ModelTraining'.[0m
+
+[1m> Finished chain.[0m
+Agent reply:
+[36m
+yes
+
+The control flow in the workflow explicitly connects 'ModelEvaluation' to 'ModelTraining'.
+[0m
+Answer correctness: 1.000
+
+
+End of test.
+
+Total test instances: 4
+                     category  score  count
+pattern                                    
+Links in flow  structure   0.75      4
+
+           score  count
+category               
+structure   0.75      4

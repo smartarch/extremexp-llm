@@ -1,0 +1,291 @@
+Configuration file path: examples/artificial_workflow/1_config.yaml
+Configuration: {'logger_folder': 'xxp_agent_logs/artificial_workflow', 'model': 'gpt-4-0125-preview', 'specification_type': 'xxp', 'specification_folder': 'examples/artificial_workflow/1_separate_files', 'main_workflow_name': 'MainWorkflow', 'main_workflow_package': 'package2'}
+LLM model: gpt-4-0125-preview 
+
+[2m
+This script uses multiline input. Press Ctrl+D (Linux) or Ctrl+Z (Windows) on an empty line to end input message.
+[0m
+Prompt template:
+[35m
+SystemMessage(content='Your goal is to help the user with analyzing results of an experiment and suggest improvements to the experiment itself.\n\nThe experiment is defined by a workflow, which is an activity diagram consisting of several tasks with a data flow among them. Each of the tasks can be composed of a subworkflow and you can use tools to obtain the specification of the subworkflow.\n\nThe workflow is specified using a DSL:\narrows "->" represent control flow\narrows with question mark “?->” represent conditional control flow\ndashed arrows "-->" represent data flow\n\nA workflow can be derived from another workflow, which is denoted by the "from" keyword. When working with a derived workflow, always obtain the specification of the base workflow as it is necessary to fully understand the derived workflow.\n\nThink in steps and use the available tools. Use the tools if you need specification of a workflow or a task, list the results collected during the experiment, etc. If the information cannot be obtained using the tools, ask the user. Always gather all the necessary information before submitting your final answer.\n')
+HumanMessagePromptTemplate(prompt=PromptTemplate(input_variables=['input'], template='{input}'))
+MessagesPlaceholder(variable_name='agent_scratchpad')
+[0m
+Tools:
+[35m
+workflow_specification: Get the specification of the workflow (or subworkflow). Note that the workflow specification can contain references to subworkflows and parent workflows. To fully understand the whole workflow, it might be necessary to also obtain the specification of the subworkflows and parent workflows.
+[0m
+
+Start of test.
+
+Configuration: 'specification_folder' updated to examples/artificial_workflow/1_separate_files
+[33m
+Pattern: Links in flow
+[0m
+User input:
+[35m
+In workflow 'package2.SubWorkflow', is there a control flow link from 'Task10' to 'Task9'? On the first line of your response, write either "yes" or "no" and nothing else. On the second, write a short justification of the answer.
+[0m
+
+
+[1m> Entering new AgentExecutor chain...[0m
+[32;1m[1;3m
+Invoking: `workflow_specification` with `{'package_name': 'package2', 'workflow_name': 'SubWorkflow'}`
+
+
+[0m[36;1m[1;3mpackage package2;
+
+workflow SubWorkflow from package1.Workflow4 {
+  
+  configure task Task9 {
+    implementation "file://implementation_F.py";
+  }
+
+  configure task Task11 {
+    implementation "file://implementation_G.java";
+  }
+}
+[0m[32;1m[1;3m
+Invoking: `workflow_specification` with `{'package_name': 'package1', 'workflow_name': 'Workflow4'}`
+
+
+[0m[36;1m[1;3mpackage package1;
+
+workflow Workflow4 {
+  
+  // TASKS
+  define task Task9;
+  define task Task10;
+  define task Task11;
+
+  // TASK CONNECTIONS
+  
+  START -> Task10 -> Task9 -> Task11 -> END;
+
+  // TASK CONFIGURATION
+  configure task Task10 {
+    implementation "file://implementation_F.java";
+  }
+}
+[0m[32;1m[1;3myes
+Task10 is directly connected to Task9 through a control flow link as specified in the base workflow 'package1.Workflow4'.[0m
+
+[1m> Finished chain.[0m
+Agent reply:
+[36m
+yes
+Task10 is directly connected to Task9 through a control flow link as specified in the base workflow 'package1.Workflow4'.
+[0m
+Answer correctness: 1.000
+
+[33m
+Pattern: Links in flow
+[0m
+User input:
+[35m
+In workflow 'package2.SubWorkflow', is there a control flow link from 'Task9' to 'Task10'? On the first line of your response, write either "yes" or "no" and nothing else. On the second, write a short justification of the answer.
+[0m
+
+
+[1m> Entering new AgentExecutor chain...[0m
+[32;1m[1;3m
+Invoking: `workflow_specification` with `{'package_name': 'package2', 'workflow_name': 'SubWorkflow'}`
+
+
+[0m[36;1m[1;3mpackage package2;
+
+workflow SubWorkflow from package1.Workflow4 {
+  
+  configure task Task9 {
+    implementation "file://implementation_F.py";
+  }
+
+  configure task Task11 {
+    implementation "file://implementation_G.java";
+  }
+}
+[0m[32;1m[1;3m
+Invoking: `workflow_specification` with `{'package_name': 'package1', 'workflow_name': 'Workflow4'}`
+
+
+[0m[36;1m[1;3mpackage package1;
+
+workflow Workflow4 {
+  
+  // TASKS
+  define task Task9;
+  define task Task10;
+  define task Task11;
+
+  // TASK CONNECTIONS
+  
+  START -> Task10 -> Task9 -> Task11 -> END;
+
+  // TASK CONFIGURATION
+  configure task Task10 {
+    implementation "file://implementation_F.java";
+  }
+}
+[0m[32;1m[1;3mno
+
+In the base workflow 'Workflow4' from package 'package1', the control flow goes from 'Task10' to 'Task9' and then to 'Task11', with no direct control flow from 'Task9' to 'Task10'.[0m
+
+[1m> Finished chain.[0m
+Agent reply:
+[36m
+no
+
+In the base workflow 'Workflow4' from package 'package1', the control flow goes from 'Task10' to 'Task9' and then to 'Task11', with no direct control flow from 'Task9' to 'Task10'.
+[0m
+Answer correctness: 1.000
+
+Configuration: 'specification_folder' updated to examples/automl_wrong_implementation/4_separate_files_descriptions
+[33m
+Pattern: Links in flow
+[0m
+User input:
+[35m
+In workflow 'automl.MLTrainingAndEvaluation', is there a control flow link from 'ModelEvaluation' to 'ModelTraining'? On the first line of your response, write either "yes" or "no" and nothing else. On the second, write a short justification of the answer.
+[0m
+
+
+[1m> Entering new AgentExecutor chain...[0m
+[32;1m[1;3m
+Invoking: `workflow_specification` with `{'package_name': 'automl', 'workflow_name': 'MLTrainingAndEvaluation'}`
+
+
+[0m[36;1m[1;3mpackage automl;
+
+workflow MLTrainingAndEvaluation {
+  description "Training and evaluation of the ML model with the given hyperparameters.";
+
+  // TASKS
+  define task FeatureExtraction;
+  define task ModelTraining;
+  define task ModelEvaluation;
+
+  // INPUT DATA
+  define data Hyperparameters;  // ML algorithm and its parameters
+  define data TrainingData;
+  define data TestData;
+
+  // INNER DATA
+  define data TrainingFeatures;
+  define data TestFeatures;
+
+  // OUTPUT DATA
+  define data MLModel;
+  define data MLModelMetrics;
+
+  // TASK CONNECTIONS
+  
+  START -> FeatureExtraction -> ModelTraining -> ModelEvaluation -> END;
+
+  // DATA CONNECTIONS
+
+  // feature extraction
+  TrainingData --> FeatureExtraction --> TrainingFeatures;
+  TestData --> FeatureExtraction --> TestFeatures;
+  Hyperparameters --> FeatureExtraction;
+
+  // model training
+  Hyperparameters --> ModelTraining;
+  TrainingFeatures --> ModelTraining --> MLModel;
+
+  // model evaluation
+  MLModel --> ModelEvaluation;
+  TestFeatures --> ModelEvaluation --> MLModelMetrics;
+}
+[0m[32;1m[1;3mno
+
+The workflow specifies a sequential flow from 'ModelTraining' to 'ModelEvaluation' without a return link from 'ModelEvaluation' to 'ModelTraining'.[0m
+
+[1m> Finished chain.[0m
+Agent reply:
+[36m
+no
+
+The workflow specifies a sequential flow from 'ModelTraining' to 'ModelEvaluation' without a return link from 'ModelEvaluation' to 'ModelTraining'.
+[0m
+Answer correctness: 1.000
+
+[33m
+Pattern: Links in flow
+[0m
+User input:
+[35m
+In workflow 'automl.MLTrainingAndEvaluation2', is there a control flow link from 'ModelEvaluation' to 'ModelTraining'? On the first line of your response, write either "yes" or "no" and nothing else. On the second, write a short justification of the answer.
+[0m
+
+
+[1m> Entering new AgentExecutor chain...[0m
+[32;1m[1;3m
+Invoking: `workflow_specification` with `{'package_name': 'automl', 'workflow_name': 'MLTrainingAndEvaluation2'}`
+
+
+[0m[36;1m[1;3mpackage automl;
+
+workflow MLTrainingAndEvaluation {
+  description "Training and evaluation of the ML model with the given hyperparameters.";
+
+  // TASKS
+  define task FeatureExtraction;
+  define task ModelTraining;
+  define task ModelEvaluation;
+
+  // INPUT DATA
+  define data Hyperparameters;  // ML algorithm and its parameters
+  define data TrainingData;
+  define data TestData;
+
+  // INNER DATA
+  define data TrainingFeatures;
+  define data TestFeatures;
+
+  // OUTPUT DATA
+  define data MLModel;
+  define data MLModelMetrics;
+
+  // TASK CONNECTIONS
+  
+  START -> FeatureExtraction -> ModelEvaluation -> ModelTraining -> END;
+
+  // DATA CONNECTIONS
+
+  // feature extraction
+  TrainingData --> FeatureExtraction --> TrainingFeatures;
+  TestData --> FeatureExtraction --> TestFeatures;
+  Hyperparameters --> FeatureExtraction;
+
+  // model training
+  Hyperparameters --> ModelTraining;
+  TrainingFeatures --> ModelTraining --> MLModel;
+
+  // model evaluation
+  MLModel --> ModelEvaluation;
+  TestFeatures --> ModelEvaluation --> MLModelMetrics;
+}
+[0m[32;1m[1;3mno
+
+The control flow in the given workflow specification from 'automl.MLTrainingAndEvaluation' mistakenly shows a connection from 'ModelEvaluation' to 'ModelTraining', but according to the task connections, it should sequentially go from 'FeatureExtraction' to 'ModelEvaluation', then to 'ModelTraining', indicating no direct control flow link from 'ModelEvaluation' to 'ModelTraining'.[0m
+
+[1m> Finished chain.[0m
+Agent reply:
+[36m
+no
+
+The control flow in the given workflow specification from 'automl.MLTrainingAndEvaluation' mistakenly shows a connection from 'ModelEvaluation' to 'ModelTraining', but according to the task connections, it should sequentially go from 'FeatureExtraction' to 'ModelEvaluation', then to 'ModelTraining', indicating no direct control flow link from 'ModelEvaluation' to 'ModelTraining'.
+[0m
+Answer correctness: 0.000
+
+
+End of test.
+
+Total test instances: 4
+                category  score  count
+pattern                               
+Links in flow  structure   0.75      4
+
+           score  count
+category               
+structure   0.75      4

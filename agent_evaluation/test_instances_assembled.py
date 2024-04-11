@@ -12,7 +12,15 @@ def test_instances(update_specification_tool_path):
             SetQuestion("List all tasks in workflow 'MLTrainingAndEvaluation' that have a parameter (set via the 'param' keyword).", {"ModelEvaluation"}),
             SetQuestion("List all tasks in workflow 'MLTrainingAndEvaluation' that have a subworkflow.", set()),
         ],
-        "Task links in flow": [
+        "Links in flow": [
+            update_specification_tool_path("artificial_workflow"),
+            YesNoQuestion("In workflow 'SubWorkflow', is there a control flow link from 'Task10' to 'Task9'?", True),
+            YesNoQuestion("In workflow 'SubWorkflow', is there a control flow link from 'Task9' to 'Task10'?", False),
+            update_specification_tool_path("automl_wrong_implementation"),
+            YesNoQuestion("In workflow 'MLTrainingAndEvaluation', is there a control flow link from 'ModelEvaluation' to 'ModelTraining'?", False),
+            YesNoQuestion("In workflow 'MLTrainingAndEvaluation2', is there a control flow link from 'ModelEvaluation' to 'ModelTraining'?", True),  # semantically incorrect order
+        ],
+        "Task after task": [
             update_specification_tool_path("artificial_workflow"),
             YesNoQuestion("In workflow 'SubWorkflow', does 'Task9' follow directly after 'Task10' in the control flow?", True),
             YesNoQuestion("In workflow 'SubWorkflow', does 'Task10' follow directly after 'Task9' in the control flow?", False),

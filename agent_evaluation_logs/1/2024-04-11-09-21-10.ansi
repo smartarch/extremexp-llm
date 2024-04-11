@@ -321,7 +321,7 @@ Answer correctness: 0.000
 
 Configuration: 'specification_folder' updated to examples/artificial_workflow/1_separate_files
 [33m
-Pattern: Task links in flow
+Pattern: Task after task
 [0m
 User input:
 [35m
@@ -382,7 +382,7 @@ Task9 follows Task10, not the other way around.
 Answer correctness: 0.000
 
 [33m
-Pattern: Task links in flow
+Pattern: Task after task
 [0m
 User input:
 [35m
@@ -444,7 +444,7 @@ Answer correctness: 1.000
 
 Configuration: 'specification_folder' updated to examples/automl_wrong_implementation/4_separate_files_descriptions
 [33m
-Pattern: Task links in flow
+Pattern: Task after task
 [0m
 User input:
 [35m
@@ -513,7 +513,7 @@ ModelTraining does not follow directly after ModelEvaluation; it precedes it. Th
 Answer correctness: 1.000
 
 [33m
-Pattern: Task links in flow
+Pattern: Task after task
 [0m
 User input:
 [35m
@@ -1315,7 +1315,7 @@ Total test instances: 19
                                       category  score  count
 pattern                                                     
 List of tasks                        structure   0.65      5
-Task links in flow                   structure   0.50      4
+Task after task                   structure   0.50      4
 Next tasks in flow                   structure   1.00      4
 Flow cycle                           structure   1.00      4
 Mutually exclusive conditional flow   behavior   1.00      2
