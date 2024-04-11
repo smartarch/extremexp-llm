@@ -1,6 +1,6 @@
 package automl_ideko;
 
-workflow FailurePredictionInManufacture {
+workflow FailurePredictionInManufacture2 {
   description "AutoML for selecting a model to perform prediction of machine failures (binary classification).";
 
   // TASKS

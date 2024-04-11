@@ -1,7 +1,5 @@
 from abc import ABC, abstractmethod
 
-CHAIN_OF_THOUGHT = ' Think step by step. First, reason about the question and write a short explanation of your answer. Then, on a separate line, write "Final answer:" followed by your final answer to the question.'
-
 class TestInstance(ABC):
     @abstractmethod
     def question(self) -> str:
@@ -13,8 +11,7 @@ class TestInstance(ABC):
         return 0
     
     def extract_answer(self, llm_answer: str) -> str:
-        _, _, final_answer = llm_answer.partition("Final answer:")
-        final_answer = final_answer.lstrip("*")  # remove bold text from "**Final answer:** no"
+        final_answer, _, _ = llm_answer.partition("\n")
         return final_answer
 
 
@@ -27,7 +24,7 @@ class YesNoQuestion(TestInstance):
 
     def question(self) -> str:
         # return self._question + ' Respond with either "yes" or "no" and nothing else.'
-        return self._question + CHAIN_OF_THOUGHT + ' Your final answer must be either "yes" or "no".'
+        return self._question + ' On the first line of your response, write either "yes" or "no" and nothing else. On the second, write a short justification of the answer.'
 
     def check_answer(self, answer: str) -> float:
         answer = self.extract_answer(answer)
@@ -47,14 +44,14 @@ class SetQuestion(TestInstance):
         self._correct_answer = correct_answer
 
     def question(self) -> str:
-        return self._question + CHAIN_OF_THOUGHT + ' Your final answer must be a comma separated list of values.'
+        return self._question + " On the first line of your response, write a comma separated list of values and nothing else. On the second, write a short justification of the answer."
 
     def check_answer(self, answer: str) -> float:
         answer = self.extract_answer(answer)
         answers = set(answer.replace(" ", "").split(","))
 
         if len(self._correct_answer) == 0:
-            if answer.strip().lower() in ("", "none"):
+            if answer.lower() == "none":
                 return 1
             return 0
 

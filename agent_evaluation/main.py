@@ -31,14 +31,14 @@ config = load_config(PROJECT_DIR / config_file_path)
 
 # Create Logger
 
-sys.stdout = Logger(PROJECT_DIR / "agent_evaluation_logs" / str(variant))
+sys.stdout = Logger(PROJECT_DIR / "agent_evaluation_logs" / "chain_of_thought" / str(variant))
 
 print("Configuration file path:", config_file_path)
 print("Configuration:", config)
 
 # Create LLM
 
-llm = create_llm(model=config.get(MODEL, "gpt-3.5-turbo"))
+llm = create_llm(model=config.get(MODEL, "gpt-4-0125-preview"))
 
 # Tools
 
