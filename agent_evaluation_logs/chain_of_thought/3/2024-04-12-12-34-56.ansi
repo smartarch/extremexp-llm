@@ -1,0 +1,622 @@
+Configuration file path: examples/artificial_workflow/3_config.yaml
+Configuration: {'logger_folder': 'xxp_agent_logs/artificial_workflow', 'model': 'gpt-4-0125-preview', 'specification_type': 'xxp_assembled', 'prompt_kwargs': {'with_subworkflows': False}, 'specification_folder': 'examples/artificial_workflow/3_expanded', 'main_workflow_name': 'MainWorkflow'}
+LLM model: gpt-4-0125-preview 
+
+[2m
+This script uses multiline input. Press Ctrl+D (Linux) or Ctrl+Z (Windows) on an empty line to end input message.
+[0m
+Prompt template:
+[35m
+SystemMessage(content='Your goal is to help the user with analyzing results of an experiment and suggest improvements to the experiment itself.\n\nThe experiment is defined by a workflow, which is an activity diagram consisting of several tasks with a data flow among them. \n\nThe workflow is specified using a DSL:\narrows "->" represent control flow\narrows with question mark “?->” represent conditional control flow\ndashed arrows "-->" represent data flow\n\nThink in steps and use the available tools. Use the tools if you need specification of a workflow or a task, list the results collected during the experiment, etc. If the information cannot be obtained using the tools, ask the user. Always gather all the necessary information before submitting your final answer.\n')
+HumanMessagePromptTemplate(prompt=PromptTemplate(input_variables=['input'], template='{input}'))
+MessagesPlaceholder(variable_name='agent_scratchpad')
+[0m
+Tools:
+[35m
+workflow_specification: Get the specification of the workflow (or subworkflow). Note that the workflow specification can contain references to subworkflows. To fully understand the whole workflow, it might be necessary to also obtain the specification of the subworkflows.
+[0m
+
+Start of test.
+
+Configuration: 'specification_folder' updated to examples/automl_wrong_implementation/6_expanded_descriptions
+[33m
+Pattern: Inconsistent task name and description
+[0m
+User input:
+[35m
+Identify potential errors in the descriptions of tasks in workflow 'FailurePredictionInManufacture'. Write one error per line.
+[0m
+
+
+[1m> Entering new AgentExecutor chain...[0m
+[32;1m[1;3m
+Invoking: `workflow_specification` with `{'workflow_name': 'FailurePredictionInManufacture'}`
+
+
+[0m[36;1m[1;3mpackage automl_ideko;
+
+workflow FailurePredictionInManufacture {
+  description "AutoML for selecting a model to perform prediction of machine failures (binary classification).";
+
+  // TASKS
+  task DataRetrieval {
+    description "Saves the results of the experiment and produces plots.";
+    implementation "file://ideko_data_retreival.py";
+  }
+  task TrainTestSplit {
+    description "Randomly splits the data into training and test sets.";
+    implementation "file://random_train_test_split.py";
+    param test_size = 0.2;
+  }
+  task HyperparameterOptimization {
+    description "Uses grid search to explore hyperparameter configurations and asks the user to select the best one.";
+    
+    // TASKS
+    task HyperparameterProposal {
+      description "Repeatedly proposes hyperparameter configurations until a stop condition is met (based on the metrics of the current ML model).";
+      implementation "file://grid_search.py";
+    }
+    task MLModelValidation {
+      description "Trains and evaluates the ML model with the proposed hyperparameter configuration.";
+      
+      // TASKS
+      task TrainTestSplit {
+        description "Randomly splits the data into training and test sets.";
+        implementation "file://random_train_test_split.py";
+        param test_size = 0.2;
+      }
+      task MLTrainingAndEvaluation {
+        description "Training and evaluation of the regression ML model with the given hyperparameters.";
+        
+        // TASKS
+        task FeatureExtraction {
+          description "Extracts features from the input data.";
+          implementation "file://ideko_feature_extraction.py";
+        }
+        task ModelTraining {
+          description "Trains the regression ML model with the given hyperparameters.";
+          implementation "file://regression_training.py";
+        }
+        task ModelEvaluation {
+          description "Evaluates the trained ML model using regression metrics.";
+          implementation "file://regression_evaluation.py";
+          param metrics = ["accuracy", "precision", "recall", "f1", "num_of_params"];
+        }
+
+        // INPUT DATA
+        define data Hyperparameters;  // ML algorithm and its parameters
+        define data TrainingData;
+        define data TestData = ValidationData;
+
+        // INNER DATA
+        define data TrainingFeatures {
+          schema "file://Features.schema";
+        }
+        define data TestFeatures {
+          schema "file://Features.schema";
+        }
+
+        // OUTPUT DATA
+        define data MLModel;
+        define data MLModelMetrics {
+          schema "file://MLModelMetrics.schema";
+        }
+
+        // TASK CONNECTIONS
+        
+        START -> FeatureExtraction -> ModelTraining -> ModelEvaluation -> END;
+
+        // DATA CONNECTIONS
+
+        // feature extraction
+        TrainingData --> FeatureExtraction --> TrainingFeatures;
+        TestData --> FeatureExtraction --> TestFeatures;
+        Hyperparameters --> FeatureExtraction;
+
+        // model training
+        Hyperparameters --> ModelTraining;
+        TrainingFeatures --> ModelTraining --> MLModel;
+
+        // model evaluation
+        MLModel --> ModelEvaluation;
+        TestFeatures --> ModelEvaluation --> MLModelMetrics;
+      }
+
+      // DATA
+      define data InputData;
+      define data Hyperparameters;
+
+      define data TrainingData;
+      define data ValidationData;
+      
+      define data MLModelMetrics;
+
+      // TASK CONNECTIONS
+      
+      START -> TrainTestSplit -> MLTrainingAndEvaluation -> END;
+
+      // DATA CONNECTIONS
+
+      // input data preprocessing and train-test split
+      InputData --> TrainTestSplit;
+      TrainTestSplit --> TrainingData;
+      TrainTestSplit --> ValidationData;
+
+      // model training and evaluation
+      Hyperparameters --> MLTrainingAndEvaluation;
+      TrainingData --> MLTrainingAndEvaluation;
+      ValidationData --> MLTrainingAndEvaluation --> MLModelMetrics;  
+    }
+    task BestHyperparameterSelection {
+      description "Asks the user to select the best hyperparameter configuration.";
+      implementation "file://user_hyperparameter_selection.py";
+    }
+    
+    // DATA
+    define data TrainingData;
+    
+    define data Hyperparameters;  // ML algorithm and its parameters
+    define data MLModelMetrics {
+      schema "file://MLModelMetrics.schema";
+    }
+
+    define data BestHyperparameters; // output
+
+    // TASK CONNECTIONS
+    
+    START -> HyperparameterProposal;
+
+    HyperparameterProposal ?-> BestHyperparameterSelection {
+      condition "stop condition"; // e.g., model is good enough, iteration limit reached, ...
+    }
+
+    HyperparameterProposal ?-> MLModelValidation {
+      condition "otherwise";
+    }
+
+    MLModelValidation -> HyperparameterProposal;
+
+    BestHyperparameterSelection -> END;
+
+    // DATA CONNECTIONS
+
+    // hyperparameter selection
+    HyperparameterProposal --> Hyperparameters;
+
+    // model training and evaluation
+    Hyperparameters --> MLModelValidation;
+    TrainingData --> MLModelValidation --> MLModelMetrics;
+    MLModelMetrics --> HyperparameterProposal; // possibility to stop proposing hyperparameters if model is good enough
+
+    // best hyperparameter selection
+    MLModelMetrics --> BestHyperparameterSelection;
+    BestHyperparameterSelection --> BestHyperparameters;
+
+    param hyperparameters_grid = "file://hyperparameters_grid.json";
+  }
+  task MLTrainingAndEvaluation {
+    description "Final training and evaluation of the ML model with the best hyperparameters.";
+    
+    // TASKS
+    task FeatureExtraction {
+      description "Extracts features from the input data.";
+      implementation "file://ideko_feature_extraction.py";
+    }
+    task ModelTraining {
+      description "Trains the regression ML model with the given hyperparameters.";
+      implementation "file://regression_training.py";
+    }
+    task ModelEvaluation {
+      description "Evaluates the trained ML model using regression metrics.";
+      implementation "file://regression_evaluation.py";
+      param metrics = ["accuracy", "precision", "recall", "f1", "num_of_params"];
+    }
+
+    // INPUT DATA
+    define data Hyperparameters;  // ML algorithm and its parameters
+    define data TrainingData;
+    define data TestData;
+
+    // INNER DATA
+    define data TrainingFeatures {
+      schema "file://Features.schema";
+    }
+    define data TestFeatures {
+      schema "file://Features.schema";
+    }
+
+    // OUTPUT DATA
+    define data MLModel;
+    define data MLModelMetrics {
+      schema "file://MLModelMetrics.schema";
+    }
+
+    // TASK CONNECTIONS
+    
+    START -> FeatureExtraction -> ModelTraining -> ModelEvaluation -> END;
+
+    // DATA CONNECTIONS
+
+    // feature extraction
+    TrainingData --> FeatureExtraction --> TrainingFeatures;
+    TestData --> FeatureExtraction --> TestFeatures;
+    Hyperparameters --> FeatureExtraction;
+
+    // model training
+    Hyperparameters --> ModelTraining;
+    TrainingFeatures --> ModelTraining --> MLModel;
+
+    // model evaluation
+    MLModel --> ModelEvaluation;
+    TestFeatures --> ModelEvaluation --> MLModelMetrics;
+  }
+
+  // DATA
+  define data InputData;
+  define data RetrievedData;
+
+  define data TrainingData;
+  define data TestData;
+  
+  define data BestHyperparameters;
+  define data MLModel;
+  define data MLModelMetrics;
+
+  // TASK CONNECTIONS
+  
+  START -> DataRetrieval -> TrainTestSplit -> HyperparameterOptimization -> MLTrainingAndEvaluation -> END;
+
+  // DATA CONNECTIONS
+
+  // input data preprocessing and train-test split
+  InputData --> DataRetrieval --> RetrievedData;
+  RetrievedData --> TrainTestSplit;
+  TrainTestSplit --> TrainingData;
+  TrainTestSplit --> TestData;
+
+  // hyperparameter optimization
+  TrainingData --> HyperparameterOptimization --> BestHyperparameters;
+
+  // final model training and evaluation
+  BestHyperparameters --> MLTrainingAndEvaluation; 
+  TrainingData --> MLTrainingAndEvaluation --> MLModel;
+  TestData --> MLTrainingAndEvaluation --> MLModelMetrics;
+}
+[0m[32;1m[1;3m- The description of the `DataRetrieval` task mistakenly mentions "Saves the results of the experiment and produces plots." which seems not to align with its intended purpose of data retrieval.
+- The `MLTrainingAndEvaluation` task and its sub-tasks `ModelTraining` and `ModelEvaluation` mention training and evaluating a "regression ML model" and use "regression metrics," but the workflow is for binary classification.
+- The `HyperparameterOptimization` sub-task `MLModelValidation` also includes a `TrainTestSplit` task, which is redundant since the data should already be split before this optimization process.[0m
+
+[1m> Finished chain.[0m
+Agent reply:
+[36m
+- The description of the `DataRetrieval` task mistakenly mentions "Saves the results of the experiment and produces plots." which seems not to align with its intended purpose of data retrieval.
+- The `MLTrainingAndEvaluation` task and its sub-tasks `ModelTraining` and `ModelEvaluation` mention training and evaluating a "regression ML model" and use "regression metrics," but the workflow is for binary classification.
+- The `HyperparameterOptimization` sub-task `MLModelValidation` also includes a `TrainTestSplit` task, which is redundant since the data should already be split before this optimization process.
+[0m
+Answer correctness: 0.697
+
+Configuration: 'specification_folder' updated to examples/automl_wrong_implementation/6_expanded_descriptions
+[33m
+Pattern: Inconsistent descriptions
+[0m
+User input:
+[35m
+Identify potential errors in the description of workflow 'FailurePredictionInManufacture' and its tasks (including all nested subtasks). Write one error per line.
+[0m
+
+
+[1m> Entering new AgentExecutor chain...[0m
+[32;1m[1;3m
+Invoking: `workflow_specification` with `{'workflow_name': 'FailurePredictionInManufacture'}`
+
+
+[0m[36;1m[1;3mpackage automl_ideko;
+
+workflow FailurePredictionInManufacture {
+  description "AutoML for selecting a model to perform prediction of machine failures (binary classification).";
+
+  // TASKS
+  task DataRetrieval {
+    description "Saves the results of the experiment and produces plots.";
+    implementation "file://ideko_data_retreival.py";
+  }
+  task TrainTestSplit {
+    description "Randomly splits the data into training and test sets.";
+    implementation "file://random_train_test_split.py";
+    param test_size = 0.2;
+  }
+  task HyperparameterOptimization {
+    description "Uses grid search to explore hyperparameter configurations and asks the user to select the best one.";
+    
+    // TASKS
+    task HyperparameterProposal {
+      description "Repeatedly proposes hyperparameter configurations until a stop condition is met (based on the metrics of the current ML model).";
+      implementation "file://grid_search.py";
+    }
+    task MLModelValidation {
+      description "Trains and evaluates the ML model with the proposed hyperparameter configuration.";
+      
+      // TASKS
+      task TrainTestSplit {
+        description "Randomly splits the data into training and test sets.";
+        implementation "file://random_train_test_split.py";
+        param test_size = 0.2;
+      }
+      task MLTrainingAndEvaluation {
+        description "Training and evaluation of the regression ML model with the given hyperparameters.";
+        
+        // TASKS
+        task FeatureExtraction {
+          description "Extracts features from the input data.";
+          implementation "file://ideko_feature_extraction.py";
+        }
+        task ModelTraining {
+          description "Trains the regression ML model with the given hyperparameters.";
+          implementation "file://regression_training.py";
+        }
+        task ModelEvaluation {
+          description "Evaluates the trained ML model using regression metrics.";
+          implementation "file://regression_evaluation.py";
+          param metrics = ["accuracy", "precision", "recall", "f1", "num_of_params"];
+        }
+
+        // INPUT DATA
+        define data Hyperparameters;  // ML algorithm and its parameters
+        define data TrainingData;
+        define data TestData = ValidationData;
+
+        // INNER DATA
+        define data TrainingFeatures {
+          schema "file://Features.schema";
+        }
+        define data TestFeatures {
+          schema "file://Features.schema";
+        }
+
+        // OUTPUT DATA
+        define data MLModel;
+        define data MLModelMetrics {
+          schema "file://MLModelMetrics.schema";
+        }
+
+        // TASK CONNECTIONS
+        
+        START -> FeatureExtraction -> ModelTraining -> ModelEvaluation -> END;
+
+        // DATA CONNECTIONS
+
+        // feature extraction
+        TrainingData --> FeatureExtraction --> TrainingFeatures;
+        TestData --> FeatureExtraction --> TestFeatures;
+        Hyperparameters --> FeatureExtraction;
+
+        // model training
+        Hyperparameters --> ModelTraining;
+        TrainingFeatures --> ModelTraining --> MLModel;
+
+        // model evaluation
+        MLModel --> ModelEvaluation;
+        TestFeatures --> ModelEvaluation --> MLModelMetrics;
+      }
+
+      // DATA
+      define data InputData;
+      define data Hyperparameters;
+
+      define data TrainingData;
+      define data ValidationData;
+      
+      define data MLModelMetrics;
+
+      // TASK CONNECTIONS
+      
+      START -> TrainTestSplit -> MLTrainingAndEvaluation -> END;
+
+      // DATA CONNECTIONS
+
+      // input data preprocessing and train-test split
+      InputData --> TrainTestSplit;
+      TrainTestSplit --> TrainingData;
+      TrainTestSplit --> ValidationData;
+
+      // model training and evaluation
+      Hyperparameters --> MLTrainingAndEvaluation;
+      TrainingData --> MLTrainingAndEvaluation;
+      ValidationData --> MLTrainingAndEvaluation --> MLModelMetrics;  
+    }
+    task BestHyperparameterSelection {
+      description "Asks the user to select the best hyperparameter configuration.";
+      implementation "file://user_hyperparameter_selection.py";
+    }
+    
+    // DATA
+    define data TrainingData;
+    
+    define data Hyperparameters;  // ML algorithm and its parameters
+    define data MLModelMetrics {
+      schema "file://MLModelMetrics.schema";
+    }
+
+    define data BestHyperparameters; // output
+
+    // TASK CONNECTIONS
+    
+    START -> HyperparameterProposal;
+
+    HyperparameterProposal ?-> BestHyperparameterSelection {
+      condition "stop condition"; // e.g., model is good enough, iteration limit reached, ...
+    }
+
+    HyperparameterProposal ?-> MLModelValidation {
+      condition "otherwise";
+    }
+
+    MLModelValidation -> HyperparameterProposal;
+
+    BestHyperparameterSelection -> END;
+
+    // DATA CONNECTIONS
+
+    // hyperparameter selection
+    HyperparameterProposal --> Hyperparameters;
+
+    // model training and evaluation
+    Hyperparameters --> MLModelValidation;
+    TrainingData --> MLModelValidation --> MLModelMetrics;
+    MLModelMetrics --> HyperparameterProposal; // possibility to stop proposing hyperparameters if model is good enough
+
+    // best hyperparameter selection
+    MLModelMetrics --> BestHyperparameterSelection;
+    BestHyperparameterSelection --> BestHyperparameters;
+
+    param hyperparameters_grid = "file://hyperparameters_grid.json";
+  }
+  task MLTrainingAndEvaluation {
+    description "Final training and evaluation of the ML model with the best hyperparameters.";
+    
+    // TASKS
+    task FeatureExtraction {
+      description "Extracts features from the input data.";
+      implementation "file://ideko_feature_extraction.py";
+    }
+    task ModelTraining {
+      description "Trains the regression ML model with the given hyperparameters.";
+      implementation "file://regression_training.py";
+    }
+    task ModelEvaluation {
+      description "Evaluates the trained ML model using regression metrics.";
+      implementation "file://regression_evaluation.py";
+      param metrics = ["accuracy", "precision", "recall", "f1", "num_of_params"];
+    }
+
+    // INPUT DATA
+    define data Hyperparameters;  // ML algorithm and its parameters
+    define data TrainingData;
+    define data TestData;
+
+    // INNER DATA
+    define data TrainingFeatures {
+      schema "file://Features.schema";
+    }
+    define data TestFeatures {
+      schema "file://Features.schema";
+    }
+
+    // OUTPUT DATA
+    define data MLModel;
+    define data MLModelMetrics {
+      schema "file://MLModelMetrics.schema";
+    }
+
+    // TASK CONNECTIONS
+    
+    START -> FeatureExtraction -> ModelTraining -> ModelEvaluation -> END;
+
+    // DATA CONNECTIONS
+
+    // feature extraction
+    TrainingData --> FeatureExtraction --> TrainingFeatures;
+    TestData --> FeatureExtraction --> TestFeatures;
+    Hyperparameters --> FeatureExtraction;
+
+    // model training
+    Hyperparameters --> ModelTraining;
+    TrainingFeatures --> ModelTraining --> MLModel;
+
+    // model evaluation
+    MLModel --> ModelEvaluation;
+    TestFeatures --> ModelEvaluation --> MLModelMetrics;
+  }
+
+  // DATA
+  define data InputData;
+  define data RetrievedData;
+
+  define data TrainingData;
+  define data TestData;
+  
+  define data BestHyperparameters;
+  define data MLModel;
+  define data MLModelMetrics;
+
+  // TASK CONNECTIONS
+  
+  START -> DataRetrieval -> TrainTestSplit -> HyperparameterOptimization -> MLTrainingAndEvaluation -> END;
+
+  // DATA CONNECTIONS
+
+  // input data preprocessing and train-test split
+  InputData --> DataRetrieval --> RetrievedData;
+  RetrievedData --> TrainTestSplit;
+  TrainTestSplit --> TrainingData;
+  TrainTestSplit --> TestData;
+
+  // hyperparameter optimization
+  TrainingData --> HyperparameterOptimization --> BestHyperparameters;
+
+  // final model training and evaluation
+  BestHyperparameters --> MLTrainingAndEvaluation; 
+  TrainingData --> MLTrainingAndEvaluation --> MLModel;
+  TestData --> MLTrainingAndEvaluation --> MLModelMetrics;
+}
+[0m[32;1m[1;3mBased on the description and tasks within the 'FailurePredictionInManufacture' workflow, here are identified potential errors:
+
+1. The `DataRetrieval` task description states "Saves the results of the experiment and produces plots." which is misleading as its name suggests it should be retrieving data rather than saving results and producing plots.
+
+2. The `MLTrainingAndEvaluation` task inside the `HyperparameterOptimization` task and the standalone `MLTrainingAndEvaluation` task at the end of the workflow use regression metrics for evaluation (`"accuracy", "precision", "recall", "f1", "num_of_params"`) despite the primary goal of the workflow being binary classification for predicting machine failures.
+
+3. The `ModelTraining` task within both instances of `MLTrainingAndEvaluation` is described as training a regression ML model, which contradicts the workflow's objective of binary classification.
+
+4. The `MLModelValidation` task's `TestData` is equated to `ValidationData`, which might be a semantic error because typically, "test data" and "validation data" are used at different stages of model evaluation.
+
+5. The use of a `TrainTestSplit` task within the `MLModelValidation` subtask could lead to data leakage or improper validation if the split is not handled correctly across different iterations of hyperparameter optimization, as it could split the data differently on each iteration.
+
+6. The workflow does not explicitly mention any data preprocessing or feature normalization steps, which are crucial for most ML models to perform well.
+
+7. The `HyperparameterOptimization` task's description mentions using grid search to explore hyperparameter configurations, but the workflow does not specify how the grid is defined or used, except for a parameter `hyperparameters_grid` at the end of the task description.
+
+8. The condition for looping from `MLModelValidation` back to `HyperparameterProposal` in `HyperparameterOptimization` is not clearly defined within the DSL, it just mentions "otherwise" without a specific metric or threshold.
+
+9. The description of the `DataRetrieval` task does not align with its expected functionality within the workflow, suggesting a possible copy-paste error or incorrect detailing.
+
+10. The workflow lacks explicit error handling or fallback mechanisms in case of failures at any stage of the model training or evaluation processes.[0m
+
+[1m> Finished chain.[0m
+Agent reply:
+[36m
+Based on the description and tasks within the 'FailurePredictionInManufacture' workflow, here are identified potential errors:
+
+1. The `DataRetrieval` task description states "Saves the results of the experiment and produces plots." which is misleading as its name suggests it should be retrieving data rather than saving results and producing plots.
+
+2. The `MLTrainingAndEvaluation` task inside the `HyperparameterOptimization` task and the standalone `MLTrainingAndEvaluation` task at the end of the workflow use regression metrics for evaluation (`"accuracy", "precision", "recall", "f1", "num_of_params"`) despite the primary goal of the workflow being binary classification for predicting machine failures.
+
+3. The `ModelTraining` task within both instances of `MLTrainingAndEvaluation` is described as training a regression ML model, which contradicts the workflow's objective of binary classification.
+
+4. The `MLModelValidation` task's `TestData` is equated to `ValidationData`, which might be a semantic error because typically, "test data" and "validation data" are used at different stages of model evaluation.
+
+5. The use of a `TrainTestSplit` task within the `MLModelValidation` subtask could lead to data leakage or improper validation if the split is not handled correctly across different iterations of hyperparameter optimization, as it could split the data differently on each iteration.
+
+6. The workflow does not explicitly mention any data preprocessing or feature normalization steps, which are crucial for most ML models to perform well.
+
+7. The `HyperparameterOptimization` task's description mentions using grid search to explore hyperparameter configurations, but the workflow does not specify how the grid is defined or used, except for a parameter `hyperparameters_grid` at the end of the task description.
+
+8. The condition for looping from `MLModelValidation` back to `HyperparameterProposal` in `HyperparameterOptimization` is not clearly defined within the DSL, it just mentions "otherwise" without a specific metric or threshold.
+
+9. The description of the `DataRetrieval` task does not align with its expected functionality within the workflow, suggesting a possible copy-paste error or incorrect detailing.
+
+10. The workflow lacks explicit error handling or fallback mechanisms in case of failures at any stage of the model training or evaluation processes.
+[0m
+Answer correctness: 0.794
+
+
+End of test.
+
+Total test instances: 2
+                                         category     score  count
+pattern                                                           
+Inconsistent task name and description  semantics  0.696970      1
+Inconsistent descriptions               semantics  0.794118      1
+
+              score  count
+category                  
+semantics  0.745544      2

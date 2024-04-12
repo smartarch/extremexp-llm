@@ -9,13 +9,13 @@ from langchain_core.pydantic_v1 import BaseModel, Field
 from helpers import MEMORY_KEY, AGENT_SCRATCHPAD
 
 
-def get_prompt_template(main_workflow_name, with_memory=True, with_main=True):
+def get_prompt_template(main_workflow_name, with_memory=True, with_main=True, with_subworkflows=True):
     # based on https://smith.langchain.com/hub/hwchase17/openai-tools-agent and modified
     messages = [
-        SystemMessage(content="""\
+        SystemMessage(content=f"""\
 Your goal is to help the user with analyzing results of an experiment and suggest improvements to the experiment itself.
 
-The experiment is defined by a workflow, which is an activity diagram consisting of several tasks with a data flow among them. Each of the tasks can be composed of a subworkflow and you can use tools to obtain the specification of the subworkflow.
+The experiment is defined by a workflow, which is an activity diagram consisting of several tasks with a data flow among them. {'Each of the tasks can be composed of a subworkflow and you can use tools to obtain the specification of the subworkflow.' if with_subworkflows else ''}
 
 The workflow is specified using a DSL:
 arrows "->" represent control flow

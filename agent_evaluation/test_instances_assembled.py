@@ -1,4 +1,4 @@
-from test_instance_templates import SetQuestion, YesNoQuestion, instance_generator
+from test_instance_templates import OpenQuestion, SetQuestion, YesNoQuestion, instance_generator
 
 
 def test_instances(update_specification_tool_path):
@@ -54,5 +54,21 @@ def test_instances(update_specification_tool_path):
         ]
     }
 
+    test_instances_semantics = {
+        "Inconsistent task name and description": [
+            update_specification_tool_path("automl_wrong_implementation"),
+            OpenQuestion(
+                "Identify potential errors in the descriptions of tasks in workflow 'FailurePredictionInManufacture'. Write one error per line.",
+                "The description of task 'DataRetrieval' does not correspond with its name. The task should retrieve the input data, while the description says that it saves the results of the experiment and produces plots."),
+        ],
+        "Inconsistent descriptions": [
+            update_specification_tool_path("automl_wrong_implementation"),
+            OpenQuestion(
+                "Identify potential errors in the description of workflow 'FailurePredictionInManufacture' and its tasks (including tasks in the subworkflows). Write one error per line.",
+                "The description of the 'MLTrainingAndEvaluation' subworkflow does not correspond with the description of the 'FailurePredictionInManufacture' workflow. The tasks state that they train a regression ML model while the workflow is intended for binary classification."),
+        ],
+    }
+
     yield from instance_generator("structure", test_instances_structure)
     yield from instance_generator("behavior", test_instances_behavior)
+    yield from instance_generator("semantics", test_instances_semantics)

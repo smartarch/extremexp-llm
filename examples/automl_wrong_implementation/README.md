@@ -1,5 +1,19 @@
 # AutoML workflow with wrong implementation
 
+The workflows in this folder intentionally contain mistakes. The LLM is asked to find them.
+
+The mistakes are:
+
+* In the description of main workflow (`FailurePredictionInManufacture`), the ML goal is "binary classification", but the descriptions (and implementation) in `MLTrainingAndEvaluation` claim it is "regression".
+* The description of `DataRetrieval` task in `FailurePredictionInManufacture` is wrong (does not correspond to the name of the task).
+* The `ModelEvaluation` task in `MLTrainingAndEvaluation` uses `regression_evaluation.py`, but the `param metrics` contains classification metrics.
+
+---
+
+**Note that the rest of this document contains old results.**
+
+---
+
 ## Variants
 
 1. Separate `xxp` files divided to packages (`examples/automl_wrong_implementation/1_config.yaml`).

@@ -1,12 +1,18 @@
-jupyter
-langchain==0.1.11
+# common
 python-dotenv
-langchain-openai
-
-chromadb
-# sentence-transformers
-unstructured
-markdown
-tqdm
+pandas
 colorama
 pyyaml
+
+# LLMs
+langchain==0.1.11
+langchain-openai
+rouge-score
+
+# # QuickStart (currently unused)
+# chromadb
+# # sentence-transformers
+# jupyter
+# unstructured
+# markdown
+# tqdm
