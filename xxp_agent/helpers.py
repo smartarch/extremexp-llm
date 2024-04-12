@@ -111,6 +111,7 @@ LOGGER_FOLDER = "logger_folder"
 MODEL = "model"
 MAIN_WORKFLOW = "main_workflow_name"
 MAIN_WORKFLOW_PACKAGE = "main_workflow_package"
+PROMPT_KWARGS = "prompt_kwargs"
 
 class SpecificationType(str, enum.Enum):
     XXP = "xxp"

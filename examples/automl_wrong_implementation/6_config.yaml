@@ -1,5 +1,7 @@
 logger_folder: xxp_agent_logs/automl_wrong_implementation
 model: gpt-4-0125-preview
 specification_type: xxp_assembled
+prompt_kwargs:
+  with_subworkflows: false
 specification_folder: examples/automl_wrong_implementation/6_expanded_descriptions
 main_workflow_name: FailurePredictionInManufacture

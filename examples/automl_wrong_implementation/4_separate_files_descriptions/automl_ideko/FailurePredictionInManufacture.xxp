@@ -4,7 +4,7 @@ workflow FailurePredictionInManufacture from automl.AutoML {
   description "AutoML for selecting a model to perform prediction of machine failures (binary classification).";
 
   configure task DataRetrieval {
-    description "Loads the data from the predictive_maintenance.csv file and drops the unnecessary data.";
+    description "Saves the results of the experiment and produces plots.";
     implementation "file://ideko_data_retreival.py";
   }
 

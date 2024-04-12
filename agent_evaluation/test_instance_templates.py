@@ -1,4 +1,6 @@
 from abc import ABC, abstractmethod
+from rouge_score import rouge_scorer
+
 
 CHAIN_OF_THOUGHT = ' Think step by step. First, reason about the question and write a short explanation of your answer. Then, on a separate line, write "Final answer:" followed by your final answer to the question.'
 
@@ -64,6 +66,25 @@ class SetQuestion(TestInstance):
         jaccard_similarity = len(intersection) / len(union)
 
         return jaccard_similarity
+    
+
+class OpenQuestion(TestInstance):
+    """Response to this question is a string."""
+
+    def __init__(self, question: str, reference_answer: str):
+        self._question = question
+        self._reference_answer = reference_answer
+
+    def question(self) -> str:
+        return self._question #+ CHAIN_OF_THOUGHT
+
+    def check_answer(self, answer: str) -> float:
+        # answer = self.extract_answer(answer)
+
+        scorer = rouge_scorer.RougeScorer(['rouge1'], use_stemmer=False)
+        scores = scorer.score(self._reference_answer, answer)['rouge1']
+
+        return scores.recall
 
 
 def instance_generator(category: str, test_instances_for_category: dict[str, list[TestInstance]]):

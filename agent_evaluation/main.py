@@ -12,7 +12,7 @@ from helpers import LOGGER_FOLDER, MODEL, SPECIFICATION_FOLDER, Logger, print_co
 from agent import create_agent, create_llm
 from config import get_prompt_template, get_specification_tools, load_config
 
-from test_instance_templates import SetQuestion, TestInstance, YesNoQuestion
+from test_instance_templates import TestInstance
 
 load_dotenv(find_dotenv(), override=True)  # take environment variables from .env.
 
