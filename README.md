@@ -22,6 +22,8 @@ To use OpenAI (paid API):
 
 The [`agent_evaluation`](agent_evaluation/) folder contains sample test instances for evaluating a LLM-based Agent. The instances are manually created based on the [*test instance patterns*](patterns.md). The evaluation can be run via the [`main.py`](xxp_agent/main.py) file.
 
+In the [`agent_evaluation/README.md`](agent_evaluation/README.md) file, the experimental results are summarized and discussed.
+
 ## XXP Agent Chat
 
 The [`xxp_agent`](xxp_agent/) folder contains code for running a LLM-based agent that chats with the user. Based on the configuration (see examples in the [`examples`](examples/) folder) the available tools are selected (so the agent can read workflow specifications, data produced by experiments, ...). To start the agent, run the [`main.py`](xxp_agent/main.py) file.
