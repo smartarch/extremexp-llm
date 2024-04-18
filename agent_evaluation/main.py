@@ -1,5 +1,6 @@
 from pathlib import Path
 import sys
+import time
 
 sys.path.append(str((Path(__file__).parent / ".." / "xxp_agent" ).resolve()))  # dirty trick to allow importing python files from the 'xxp_agent' folder
 
@@ -85,6 +86,7 @@ print("\nStart of test.\n")
 results = pd.DataFrame(columns=["category", "pattern", "score"])
 
 # Chat loop
+start_time = time.time()
 for category, pattern, test_instance in test_instances(update_specification_tool_path):
     if isinstance(test_instance, TestInstance):
 
@@ -116,8 +118,10 @@ for category, pattern, test_instance in test_instances(update_specification_tool
 
 
 print("\nEnd of test.\n")
+end_time = time.time()
 
 print("Total test instances:", len(results.index))
+print(f"Test duration: {end_time - start_time:.2f} s, per instance: {(end_time - start_time) / len(results.index):.2f} s")
 
 results_path = sys.stdout.file_name.replace(".ansi", ".csv")  # FIXME: this is ugly and depends on the implementation of Logger
 results.to_csv(results_path, index=False)

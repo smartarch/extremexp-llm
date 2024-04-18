@@ -1,0 +1,26 @@
+category,pattern,score
+structure,List of tasks,1.0
+structure,List of tasks,1.0
+structure,List of tasks,1.0
+structure,List of tasks,1.0
+structure,List of tasks,1.0
+structure,Links in flow,1.0
+structure,Links in flow,1.0
+structure,Links in flow,1.0
+structure,Links in flow,1.0
+structure,Task after task,1.0
+structure,Task after task,1.0
+structure,Task after task,1.0
+structure,Task after task,0.0
+structure,Next tasks in flow,1.0
+structure,Next tasks in flow,1.0
+structure,Next tasks in flow,1.0
+structure,Next tasks in flow,1.0
+structure,Flow cycle,1.0
+structure,Flow cycle,1.0
+structure,Flow cycle,1.0
+structure,Flow cycle,1.0
+behavior,Mutually exclusive conditional flow,1.0
+behavior,Mutually exclusive conditional flow,1.0
+semantics,Inconsistent task name and description,0.36363636363636365
+semantics,Inconsistent descriptions,0.8235294117647058

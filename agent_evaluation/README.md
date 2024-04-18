@@ -35,16 +35,16 @@ We manually created 25 test instances based on the [*test patterns*](/patterns.m
 | **Pattern category**  | **Pattern name**                  | **Number of instances** | **Variant 1 Score** | **Variant 2 Score** | **Variant 3 Score** |
 |----------------------------|----------------------------------------|------------------------------|--------------------------|--------------------------|--------------------------|
 | Structure | List of tasks                          | 5                            | $0.85\pm0.00$            | $1.00\pm0.00$            | $1.00\pm0.00$            |
-| Structure | Links in flow                          | 4                            | $0.92\pm0.12$            | $1.00\pm0.00$            | $0.75\pm0.20$            |
-| Structure | Task after task                        | 4                            | $0.58\pm0.12$            | $0.75\pm0.00$            | $0.67\pm0.12$            |
+| Structure | Links in flow                          | 4                            | $0.95\pm0.11$            | $1.00\pm0.00$            | $0.85\pm0.22$            |
+| Structure | Task after task                        | 4                            | $0.60\pm0.14$            | $0.75\pm0.00$            | $0.60\pm0.14$            |
 | Structure | Next tasks in flow                     | 4                            | $1.00\pm0.00$            | $1.00\pm0.00$            | $1.00\pm0.00$            |
-| Structure | Flow cycle                             | 4                            | $0.83\pm0.12$            | $1.00\pm0.00$            | $1.00\pm0.00$            |
-| Structure | *All patterns*                  | *21*                  | $0.84\pm0.02$            | $0.95\pm0.00$            | $0.89\pm0.04$            |
-| Behavior | Mutually exclusive conditional flow    | 2                            | $1.00\pm0.00$            | $1.00\pm0.00$            | $1.00\pm0.00$            |
-| Behavior | *All patterns*                  | *2*                   | $1.00\pm0.00$            | $1.00\pm0.00$            | $1.00\pm0.00$            |
-| Semantics | Inconsistent task name and description | 1                            | $0.66\pm0.01$            | $0.57\pm0.01$            | $0.69\pm0.04$            |
-| Semantics | Inconsistent descriptions              | 1                            | $0.81\pm0.03$            | $0.81\pm0.01$            | $0.80\pm0.08$            |
-| Semantics | *All patterns*                  | *2*                   | $0.74\pm0.01$            | $0.69\pm0.01$            | $0.75\pm0.06$            |
+| Structure | Flow cycle                             | 4                            | $0.85\pm0.14$            | $1.00\pm0.00$            | $1.00\pm0.00$            |
+| Structure | *All patterns*                         | *21*                         | $0.85\pm0.04$            | $0.95\pm0.00$            | $0.90\pm0.04$            |
+| Behavior  | Mutually exclusive conditional flow    | 2                            | $1.00\pm0.00$            | $1.00\pm0.00$            | $1.00\pm0.00$            |
+| Behavior  | *All patterns*                         | *2*                          | $1.00\pm0.00$            | $1.00\pm0.00$            | $1.00\pm0.00$            |
+| Semantics | Inconsistent task name and description | 1                            | $0.65\pm0.02$            | $0.54\pm0.10$            | $0.70\pm0.06$            |
+| Semantics | Inconsistent descriptions              | 1                            | $0.82\pm0.03$            | $0.80\pm0.02$            | $0.80\pm0.07$            |
+| Semantics | *All patterns*                         | *2*                          | $0.74\pm0.01$            | $0.67\pm0.04$            | $0.75\pm0.06$            |
 
 
 ## Discussion
@@ -80,3 +80,7 @@ This can be taken one step further by asking the LLM what information it needs t
 ### Cost
 
 In our setup (LLM inputs: system prompt with general information, specification of workflow in our DSL, test instance question; LLM outputs: answer to the test instance, explanation of the answer; LLM model: GPT-4 Turbo), the cost of running the evaluation is roughly 0.02 USD per test instance.
+
+### Time
+
+In our setup, it takes approximately 10 seconds to process one test instance. That totals to approximately 4-5 minutes for the evaluation with 25 test instances.

@@ -5,47 +5,27 @@ import pandas as pd
 import numpy as np
 import sys
 
+# AGG_COLUMN = "pattern"
+AGG_COLUMN = "category"
+VARIANT = 2
+
 def compute_statistics(files):
-    # Load the CSV files and extract the 'score' column
-    scores = []
-    patterns = None
-    categories = None
-    for idx, file in enumerate(files):
+    # Combine all scores into one DataFrame with associated patterns
+    data_frames = []
+    for file in files:
         df = pd.read_csv(file)
-        if 'score' in df.columns:
-            scores.append(df['score'])
-
-            # For the first file, also store the pattern and category values
-            if idx == 0:
-                if 'pattern' in df.columns:
-                    patterns = df[['pattern']]
-                if 'category' in df.columns:
-                    categories = df[['category']]
+        if 'score' in df.columns and AGG_COLUMN in df.columns:
+            data_frames.append(df[[AGG_COLUMN, 'score']])
         else:
-            raise ValueError(f"'score' column not found in {file}")
+            raise ValueError(f"'score' or '{AGG_COLUMN}' column not found in {file}")
     
-    # Ensure all CSVs have the same number of rows
-    row_counts = [len(score) for score in scores]
-    if len(set(row_counts)) > 1:
-        raise ValueError("CSV files have different number of rows.")
+    # Concatenate all data frames
+    combined_df = pd.concat(data_frames, ignore_index=True)
     
-    # Compute mean and standard deviation row-wise
-    results = []
-    for i in range(row_counts[0]):
-        row_scores = [score[i] for score in scores]
-        mean = np.mean(row_scores)
-        std_dev = np.std(row_scores)
-        results.append([mean, std_dev])
+    # Group by 'pattern' and calculate mean and standard deviation
+    result_df = combined_df.groupby(AGG_COLUMN, sort=False)['score'].agg(['mean', 'std', 'size']).reset_index()
+    result_df.columns = [AGG_COLUMN, 'Mean', 'Standard Deviation', 'Repetitions']
     
-    # Convert results to a DataFrame and save or print
-    result_df = pd.DataFrame(results, columns=['Mean', 'Standard Deviation'])
-
-    # Add the 'pattern' and 'category' columns from the first file
-    if patterns is not None:
-        result_df = pd.concat([patterns.reset_index(drop=True), result_df], axis=1)
-    if categories is not None:
-        result_df = pd.concat([categories.reset_index(drop=True), result_df], axis=1)
-
     print(result_df)
     # To save to a CSV file, uncomment the next line and specify your filename
     # result_df.to_csv('output.csv', index=False)
@@ -57,9 +37,11 @@ def compute_statistics(files):
 if __name__ == "__main__":
 
     files = []
-    # glob = "chain_of_thought/1/*.patterns.csv"
-    glob = "chain_of_thought/1/*.categories.csv"
-    files = list((Path(__file__).parent.parent / "agent_evaluation_logs").glob(glob))
+    if AGG_COLUMN == "pattern":
+        glob = f"chain_of_thought/{VARIANT}/*.patterns.csv"
+    else:
+        glob = f"chain_of_thought/{VARIANT}/*.categories.csv"
+    files = sorted((Path(__file__).parent.parent / "agent_evaluation_logs").glob(glob))
 
     # Expects file paths to CSV files as command-line arguments
     if files == []:
