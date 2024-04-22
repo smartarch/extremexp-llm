@@ -10,7 +10,7 @@ Full list of evaluation patterns: [`patterns.md`](patterns.md)
 
 ## Installation
 
-1. (Optional): create virtual environment: `python3 -m venv .venv` and activate it: `source env/bin/activate`
+1. (Optional): create virtual environment: `python3 -m venv .venv` and activate it: `source .venv/bin/activate`
 2. install requirements: `pip install -r requirements.txt`
 
 To use OpenAI (paid API):
