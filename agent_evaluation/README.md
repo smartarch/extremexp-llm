@@ -8,7 +8,7 @@ The test instances depend on the architecture specifications defined in the [`ex
 
 ## DSL Variants
 
-### Variant 1: separate files
+### Variant 1: Inheritance (also known as `separate files`)
 
 The first variant is the DSL developed for the XXP project. In this variant, there can be workflows derived from other workflows. In the derived workflow (called *assembled* in the project), the configuration of the tasks can be updated, but no new control flow or data flow can be added. To fully understand the derived workflow (especially to be able to reason about the control and data flow), it is necessary to obtain the specification of the base workflow (which is referenced from the derived workflow).
 
@@ -16,13 +16,13 @@ The tasks can either be *primitive* (an implementation file is specified) or *co
 
 An example workflow specification can be found in the [`/examples/artificial_workflow/1_separate_files`](/examples/artificial_workflow/1_separate_files/) folder.
 
-### Variant 2: assembled
+### Variant 2: Inlined (a.k.a. `assembled`)
 
 The second variant is a simplified version of the first variant, where only *assembled* workflows exist. Instead of referencing the base workflow, all the information are copied into the specification of the derived workflow (and slightly syntactically simplified).
 
 An example workflow specification can be found in the [`/examples/artificial_workflow/2_assembled`](/examples/artificial_workflow/2_assembled/) folder.
 
-### Variant 3: expanded
+### Variant 3: No sub-workflows (a.k.a. `expanded`)
 
 The third variant is created from the second variant by inlining all the sub-workflows. Instead of a reference to a sub-workflow, the whole specification is copied inside the composite task. This can lead to a high level of nesting of tasks.
 
@@ -39,13 +39,14 @@ We manually created 25 test instances based on the [*test patterns*](/patterns.m
 | Structure | Task after task                        | 4                            | $0.60\pm0.14$            | $0.75\pm0.00$            | $0.60\pm0.14$            |
 | Structure | Next tasks in flow                     | 4                            | $1.00\pm0.00$            | $1.00\pm0.00$            | $1.00\pm0.00$            |
 | Structure | Flow cycle                             | 4                            | $0.85\pm0.14$            | $1.00\pm0.00$            | $1.00\pm0.00$            |
-| Structure | *All patterns*                         | *21*                         | $0.85\pm0.04$            | $0.95\pm0.00$            | $0.90\pm0.04$            |
+| Structure | *Total*                         | *21*                         | $0.85\pm0.04$            | $0.95\pm0.00$            | $0.90\pm0.04$            |
 | Behavior  | Mutually exclusive conditional flow    | 2                            | $1.00\pm0.00$            | $1.00\pm0.00$            | $1.00\pm0.00$            |
-| Behavior  | *All patterns*                         | *2*                          | $1.00\pm0.00$            | $1.00\pm0.00$            | $1.00\pm0.00$            |
-| Semantics | Inconsistent task name and description | 1                            | $0.65\pm0.02$            | $0.54\pm0.10$            | $0.70\pm0.06$            |
-| Semantics | Inconsistent descriptions              | 1                            | $0.82\pm0.03$            | $0.80\pm0.02$            | $0.80\pm0.07$            |
-| Semantics | *All patterns*                         | *2*                          | $0.74\pm0.01$            | $0.67\pm0.04$            | $0.75\pm0.06$            |
+| Behavior  | *Total*                         | *2*                          | $1.00\pm0.00$            | $1.00\pm0.00$            | $1.00\pm0.00$            |
+| Basic functionality | Inconsistent task name and description | 1                            | $0.65\pm0.02$            | $0.54\pm0.10$            | $0.70\pm0.06$            |
+| Basic functionality | Inconsistent descriptions              | 1                            | $0.82\pm0.03$            | $0.80\pm0.02$            | $0.80\pm0.07$            |
+| Basic functionality | *Total*                         | *2*                          | $0.74\pm0.01$            | $0.67\pm0.04$            | $0.75\pm0.06$            |
 
+Note: The *Basic functionality* patterns are labeled `semantics` in the source code and raw results.
 
 ## Discussion
 
@@ -63,9 +64,9 @@ Another example is the "Links in flow" and "Task after task" patterns. Although 
 
 In our evaluation setup, we do not present the workflow specifications to the LLM in the initial prompt. Rather, the LLM works as an agent (based on the [ReAct](https://arxiv.org/abs/2210.03629) approach and [function calling](https://platform.openai.com/docs/guides/function-calling)) and can request the workflow specification files it needs. We chose this approach because we wanted to see whether the LLM is able to choose which information is necessary. This is aligned with our long-term goal of building an assistant that could also work, for example, with experiment results, and always presenting all the available information to the LLM can become costly.
 
-### Evaluation of open questions (semantics patterns)
+### Evaluation of open-ended questions (basic functionality patterns)
 
-We evaluated all the semantics patterns using the recall from [ROUGE-1 metric](https://aclanthology.org/W04-1013/). In short, this counts how many words from the reference answer appeared in the LLM's answer. Clearly, this metric depends on the concrete formulation of the answer so a correct answer formulated in different words will not get a perfect score. For reference, we also checked all the answers by hand and the LLM's responses contained the correct answer for all the semantics instances. That means that the scores for semantic patterns in table above correspond to correct answers.
+We evaluated all the basic functionality patterns using the recall from [ROUGE-1 metric](https://aclanthology.org/W04-1013/). In short, this counts how many words from the reference answer appeared in the LLM's answer. Clearly, this metric depends on the concrete formulation of the answer so a correct answer formulated in different words will not get a perfect score. For reference, we also checked all the answers by hand and the LLM's responses contained the correct answer for all the basic functionality instances. That means that the scores for semantic patterns in table above correspond to correct answers.
 
 It should also be noted that even a wrong answer would score well in the ROUGE-1 metric if it contained all the words from the reference answer (possibly in incorrect order or with different meanings). Further investigation is necessary to assess whether other metrics (e.g., [BERTScore](https://arxiv.org/abs/1904.09675), [G-Eval](https://arxiv.org/abs/2303.16634)) are more appropriate for evaluating open questions.
 
