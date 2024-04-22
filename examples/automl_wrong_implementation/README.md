@@ -87,7 +87,3 @@ The errors reported after the follow-up prompt often repeat the errors already s
 |6|✅|➖|➖|➖|➖|➖|
 
 The header of the table are shortened names of workflows (`ai.MLTAE` -> `automl_ideko.MLTrainingAndEvaluation`).
-
-## Old Results
-
-Results for older version of the prompt, `gpt-3.5-turbo` and also `YAML` descriptions are [here](https://github.com/smartarch/extremexp-llm/blob/aba0fa76b74df79e81030d5cdd1b56eaab514252/examples/automl_wrong_implementation/README.md).

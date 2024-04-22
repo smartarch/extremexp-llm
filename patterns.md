@@ -524,7 +524,9 @@ Example instance: "Given the initial situation p=0, list all the tasks that will
 
 ---
 
-## Semantics patterns
+## Basic functionality patterns
+
+In the source code and raw results, these patterns are labeled `semantics`.
 
 ### Inconsistent task name and description
 
@@ -653,7 +655,7 @@ Note: Other variants of this pattern can also be created, e.g., "Does a task wit
 
 * **Damerau–Levenshtein distance**: edit distance between two sequences allowing insertions, deletions, substitutions, and transposition (swap) of two adjacent elements
 
-### Open questions (semantics)
+### Open-ended questions
 
 * [**ROUGE**](https://aclanthology.org/W04-1013/) (Recall-Oriented Understudy for Gisting Evaluation): the word overlap of the reference answer and the LLM output
 * [**BERTScore**](https://arxiv.org/abs/1904.09675): the cosine similarity of word embeddings (that capture the meaning of words)
