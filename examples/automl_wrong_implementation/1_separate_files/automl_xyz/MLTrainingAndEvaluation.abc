@@ -1,0 +1,24 @@
+package automl_xyz;
+
+workflow MLTrainingAndEvaluation from automl.MLTrainingAndEvaluation {
+  configure task FeatureExtraction {
+    implementation "file://xyz_feature_extraction.py";
+  }
+  configure task ModelTraining {
+    implementation "file://regression_training.py";
+  }
+  configure task ModelEvaluation {
+    implementation "file://regression_evaluation.py";
+    param metrics = ["accuracy", "precision", "recall", "f1", "num_of_params"];
+  }
+
+  configure data TrainingFeatures {
+    schema "file://Features.schema";
+  }
+  configure data TestFeatures {
+    schema "file://Features.schema";
+  }
+  configure data MLModelMetrics {
+    schema "file://MLModelMetrics.schema";
+  }
+}

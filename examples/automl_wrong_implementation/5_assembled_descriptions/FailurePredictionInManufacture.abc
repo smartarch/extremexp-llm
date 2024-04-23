@@ -1,0 +1,56 @@
+package automl_xyz;
+
+workflow FailurePredictionInManufacture {
+  description "AutoML for selecting a model to perform prediction of machine failures (binary classification).";
+
+  // TASKS
+  task DataRetrieval {
+    description "Saves the results of the experiment and produces plots.";
+    implementation "file://xyz_data_retreival.py";
+  }
+  task TrainTestSplit {
+    description "Randomly splits the data into training and test sets.";
+    implementation "file://random_train_test_split.py";
+    param test_size = 0.2;
+  }
+  task HyperparameterOptimization {
+    description "Uses grid search to explore hyperparameter configurations and asks the user to select the best one.";
+    subworkflow HyperparameterOptimization;
+    param hyperparameters_grid = "file://hyperparameters_grid.json";
+  }
+  task MLTrainingAndEvaluation {
+    description "Final training and evaluation of the ML model with the best hyperparameters.";
+    subworkflow MLTrainingAndEvaluation;
+  }
+
+  // DATA
+  define data InputData;
+  define data RetrievedData;
+
+  define data TrainingData;
+  define data TestData;
+  
+  define data BestHyperparameters;
+  define data MLModel;
+  define data MLModelMetrics;
+
+  // TASK CONNECTIONS
+  
+  START -> DataRetrieval -> TrainTestSplit -> HyperparameterOptimization -> MLTrainingAndEvaluation -> END;
+
+  // DATA CONNECTIONS
+
+  // input data preprocessing and train-test split
+  InputData --> DataRetrieval --> RetrievedData;
+  RetrievedData --> TrainTestSplit;
+  TrainTestSplit --> TrainingData;
+  TrainTestSplit --> TestData;
+
+  // hyperparameter optimization
+  TrainingData --> HyperparameterOptimization --> BestHyperparameters;
+
+  // final model training and evaluation
+  BestHyperparameters --> MLTrainingAndEvaluation; 
+  TrainingData --> MLTrainingAndEvaluation --> MLModel;
+  TestData --> MLTrainingAndEvaluation --> MLModelMetrics;
+}

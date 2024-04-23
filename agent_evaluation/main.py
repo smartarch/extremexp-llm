@@ -2,7 +2,7 @@ from pathlib import Path
 import sys
 import time
 
-sys.path.append(str((Path(__file__).parent / ".." / "xxp_agent" ).resolve()))  # dirty trick to allow importing python files from the 'xxp_agent' folder
+sys.path.append(str((Path(__file__).parent / ".." / "abc_agent" ).resolve()))  # dirty trick to allow importing python files from the 'abc_agent' folder
 
 from colorama import Style, Fore
 from dotenv import find_dotenv, load_dotenv

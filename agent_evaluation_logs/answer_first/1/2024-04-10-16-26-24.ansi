@@ -1,5 +1,5 @@
 Configuration file path: examples/artificial_workflow/1_config.yaml
-Configuration: {'logger_folder': 'xxp_agent_logs/artificial_workflow', 'model': 'gpt-4-0125-preview', 'specification_type': 'xxp', 'specification_folder': 'examples/artificial_workflow/1_separate_files', 'main_workflow_name': 'MainWorkflow', 'main_workflow_package': 'package2'}
+Configuration: {'logger_folder': 'abc_agent_logs/artificial_workflow', 'model': 'gpt-4-0125-preview', 'specification_type': 'abc', 'specification_folder': 'examples/artificial_workflow/1_separate_files', 'main_workflow_name': 'MainWorkflow', 'main_workflow_package': 'package2'}
 LLM model: gpt-4-0125-preview 
 
 [2m
@@ -150,16 +150,16 @@ Pattern: List of tasks
 [0m
 User input:
 [35m
-List all tasks in workflow 'automl_ideko.MLTrainingAndEvaluation' that have a parameter (set via the 'param' keyword). On the first line of your response, write a comma separated list of values and nothing else. On the second, write a short justification of the answer.
+List all tasks in workflow 'automl_xyz.MLTrainingAndEvaluation' that have a parameter (set via the 'param' keyword). On the first line of your response, write a comma separated list of values and nothing else. On the second, write a short justification of the answer.
 [0m
 
 
 [1m> Entering new AgentExecutor chain...[0m
 [32;1m[1;3m
-Invoking: `workflow_specification` with `{'package_name': 'automl_ideko', 'workflow_name': 'MLTrainingAndEvaluation'}`
+Invoking: `workflow_specification` with `{'package_name': 'automl_xyz', 'workflow_name': 'MLTrainingAndEvaluation'}`
 
 
-[0m[36;1m[1;3mError: package 'automl_ideko' not found. Available packages: ['package2', 'package1'][0m[32;1m[1;3m
+[0m[36;1m[1;3mError: package 'automl_xyz' not found. Available packages: ['package2', 'package1'][0m[32;1m[1;3m
 Invoking: `workflow_specification` with `{'package_name': 'package1', 'workflow_name': 'MLTrainingAndEvaluation'}`
 responded: I apologize for the mistake. It seems there was a misunderstanding regarding the package name. Let me correct this and retrieve the correct information.
 
@@ -181,13 +181,13 @@ Pattern: List of tasks
 [0m
 User input:
 [35m
-List all tasks in workflow 'automl_ideko.MLTrainingAndEvaluation' that have a subworkflow. On the first line of your response, write a comma separated list of values and nothing else. On the second, write a short justification of the answer.
+List all tasks in workflow 'automl_xyz.MLTrainingAndEvaluation' that have a subworkflow. On the first line of your response, write a comma separated list of values and nothing else. On the second, write a short justification of the answer.
 [0m
 
 
 [1m> Entering new AgentExecutor chain...[0m
 [32;1m[1;3m
-Invoking: `workflow_specification` with `{'package_name': 'automl_ideko', 'workflow_name': 'MLTrainingAndEvaluation'}`
+Invoking: `workflow_specification` with `{'package_name': 'automl_xyz', 'workflow_name': 'MLTrainingAndEvaluation'}`
 
 
-[0m[36;1m[1;3mError: package 'automl_ideko' not found. Available packages: ['package2', 'package1'][0m
+[0m[36;1m[1;3mError: package 'automl_xyz' not found. Available packages: ['package2', 'package1'][0m

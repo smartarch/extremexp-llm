@@ -1,5 +1,5 @@
 Configuration file path: examples/artificial_workflow/2_config.yaml
-Configuration: {'logger_folder': 'xxp_agent_logs/artificial_workflow', 'model': 'gpt-4-0125-preview', 'specification_type': 'xxp_assembled', 'specification_folder': 'examples/artificial_workflow/2_assembled', 'main_workflow_name': 'MainWorkflow'}
+Configuration: {'logger_folder': 'abc_agent_logs/artificial_workflow', 'model': 'gpt-4-0125-preview', 'specification_type': 'abc_assembled', 'specification_folder': 'examples/artificial_workflow/2_assembled', 'main_workflow_name': 'MainWorkflow'}
 LLM model: gpt-4-0125-preview 
 
 [2m
@@ -33,7 +33,7 @@ Identify potential errors in the descriptions of tasks in workflow 'FailurePredi
 Invoking: `workflow_specification` with `{'workflow_name': 'FailurePredictionInManufacture'}`
 
 
-[0m[36;1m[1;3mpackage automl_ideko;
+[0m[36;1m[1;3mpackage automl_xyz;
 
 workflow FailurePredictionInManufacture {
   description "AutoML for selecting a model to perform prediction of machine failures (binary classification).";
@@ -41,7 +41,7 @@ workflow FailurePredictionInManufacture {
   // TASKS
   task DataRetrieval {
     description "Saves the results of the experiment and produces plots.";
-    implementation "file://ideko_data_retreival.py";
+    implementation "file://xyz_data_retreival.py";
   }
   task TrainTestSplit {
     description "Randomly splits the data into training and test sets.";
@@ -117,7 +117,7 @@ Identify potential errors in the description of workflow 'FailurePredictionInMan
 Invoking: `workflow_specification` with `{'workflow_name': 'FailurePredictionInManufacture'}`
 
 
-[0m[36;1m[1;3mpackage automl_ideko;
+[0m[36;1m[1;3mpackage automl_xyz;
 
 workflow FailurePredictionInManufacture {
   description "AutoML for selecting a model to perform prediction of machine failures (binary classification).";
@@ -125,7 +125,7 @@ workflow FailurePredictionInManufacture {
   // TASKS
   task DataRetrieval {
     description "Saves the results of the experiment and produces plots.";
-    implementation "file://ideko_data_retreival.py";
+    implementation "file://xyz_data_retreival.py";
   }
   task TrainTestSplit {
     description "Randomly splits the data into training and test sets.";
@@ -240,7 +240,7 @@ workflow HyperparameterOptimization {
 Invoking: `workflow_specification` with `{'workflow_name': 'MLTrainingAndEvaluation'}`
 
 
-[0m[36;1m[1;3mpackage automl_ideko;
+[0m[36;1m[1;3mpackage automl_xyz;
 
 workflow MLTrainingAndEvaluation {
   description "Training and evaluation of the regression ML model with the given hyperparameters.";
@@ -248,7 +248,7 @@ workflow MLTrainingAndEvaluation {
   // TASKS
   task FeatureExtraction {
     description "Extracts features from the input data.";
-    implementation "file://ideko_feature_extraction.py";
+    implementation "file://xyz_feature_extraction.py";
   }
   task ModelTraining {
     description "Trains the regression ML model with the given hyperparameters.";

@@ -1,5 +1,5 @@
 Configuration file path: examples/artificial_workflow/2_config.yaml
-Configuration: {'logger_folder': 'xxp_agent_logs/artificial_workflow', 'model': 'gpt-4-0125-preview', 'specification_type': 'xxp_assembled', 'specification_folder': 'examples/artificial_workflow/2_assembled', 'main_workflow_name': 'MainWorkflow'}
+Configuration: {'logger_folder': 'abc_agent_logs/artificial_workflow', 'model': 'gpt-4-0125-preview', 'specification_type': 'abc_assembled', 'specification_folder': 'examples/artificial_workflow/2_assembled', 'main_workflow_name': 'MainWorkflow'}
 LLM model: gpt-4-0125-preview 
 
 [2m

@@ -16,16 +16,16 @@ The mistakes are:
 
 ## Variants
 
-1. Separate `xxp` files divided to packages (`examples/automl_wrong_implementation/1_config.yaml`).
-2. Assembled `xxp` workflows -> information from parent workflow are copied to the assembled workflow, nested specification is separated to the subworkflow files, packages are not necessary anymore (`examples/automl_wrong_implementation/2_config.yaml`).
-3. Expanded workflow: one `xxp` file with nested subworkflows (`examples/automl_wrong_implementation/3_config.yaml`).
+1. Separate `abc` files divided to packages (`examples/automl_wrong_implementation/1_config.yaml`).
+2. Assembled `abc` workflows -> information from parent workflow are copied to the assembled workflow, nested specification is separated to the subworkflow files, packages are not necessary anymore (`examples/automl_wrong_implementation/2_config.yaml`).
+3. Expanded workflow: one `abc` file with nested subworkflows (`examples/automl_wrong_implementation/3_config.yaml`).
 4. 1\. with descriptions (`examples/automl_wrong_implementation/4_config.yaml`).
 5. 2\. with descriptions (`examples/automl_wrong_implementation/5_config.yaml`).
 6. 3\. with descriptions (`examples/automl_wrong_implementation/6_config.yaml`).
 
 ## Goal: identify errors
 
-We introduced a mistake into the `FailurePredictionInManufacture` workflow: In the `automl_ideko.MLTrainingAndEvaluation` subworkflow, the `ModelEvaluation` task uses `regression_evaluation.py`, but the `param metrics` contains classification metrics.
+We introduced a mistake into the `FailurePredictionInManufacture` workflow: In the `automl_xyz.MLTrainingAndEvaluation` subworkflow, the `ModelEvaluation` task uses `regression_evaluation.py`, but the `param metrics` contains classification metrics.
 
 The task for the Agent is to explore the whole workflow including subworkflows and spot a mistake.
 
@@ -86,4 +86,4 @@ The errors reported after the follow-up prompt often repeat the errors already s
 |5|✅|✅|➖|✅|❌|➖|
 |6|✅|➖|➖|➖|➖|➖|
 
-The header of the table are shortened names of workflows (`ai.MLTAE` -> `automl_ideko.MLTrainingAndEvaluation`).
+The header of the table are shortened names of workflows (`ai.MLTAE` -> `automl_xyz.MLTrainingAndEvaluation`).

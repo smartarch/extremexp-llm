@@ -1,0 +1,58 @@
+package automl_xyz;
+
+workflow MLTrainingAndEvaluation {
+  description "Training and evaluation of the regression ML model with the given hyperparameters.";
+  
+  // TASKS
+  task FeatureExtraction {
+    description "Extracts features from the input data.";
+    implementation "file://xyz_feature_extraction.py";
+  }
+  task ModelTraining {
+    description "Trains the regression ML model with the given hyperparameters.";
+    implementation "file://regression_training.py";
+  }
+  task ModelEvaluation {
+    description "Evaluates the trained ML model using regression metrics.";
+    implementation "file://regression_evaluation.py";
+    param metrics = ["accuracy", "precision", "recall", "f1", "num_of_params"];
+  }
+
+  // INPUT DATA
+  define data Hyperparameters;  // ML algorithm and its parameters
+  define data TrainingData;
+  define data TestData;
+
+  // INNER DATA
+  define data TrainingFeatures {
+    schema "file://Features.schema";
+  }
+  define data TestFeatures {
+    schema "file://Features.schema";
+  }
+
+  // OUTPUT DATA
+  define data MLModel;
+  define data MLModelMetrics {
+    schema "file://MLModelMetrics.schema";
+  }
+
+  // TASK CONNECTIONS
+  
+  START -> FeatureExtraction -> ModelTraining -> ModelEvaluation -> END;
+
+  // DATA CONNECTIONS
+
+  // feature extraction
+  TrainingData --> FeatureExtraction --> TrainingFeatures;
+  TestData --> FeatureExtraction --> TestFeatures;
+  Hyperparameters --> FeatureExtraction;
+
+  // model training
+  Hyperparameters --> ModelTraining;
+  TrainingFeatures --> ModelTraining --> MLModel;
+
+  // model evaluation
+  MLModel --> ModelEvaluation;
+  TestFeatures --> ModelEvaluation --> MLModelMetrics;
+}

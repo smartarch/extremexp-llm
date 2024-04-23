@@ -2,9 +2,9 @@
 
 ## Variants
 
-1. Separate `xxp` files divided to packages (`examples/artificial_workflow/1_config.yaml`).
-2. Assembled `xxp` workflows -> information from parent workflow are copied to the assembled workflow, nested specification is separated to the subworkflow files, packages are not necessary anymore (`examples/artificial_workflow/2_config.yaml`).
-3. Expanded workflow: one `xxp` file with nested subworkflows (`examples/artificial_workflow/3_config.yaml`).
+1. Separate `abc` files divided to packages (`examples/artificial_workflow/1_config.yaml`).
+2. Assembled `abc` workflows -> information from parent workflow are copied to the assembled workflow, nested specification is separated to the subworkflow files, packages are not necessary anymore (`examples/artificial_workflow/2_config.yaml`).
+3. Expanded workflow: one `abc` file with nested subworkflows (`examples/artificial_workflow/3_config.yaml`).
 
 ## Goal: List all Python tasks
 

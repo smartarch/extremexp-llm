@@ -1,0 +1,33 @@
+package automl_xyz;
+
+workflow FailurePredictionInManufacture from automl.AutoML {
+  configure task DataRetrieval {
+    implementation "file://xyz_data_retreival.py";
+  }
+
+  configure task HyperparameterOptimization {
+    param hyperparameters_grid = "file://hyperparameters_grid.json";
+
+    configure task HyperparameterProposal {
+      implementation "file://grid_search.py";
+    }
+
+    configure task MLModelValidation {
+      configure task MLTrainingAndEvaluation {
+        subworkflow MLTrainingAndEvaluation;
+      }
+    }
+
+    configure data MLModelMetrics {
+      schema "file://MLModelMetrics.schema";
+    }
+
+    configure task BestHyperparameterSelection {
+      implementation "file://user_hyperparameter_selection.py";
+    }
+  }
+
+  configure task MLTrainingAndEvaluation {
+    subworkflow MLTrainingAndEvaluation;
+  }
+}

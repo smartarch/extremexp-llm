@@ -1,0 +1,249 @@
+package automl_xyz;
+
+workflow FailurePredictionInManufacture2 {
+  description "AutoML for selecting a model to perform prediction of machine failures (binary classification).";
+
+  // TASKS
+  task DataRetrieval {
+    description "Loads the data from the predictive_maintenance.csv file and drops the unnecessary data.";
+    implementation "file://xyz_data_retreival.py";
+  }
+  task TrainTestSplit {
+    description "Randomly splits the data into training and test sets.";
+    implementation "file://random_train_test_split.py";
+    param test_size = 0.2;
+  }
+  task HyperparameterOptimization {
+    description "Uses grid search to explore hyperparameter configurations and asks the user to select the best one.";
+    
+    // TASKS
+    task HyperparameterProposal {
+      description "Repeatedly proposes hyperparameter configurations until a stop condition is met (based on the metrics of the current ML model).";
+      implementation "file://grid_search.py";
+    }
+    task MLModelValidation {
+      description "Trains and evaluates the ML model with the proposed hyperparameter configuration.";
+      
+      // TASKS
+      task TrainTestSplit {
+        description "Randomly splits the data into training and test sets.";
+        implementation "file://random_train_test_split.py";
+        param test_size = 0.2;
+      }
+      task MLTrainingAndEvaluation {
+        description "Training and evaluation of the ML model with the given hyperparameters.";
+        
+        // TASKS
+        task FeatureExtraction {
+          description "Extracts features from the input data.";
+          implementation "file://xyz_feature_extraction.py";
+        }
+        task ModelTraining {
+          description "Trains the regression ML model with the given hyperparameters.";
+          implementation "file://regression_training.py";
+        }
+        task ModelEvaluation {
+          description "Evaluates the trained ML model using regression metrics.";
+          implementation "file://regression_evaluation.py";
+          param metrics = ["accuracy", "precision", "recall", "f1", "num_of_params"];
+        }
+
+        // INPUT DATA
+        define data Hyperparameters;  // ML algorithm and its parameters
+        define data TrainingData;
+        define data TestData = ValidationData;
+
+        // INNER DATA
+        define data TrainingFeatures {
+          schema "file://Features.schema";
+        }
+        define data TestFeatures {
+          schema "file://Features.schema";
+        }
+
+        // OUTPUT DATA
+        define data MLModel;
+        define data MLModelMetrics {
+          schema "file://MLModelMetrics.schema";
+        }
+
+        // TASK CONNECTIONS
+        
+        START -> FeatureExtraction -> ModelEvaluation -> ModelTraining -> END;
+
+        // DATA CONNECTIONS
+
+        // feature extraction
+        TrainingData --> FeatureExtraction --> TrainingFeatures;
+        TestData --> FeatureExtraction --> TestFeatures;
+        Hyperparameters --> FeatureExtraction;
+
+        // model training
+        Hyperparameters --> ModelTraining;
+        TrainingFeatures --> ModelTraining --> MLModel;
+
+        // model evaluation
+        MLModel --> ModelEvaluation;
+        TestFeatures --> ModelEvaluation --> MLModelMetrics;
+      }
+
+      // DATA
+      define data InputData;
+      define data Hyperparameters;
+
+      define data TrainingData;
+      define data ValidationData;
+      
+      define data MLModelMetrics;
+
+      // TASK CONNECTIONS
+      
+      START -> TrainTestSplit -> MLTrainingAndEvaluation -> END;
+
+      // DATA CONNECTIONS
+
+      // input data preprocessing and train-test split
+      InputData --> TrainTestSplit;
+      TrainTestSplit --> TrainingData;
+      TrainTestSplit --> ValidationData;
+
+      // model training and evaluation
+      Hyperparameters --> MLTrainingAndEvaluation;
+      TrainingData --> MLTrainingAndEvaluation;
+      ValidationData --> MLTrainingAndEvaluation --> MLModelMetrics;  
+    }
+    task BestHyperparameterSelection {
+      description "Asks the user to select the best hyperparameter configuration.";
+      implementation "file://user_hyperparameter_selection.py";
+    }
+    
+    // DATA
+    define data TrainingData;
+    
+    define data Hyperparameters;  // ML algorithm and its parameters
+    define data MLModelMetrics {
+      schema "file://MLModelMetrics.schema";
+    }
+
+    define data BestHyperparameters; // output
+
+    // TASK CONNECTIONS
+    
+    START -> HyperparameterProposal;
+
+    HyperparameterProposal ?-> BestHyperparameterSelection {
+      condition "stop condition"; // e.g., model is good enough, iteration limit reached, ...
+    }
+
+    HyperparameterProposal ?-> MLModelValidation {
+      condition "otherwise";
+    }
+
+    MLModelValidation -> HyperparameterProposal;
+
+    BestHyperparameterSelection -> END;
+
+    // DATA CONNECTIONS
+
+    // hyperparameter selection
+    HyperparameterProposal --> Hyperparameters;
+
+    // model training and evaluation
+    Hyperparameters --> MLModelValidation;
+    TrainingData --> MLModelValidation --> MLModelMetrics;
+    MLModelMetrics --> HyperparameterProposal; // possibility to stop proposing hyperparameters if model is good enough
+
+    // best hyperparameter selection
+    MLModelMetrics --> BestHyperparameterSelection;
+    BestHyperparameterSelection --> BestHyperparameters;
+
+    param hyperparameters_grid = "file://hyperparameters_grid.json";
+  }
+  task MLTrainingAndEvaluation {
+    description "Final training and evaluation of the ML model with the best hyperparameters.";
+    
+    // TASKS
+    task FeatureExtraction {
+      description "Extracts features from the input data.";
+      implementation "file://xyz_feature_extraction.py";
+    }
+    task ModelTraining {
+      description "Trains the regression ML model with the given hyperparameters.";
+      implementation "file://regression_training.py";
+    }
+    task ModelEvaluation {
+      description "Evaluates the trained ML model using regression metrics.";
+      implementation "file://regression_evaluation.py";
+      param metrics = ["accuracy", "precision", "recall", "f1", "num_of_params"];
+    }
+
+    // INPUT DATA
+    define data Hyperparameters;  // ML algorithm and its parameters
+    define data TrainingData;
+    define data TestData;
+
+    // INNER DATA
+    define data TrainingFeatures {
+      schema "file://Features.schema";
+    }
+    define data TestFeatures {
+      schema "file://Features.schema";
+    }
+
+    // OUTPUT DATA
+    define data MLModel;
+    define data MLModelMetrics {
+      schema "file://MLModelMetrics.schema";
+    }
+
+    // TASK CONNECTIONS
+    
+    START -> FeatureExtraction -> ModelEvaluation -> ModelTraining -> END;
+
+    // DATA CONNECTIONS
+
+    // feature extraction
+    TrainingData --> FeatureExtraction --> TrainingFeatures;
+    TestData --> FeatureExtraction --> TestFeatures;
+    Hyperparameters --> FeatureExtraction;
+
+    // model training
+    Hyperparameters --> ModelTraining;
+    TrainingFeatures --> ModelTraining --> MLModel;
+
+    // model evaluation
+    MLModel --> ModelEvaluation;
+    TestFeatures --> ModelEvaluation --> MLModelMetrics;
+  }
+
+  // DATA
+  define data InputData;
+  define data RetrievedData;
+
+  define data TrainingData;
+  define data TestData;
+  
+  define data BestHyperparameters;
+  define data MLModel;
+  define data MLModelMetrics;
+
+  // TASK CONNECTIONS
+  
+  START -> DataRetrieval -> TrainTestSplit -> HyperparameterOptimization -> MLTrainingAndEvaluation -> END;
+
+  // DATA CONNECTIONS
+
+  // input data preprocessing and train-test split
+  InputData --> DataRetrieval --> RetrievedData;
+  RetrievedData --> TrainTestSplit;
+  TrainTestSplit --> TrainingData;
+  TrainTestSplit --> TestData;
+
+  // hyperparameter optimization
+  TrainingData --> HyperparameterOptimization --> BestHyperparameters;
+
+  // final model training and evaluation
+  BestHyperparameters --> MLTrainingAndEvaluation; 
+  TrainingData --> MLTrainingAndEvaluation --> MLModel;
+  TestData --> MLTrainingAndEvaluation --> MLModelMetrics;
+}

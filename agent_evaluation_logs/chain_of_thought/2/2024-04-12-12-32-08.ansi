@@ -1,5 +1,5 @@
 Configuration file path: examples/artificial_workflow/2_config.yaml
-Configuration: {'logger_folder': 'xxp_agent_logs/artificial_workflow', 'model': 'gpt-4-0125-preview', 'specification_type': 'xxp_assembled', 'specification_folder': 'examples/artificial_workflow/2_assembled', 'main_workflow_name': 'MainWorkflow'}
+Configuration: {'logger_folder': 'abc_agent_logs/artificial_workflow', 'model': 'gpt-4-0125-preview', 'specification_type': 'abc_assembled', 'specification_folder': 'examples/artificial_workflow/2_assembled', 'main_workflow_name': 'MainWorkflow'}
 LLM model: gpt-4-0125-preview 
 
 [2m
@@ -33,7 +33,7 @@ Identify potential errors in the descriptions of tasks in workflow 'FailurePredi
 Invoking: `workflow_specification` with `{'workflow_name': 'FailurePredictionInManufacture'}`
 
 
-[0m[36;1m[1;3mpackage automl_ideko;
+[0m[36;1m[1;3mpackage automl_xyz;
 
 workflow FailurePredictionInManufacture {
   description "AutoML for selecting a model to perform prediction of machine failures (binary classification).";
@@ -41,7 +41,7 @@ workflow FailurePredictionInManufacture {
   // TASKS
   task DataRetrieval {
     description "Saves the results of the experiment and produces plots.";
-    implementation "file://ideko_data_retreival.py";
+    implementation "file://xyz_data_retreival.py";
   }
   task TrainTestSplit {
     description "Randomly splits the data into training and test sets.";
@@ -117,7 +117,7 @@ Identify potential errors in the description of workflow 'FailurePredictionInMan
 Invoking: `workflow_specification` with `{'workflow_name': 'FailurePredictionInManufacture'}`
 
 
-[0m[36;1m[1;3mpackage automl_ideko;
+[0m[36;1m[1;3mpackage automl_xyz;
 
 workflow FailurePredictionInManufacture {
   description "AutoML for selecting a model to perform prediction of machine failures (binary classification).";
@@ -125,7 +125,7 @@ workflow FailurePredictionInManufacture {
   // TASKS
   task DataRetrieval {
     description "Saves the results of the experiment and produces plots.";
-    implementation "file://ideko_data_retreival.py";
+    implementation "file://xyz_data_retreival.py";
   }
   task TrainTestSplit {
     description "Randomly splits the data into training and test sets.";
@@ -240,7 +240,7 @@ workflow HyperparameterOptimization {
 Invoking: `workflow_specification` with `{'workflow_name': 'MLTrainingAndEvaluation'}`
 
 
-[0m[36;1m[1;3mpackage automl_ideko;
+[0m[36;1m[1;3mpackage automl_xyz;
 
 workflow MLTrainingAndEvaluation {
   description "Training and evaluation of the regression ML model with the given hyperparameters.";
@@ -248,7 +248,7 @@ workflow MLTrainingAndEvaluation {
   // TASKS
   task FeatureExtraction {
     description "Extracts features from the input data.";
-    implementation "file://ideko_feature_extraction.py";
+    implementation "file://xyz_feature_extraction.py";
   }
   task ModelTraining {
     description "Trains the regression ML model with the given hyperparameters.";
@@ -303,7 +303,7 @@ workflow MLTrainingAndEvaluation {
 1. The `DataRetrieval` task description inaccurately states "Saves the results of the experiment and produces plots," which suggests post-analysis activities rather than data retrieval.
 2. The `MLTrainingAndEvaluation` subworkflow description refers to "the regression ML model" which conflicts with the main workflow's objective of "binary classification."
 3. The `ModelEvaluation` task in the `MLTrainingAndEvaluation` subworkflow uses regression metrics ("accuracy", "precision", "recall", "f1", "num_of_params"), which are not exclusively regression metrics. "Accuracy", "precision", "recall", and "f1" are classification metrics, which is correct for a binary classification problem, but the description incorrectly labels them as regression metrics.
-4. The `HyperparameterOptimization` subworkflow and the `MLTrainingAndEvaluation` subworkflow belong to different packages (`automl` and `automl_ideko`), which might not be an error per se but could lead to inconsistencies or confusion if not intended for interoperability.
+4. The `HyperparameterOptimization` subworkflow and the `MLTrainingAndEvaluation` subworkflow belong to different packages (`automl` and `automl_xyz`), which might not be an error per se but could lead to inconsistencies or confusion if not intended for interoperability.
 5. The `BestHyperparameters` data flow between `HyperparameterOptimization` and `MLTrainingAndEvaluation` workflows suggests that the user's choice is directly used for final model training, but there's an implicit assumption that the user's selection process is error-free and optimal.
 6. The `MLTrainingAndEvaluation` subworkflow is described as training a "regression ML model" but it should be focused on a classification model given the main workflow's goal.
 7. The `FeatureExtraction` task in `MLTrainingAndEvaluation` subworkflow mentions that hyperparameters influence feature extraction, which is unusual as hyperparameters typically influence model training rather than feature extraction.
@@ -318,7 +318,7 @@ Here are the potential errors found in the description of the workflow 'FailureP
 1. The `DataRetrieval` task description inaccurately states "Saves the results of the experiment and produces plots," which suggests post-analysis activities rather than data retrieval.
 2. The `MLTrainingAndEvaluation` subworkflow description refers to "the regression ML model" which conflicts with the main workflow's objective of "binary classification."
 3. The `ModelEvaluation` task in the `MLTrainingAndEvaluation` subworkflow uses regression metrics ("accuracy", "precision", "recall", "f1", "num_of_params"), which are not exclusively regression metrics. "Accuracy", "precision", "recall", and "f1" are classification metrics, which is correct for a binary classification problem, but the description incorrectly labels them as regression metrics.
-4. The `HyperparameterOptimization` subworkflow and the `MLTrainingAndEvaluation` subworkflow belong to different packages (`automl` and `automl_ideko`), which might not be an error per se but could lead to inconsistencies or confusion if not intended for interoperability.
+4. The `HyperparameterOptimization` subworkflow and the `MLTrainingAndEvaluation` subworkflow belong to different packages (`automl` and `automl_xyz`), which might not be an error per se but could lead to inconsistencies or confusion if not intended for interoperability.
 5. The `BestHyperparameters` data flow between `HyperparameterOptimization` and `MLTrainingAndEvaluation` workflows suggests that the user's choice is directly used for final model training, but there's an implicit assumption that the user's selection process is error-free and optimal.
 6. The `MLTrainingAndEvaluation` subworkflow is described as training a "regression ML model" but it should be focused on a classification model given the main workflow's goal.
 7. The `FeatureExtraction` task in `MLTrainingAndEvaluation` subworkflow mentions that hyperparameters influence feature extraction, which is unusual as hyperparameters typically influence model training rather than feature extraction.

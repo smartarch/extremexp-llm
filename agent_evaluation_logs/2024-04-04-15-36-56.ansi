@@ -1,5 +1,5 @@
 Configuration file path: examples/artificial_workflow/2_config.yaml
-Configuration: {'logger_folder': 'xxp_agent_logs/artificial_workflow', 'model': 'gpt-4-0125-preview', 'specification_type': 'xxp_assembled', 'specification_folder': 'examples/artificial_workflow/2_assembled', 'main_workflow_name': 'MainWorkflow'}
+Configuration: {'logger_folder': 'abc_agent_logs/artificial_workflow', 'model': 'gpt-4-0125-preview', 'specification_type': 'abc_assembled', 'specification_folder': 'examples/artificial_workflow/2_assembled', 'main_workflow_name': 'MainWorkflow'}
 LLM model: gpt-4-0125-preview 
 
 [2m
@@ -157,7 +157,7 @@ List all tasks in workflow 'MLTrainingAndEvaluation' that have a parameter. On t
 Invoking: `workflow_specification` with `{'workflow_name': 'MLTrainingAndEvaluation'}`
 
 
-[0m[36;1m[1;3mpackage automl_ideko;
+[0m[36;1m[1;3mpackage automl_xyz;
 
 workflow MLTrainingAndEvaluation {
   description "Training and evaluation of the regression ML model with the given hyperparameters.";
@@ -165,7 +165,7 @@ workflow MLTrainingAndEvaluation {
   // TASKS
   task FeatureExtraction {
     description "Extracts features from the input data.";
-    implementation "file://ideko_feature_extraction.py";
+    implementation "file://xyz_feature_extraction.py";
   }
   task ModelTraining {
     description "Trains the regression ML model with the given hyperparameters.";
@@ -239,7 +239,7 @@ List all tasks in workflow 'MLTrainingAndEvaluation' that have a subworkflow. On
 Invoking: `workflow_specification` with `{'workflow_name': 'MLTrainingAndEvaluation'}`
 
 
-[0m[36;1m[1;3mpackage automl_ideko;
+[0m[36;1m[1;3mpackage automl_xyz;
 
 workflow MLTrainingAndEvaluation {
   description "Training and evaluation of the regression ML model with the given hyperparameters.";
@@ -247,7 +247,7 @@ workflow MLTrainingAndEvaluation {
   // TASKS
   task FeatureExtraction {
     description "Extracts features from the input data.";
-    implementation "file://ideko_feature_extraction.py";
+    implementation "file://xyz_feature_extraction.py";
   }
   task ModelTraining {
     description "Trains the regression ML model with the given hyperparameters.";

@@ -9,8 +9,8 @@ def test_instances(update_specification_tool_path):
             SetQuestion("List all tasks in workflow 'package2.MainWorkflow' that have a subworkflow. Do not list tasks nested inside other tasks.", {"Task1", "Task4"}),
             update_specification_tool_path("automl_wrong_implementation"),
             SetQuestion("List all tasks in workflow 'automl.HyperparameterOptimization'. Do not list tasks nested inside other tasks.", {"HyperparameterProposal", "MLModelValidation", "BestHyperparameterSelection"}),
-            SetQuestion("List all tasks in workflow 'automl_ideko.MLTrainingAndEvaluation' that have a parameter (set via the 'param' keyword). Do not list tasks nested inside other tasks.", {"ModelEvaluation"}),
-            SetQuestion("List all tasks in workflow 'automl_ideko.MLTrainingAndEvaluation' that have a subworkflow. Do not list tasks nested inside other tasks.", set()),
+            SetQuestion("List all tasks in workflow 'automl_xyz.MLTrainingAndEvaluation' that have a parameter (set via the 'param' keyword). Do not list tasks nested inside other tasks.", {"ModelEvaluation"}),
+            SetQuestion("List all tasks in workflow 'automl_xyz.MLTrainingAndEvaluation' that have a subworkflow. Do not list tasks nested inside other tasks.", set()),
         ],
         "Links in flow": [
             update_specification_tool_path("artificial_workflow"),
@@ -58,13 +58,13 @@ def test_instances(update_specification_tool_path):
         "Inconsistent task name and description": [
             update_specification_tool_path("automl_wrong_implementation"),
             OpenQuestion(
-                "Identify potential errors in the descriptions of tasks in workflow 'automl_ideko.FailurePredictionInManufacture'. Write one error per line.",
+                "Identify potential errors in the descriptions of tasks in workflow 'automl_xyz.FailurePredictionInManufacture'. Write one error per line.",
                 "The description of task 'DataRetrieval' does not correspond with its name. The task should retrieve the input data, while the description says that it saves the results of the experiment and produces plots."),
         ],
         "Inconsistent descriptions": [
             update_specification_tool_path("automl_wrong_implementation"),
             OpenQuestion(
-                "Identify potential errors in the description of workflow 'automl_ideko.FailurePredictionInManufacture' and its tasks (including tasks in the subworkflows). Write one error per line.",
+                "Identify potential errors in the description of workflow 'automl_xyz.FailurePredictionInManufacture' and its tasks (including tasks in the subworkflows). Write one error per line.",
                 "The description of the 'MLTrainingAndEvaluation' subworkflow does not correspond with the description of the 'FailurePredictionInManufacture' workflow. The tasks state that they train a regression ML model while the workflow is intended for binary classification."),
         ],
     }
