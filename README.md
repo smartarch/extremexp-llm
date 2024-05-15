@@ -1,11 +1,5 @@
 # extremexp-llm
 
-## ❗❗❗ TODO before submission ❗❗❗
-
-* remove quickstart, IDEKO and predictive maintenance (only keep `xxp_agent` and `agent_evaluation`)
-
----
-
 Full list of evaluation patterns: [`patterns.md`](patterns.md)
 
 ## Installation
@@ -28,11 +22,7 @@ In the [`agent_evaluation/README.md`](agent_evaluation/README.md) file, the expe
 
 The [`xxp_agent`](xxp_agent/) folder contains code for running a LLM-based agent that chats with the user. Based on the configuration (see examples in the [`examples`](examples/) folder) the available tools are selected (so the agent can read workflow specifications, data produced by experiments, ...). To start the agent, run the [`main.py`](xxp_agent/main.py) file.
 
-
-
-
-
-
+---
 
 ## [`agent_with_fake_tools.py`](agent_with_fake_tools.py)
 

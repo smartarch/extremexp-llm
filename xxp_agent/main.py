@@ -1,5 +1,5 @@
 """
-A LLM-based Agent, all tools are faked and require a human to respond.
+A LLM-based Agent for ExtremeXP.
 """
 
 import sys

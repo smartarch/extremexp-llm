@@ -1,0 +1,395 @@
+Configuration file path: examples/artificial_workflow/1_config.yaml
+Configuration: {'logger_folder': 'xxp_agent_logs/artificial_workflow', 'model': 'gpt-4o-2024-05-13', 'specification_type': 'xxp', 'specification_folder': 'examples/artificial_workflow/1_separate_files', 'main_workflow_name': 'MainWorkflow', 'main_workflow_package': 'package2'}
+LLM model: gpt-4o-2024-05-13 
+
+[2m
+This script uses multiline input. Press Ctrl+D (Linux) or Ctrl+Z (Windows) on an empty line to end input message.
+[0m
+Prompt template:
+[35m
+SystemMessage(content='Your goal is to help the user with analyzing results of an experiment and suggest improvements to the experiment itself.\n\nThe experiment is defined by a workflow, which is an activity diagram consisting of several tasks with a data flow among them. Each of the tasks can be composed of a subworkflow and you can use tools to obtain the specification of the subworkflow.\n\nThe workflow is specified using a DSL:\narrows "->" represent control flow\narrows with question mark “?->” represent conditional control flow\ndashed arrows "-->" represent data flow\n\nA workflow can be derived from another workflow, which is denoted by the "from" keyword. When working with a derived workflow, always obtain the specification of the base workflow as it is necessary to fully understand the derived workflow.\n\nThink in steps and use the available tools. Use the tools if you need specification of a workflow or a task, list the results collected during the experiment, etc. If the information cannot be obtained using the tools, ask the user. Always gather all the necessary information before submitting your final answer.\n')
+HumanMessagePromptTemplate(prompt=PromptTemplate(input_variables=[], template="Experiment workflow: 'MainWorkflow' from package 'package2'\n"))
+MessagesPlaceholder(variable_name='chat_history')
+HumanMessagePromptTemplate(prompt=PromptTemplate(input_variables=['input'], template='{input}'))
+MessagesPlaceholder(variable_name='agent_scratchpad')
+[0m
+Tools:
+[35m
+workflow_specification: Get the specification of the workflow (or subworkflow). Note that the workflow specification can contain references to subworkflows and parent workflows. To fully understand the whole workflow, it might be necessary to also obtain the specification of the subworkflows and parent workflows.
+[0m
+
+Start of chat.
+
+User input:
+[35m
+Generate Python code that will run the experiment specified by the experiment workflow. Use the tools to obtain the specification of the experiment workflow and all the referenced workflows.
+
+Use the ProActive Python Client SDK (`import proactive`) to create corresponding tasks and run them.
+
+[0m
+
+
+[1m> Entering new AgentExecutor chain...[0m
+[32;1m[1;3m
+Invoking: `workflow_specification` with `{'package_name': 'package2', 'workflow_name': 'MainWorkflow'}`
+
+
+[0m[36;1m[1;3mpackage package2;
+
+workflow MainWorkflow from package1.Workflow1 {
+  
+  configure task Task3 {
+    implementation "file://implementation_B.py";
+  }
+
+  configure task Task4 {
+    subworkflow SubWorkflow;
+  }
+
+  configure task Task1 {
+    configure tasks Task6 {
+      configure task Task8 {
+        implementation "file://implementation_E.exe";
+      }
+
+      configure task Task9 {
+        implementation "file://implementation_F.exe";
+      }
+    }
+  }
+
+}
+[0m[32;1m[1;3m
+Invoking: `workflow_specification` with `{'package_name': 'package1', 'workflow_name': 'Workflow1'}`
+
+
+[0m[36;1m[1;3mpackage package1;
+
+workflow Workflow1 {
+  
+  // TASKS
+  define task Task1;
+  define task Task2;
+  define task Task3;
+  define task Task4;
+
+  // DATA
+  define data InputData;
+
+  // TASK CONNECTIONS
+  
+  START -> Task2 -> PARALLEL_1;
+  PARALLEL_1 -> Task1 -> PARALLEL_END_1;
+  PARALLEL_1 -> Task3 -> Task4 -> PARALLEL_END_1;
+  PARALLEL_END_1 -> END;
+
+  // DATA CONNECTIONS
+
+  InputData --> Task2;
+
+  // TASK CONFIGURATION
+  configure task Task2 {
+    implementation "file://implementation_A.py";
+    param value = 0.2;
+  }
+
+  configure task Task1 {
+    subworkflow Workflow2;
+  }
+}
+[0m[32;1m[1;3m
+Invoking: `workflow_specification` with `{'package_name': 'package2', 'workflow_name': 'SubWorkflow'}`
+
+
+[0m[36;1m[1;3mpackage package2;
+
+workflow SubWorkflow from package1.Workflow4 {
+  
+  configure task Task9 {
+    implementation "file://implementation_F.py";
+  }
+
+  configure task Task11 {
+    implementation "file://implementation_G.java";
+  }
+}
+[0m[32;1m[1;3m
+Invoking: `workflow_specification` with `{'package_name': 'package1', 'workflow_name': 'Workflow2'}`
+
+
+[0m[36;1m[1;3mpackage package1;
+
+workflow Workflow2 {
+  
+  // TASKS
+  define task Task5;
+  define task Task6;
+
+  // TASK CONNECTIONS
+  
+  START -> Task5 -> Task6;
+  Task6 -> Task5;
+
+  // TASK CONFIGURATION
+  configure task Task5 {
+    implementation "file://implementation_C.py";
+  }
+
+  configure task Task6 {
+    subworkflow Workflow3;
+    param p = 4;
+  }
+}
+[0m[32;1m[1;3m
+Invoking: `workflow_specification` with `{'package_name': 'package1', 'workflow_name': 'Workflow4'}`
+
+
+[0m[36;1m[1;3mpackage package1;
+
+workflow Workflow4 {
+  
+  // TASKS
+  define task Task9;
+  define task Task10;
+  define task Task11;
+
+  // TASK CONNECTIONS
+  
+  START -> Task10 -> Task9 -> Task11 -> END;
+
+  // TASK CONFIGURATION
+  configure task Task10 {
+    implementation "file://implementation_F.java";
+  }
+}
+[0m[32;1m[1;3m
+Invoking: `workflow_specification` with `{'package_name': 'package1', 'workflow_name': 'Workflow3'}`
+
+
+[0m[36;1m[1;3mpackage package1;
+
+workflow Workflow3 {
+  
+  // TASKS
+  define task Task7;
+  define task Task8;
+  define task Task9;
+
+  // PARAMETERS
+  param p = 0;
+
+  // TASK CONNECTIONS
+  
+  START -> Task7;
+
+  Task7 ?-> Task9 {
+    condition "p > 1";
+  }
+
+  Task7 ?-> Task8 {
+    condition "p < 10";
+  }
+  
+  Task9 -> END;
+  Task8 -> END;
+
+  // TASK CONFIGURATION
+  configure task Task7 {
+    implementation "file://implementation_D.py";
+  }
+}
+[0m[32;1m[1;3mThe specifications of all the workflows have been obtained. Let's summarize them:
+
+### Main Workflow (MainWorkflow from package2)
+- Derived from `Workflow1` in `package1`.
+- Configures `Task3`, `Task4`, and `Task1`.
+
+### Workflow1 (package1)
+- Tasks: `Task1`, `Task2`, `Task3`, `Task4`
+- Data: `InputData`
+- Task Connections:
+  - `START -> Task2 -> PARALLEL_1`
+  - `PARALLEL_1 -> Task1 -> PARALLEL_END_1`
+  - `PARALLEL_1 -> Task3 -> Task4 -> PARALLEL_END_1`
+  - `PARALLEL_END_1 -> END`
+- Data Connections:
+  - `InputData --> Task2`
+- Task Configurations:
+  - `Task2`: Implementation: `file://implementation_A.py`, Param: `value = 0.2`
+  - `Task1`: Subworkflow: `Workflow2`
+
+### Workflow2 (package1)
+- Tasks: `Task5`, `Task6`
+- Task Connections:
+  - `START -> Task5 -> Task6`
+  - `Task6 -> Task5`
+- Task Configurations:
+  - `Task5`: Implementation: `file://implementation_C.py`
+  - `Task6`: Subworkflow: `Workflow3`, Param: `p = 4`
+
+### Workflow3 (package1)
+- Tasks: `Task7`, `Task8`, `Task9`
+- Parameters: `p = 0`
+- Task Connections:
+  - `START -> Task7`
+  - `Task7 ?-> Task9` (condition: `p > 1`)
+  - `Task7 ?-> Task8` (condition: `p < 10`)
+  - `Task9 -> END`
+  - `Task8 -> END`
+- Task Configurations:
+  - `Task7`: Implementation: `file://implementation_D.py`
+
+### SubWorkflow (SubWorkflow from package2, derived from Workflow4 in package1)
+- Configures `Task9` and `Task11`.
+
+### Workflow4 (package1)
+- Tasks: `Task9`, `Task10`, `Task11`
+- Task Connections:
+  - `START -> Task10 -> Task9 -> Task11 -> END`
+- Task Configurations:
+  - `Task10`: Implementation: `file://implementation_F.java`
+  - `Task9`: Implementation: `file://implementation_F.py`
+  - `Task11`: Implementation: `file://implementation_G.java`
+
+Now, let's generate the Python code using the ProActive Python Client SDK (`import proactive`) to create corresponding tasks and run them.
+
+```python
+import proactive
+
+# Initialize the ProActive client
+gateway = proactive.ProActiveGateway()
+gateway.connect(username="your_username", password="your_password")
+
+# Define tasks
+task2 = proactive.createPythonTask(script_path="file://implementation_A.py", parameters={"value": 0.2})
+task5 = proactive.createPythonTask(script_path="file://implementation_C.py")
+task7 = proactive.createPythonTask(script_path="file://implementation_D.py")
+task8 = proactive.createExecutableTask(executable_path="file://implementation_E.exe")
+task9 = proactive.createExecutableTask(executable_path="file://implementation_F.exe")
+task10 = proactive.createJavaTask(java_class="file://implementation_F.java")
+task11 = proactive.createJavaTask(java_class="file://implementation_G.java")
+
+# Define workflows
+workflow3 = proactive.createWorkflow(name="Workflow3", tasks=[task7, task8, task9], connections=[
+    proactive.createCondition(task7, task9, condition="p > 1"),
+    proactive.createCondition(task7, task8, condition="p < 10"),
+])
+workflow2 = proactive.createWorkflow(name="Workflow2", tasks=[task5, proactive.createSubworkflowTask(workflow3, parameters={"p": 4})])
+workflow4 = proactive.createWorkflow(name="Workflow4", tasks=[task10, task9, task11])
+subworkflow = proactive.createWorkflow(name="SubWorkflow", base_workflow=workflow4, task_configs={"Task9": task9, "Task11": task11})
+workflow1 = proactive.createWorkflow(name="Workflow1", tasks=[task2, proactive.createSubworkflowTask(workflow2)], connections=[
+    proactive.createParallelConnection([task2], [proactive.createSubworkflowTask(workflow2), proactive.createTask(task8)], end_parallel_task=proactive.createTask(task9))
+])
+main_workflow = proactive.createWorkflow(name="MainWorkflow", base_workflow=workflow1, task_configs={"Task3": proactive.createPythonTask(script_path="file://implementation_B.py"), "Task4": proactive.createSubworkflowTask(subworkflow)})
+
+# Submit workflow
+jobId = gateway.submitWorkflow(main_workflow)
+
+# Wait for job to complete
+gateway.monitorJob(jobId)
+results = gateway.getJobResults(jobId)
+
+print(results)
+```
+
+Make sure to replace `"your_username"` and `"your_password"` with actual credentials. This code initializes the ProActive client, defines the tasks and workflows, and then submits the main workflow for execution.[0m
+
+[1m> Finished chain.[0m
+Agent reply:
+[36m
+The specifications of all the workflows have been obtained. Let's summarize them:
+
+### Main Workflow (MainWorkflow from package2)
+- Derived from `Workflow1` in `package1`.
+- Configures `Task3`, `Task4`, and `Task1`.
+
+### Workflow1 (package1)
+- Tasks: `Task1`, `Task2`, `Task3`, `Task4`
+- Data: `InputData`
+- Task Connections:
+  - `START -> Task2 -> PARALLEL_1`
+  - `PARALLEL_1 -> Task1 -> PARALLEL_END_1`
+  - `PARALLEL_1 -> Task3 -> Task4 -> PARALLEL_END_1`
+  - `PARALLEL_END_1 -> END`
+- Data Connections:
+  - `InputData --> Task2`
+- Task Configurations:
+  - `Task2`: Implementation: `file://implementation_A.py`, Param: `value = 0.2`
+  - `Task1`: Subworkflow: `Workflow2`
+
+### Workflow2 (package1)
+- Tasks: `Task5`, `Task6`
+- Task Connections:
+  - `START -> Task5 -> Task6`
+  - `Task6 -> Task5`
+- Task Configurations:
+  - `Task5`: Implementation: `file://implementation_C.py`
+  - `Task6`: Subworkflow: `Workflow3`, Param: `p = 4`
+
+### Workflow3 (package1)
+- Tasks: `Task7`, `Task8`, `Task9`
+- Parameters: `p = 0`
+- Task Connections:
+  - `START -> Task7`
+  - `Task7 ?-> Task9` (condition: `p > 1`)
+  - `Task7 ?-> Task8` (condition: `p < 10`)
+  - `Task9 -> END`
+  - `Task8 -> END`
+- Task Configurations:
+  - `Task7`: Implementation: `file://implementation_D.py`
+
+### SubWorkflow (SubWorkflow from package2, derived from Workflow4 in package1)
+- Configures `Task9` and `Task11`.
+
+### Workflow4 (package1)
+- Tasks: `Task9`, `Task10`, `Task11`
+- Task Connections:
+  - `START -> Task10 -> Task9 -> Task11 -> END`
+- Task Configurations:
+  - `Task10`: Implementation: `file://implementation_F.java`
+  - `Task9`: Implementation: `file://implementation_F.py`
+  - `Task11`: Implementation: `file://implementation_G.java`
+
+Now, let's generate the Python code using the ProActive Python Client SDK (`import proactive`) to create corresponding tasks and run them.
+
+```python
+import proactive
+
+# Initialize the ProActive client
+gateway = proactive.ProActiveGateway()
+gateway.connect(username="your_username", password="your_password")
+
+# Define tasks
+task2 = proactive.createPythonTask(script_path="file://implementation_A.py", parameters={"value": 0.2})
+task5 = proactive.createPythonTask(script_path="file://implementation_C.py")
+task7 = proactive.createPythonTask(script_path="file://implementation_D.py")
+task8 = proactive.createExecutableTask(executable_path="file://implementation_E.exe")
+task9 = proactive.createExecutableTask(executable_path="file://implementation_F.exe")
+task10 = proactive.createJavaTask(java_class="file://implementation_F.java")
+task11 = proactive.createJavaTask(java_class="file://implementation_G.java")
+
+# Define workflows
+workflow3 = proactive.createWorkflow(name="Workflow3", tasks=[task7, task8, task9], connections=[
+    proactive.createCondition(task7, task9, condition="p > 1"),
+    proactive.createCondition(task7, task8, condition="p < 10"),
+])
+workflow2 = proactive.createWorkflow(name="Workflow2", tasks=[task5, proactive.createSubworkflowTask(workflow3, parameters={"p": 4})])
+workflow4 = proactive.createWorkflow(name="Workflow4", tasks=[task10, task9, task11])
+subworkflow = proactive.createWorkflow(name="SubWorkflow", base_workflow=workflow4, task_configs={"Task9": task9, "Task11": task11})
+workflow1 = proactive.createWorkflow(name="Workflow1", tasks=[task2, proactive.createSubworkflowTask(workflow2)], connections=[
+    proactive.createParallelConnection([task2], [proactive.createSubworkflowTask(workflow2), proactive.createTask(task8)], end_parallel_task=proactive.createTask(task9))
+])
+main_workflow = proactive.createWorkflow(name="MainWorkflow", base_workflow=workflow1, task_configs={"Task3": proactive.createPythonTask(script_path="file://implementation_B.py"), "Task4": proactive.createSubworkflowTask(subworkflow)})
+
+# Submit workflow
+jobId = gateway.submitWorkflow(main_workflow)
+
+# Wait for job to complete
+gateway.monitorJob(jobId)
+results = gateway.getJobResults(jobId)
+
+print(results)
+```
+
+Make sure to replace `"your_username"` and `"your_password"` with actual credentials. This code initializes the ProActive client, defines the tasks and workflows, and then submits the main workflow for execution.
+[0m

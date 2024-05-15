@@ -165,4 +165,5 @@ agent_with_fake_tools_logs
 xxp_agent_logs/*
 !xxp_agent_logs/artificial_workflow
 !xxp_agent_logs/automl_wrong_implementation
+!xxp_agent_logs/code
 xxp_agent_logs/automl_wrong_implementation/old

@@ -1,0 +1,366 @@
+Configuration file path: examples/artificial_workflow/2_config.yaml
+Configuration: {'logger_folder': 'xxp_agent_logs/artificial_workflow', 'model': 'gpt-4o-2024-05-13', 'specification_type': 'xxp_assembled', 'specification_folder': 'examples/artificial_workflow/2_assembled', 'main_workflow_name': 'MainWorkflow'}
+LLM model: gpt-4o-2024-05-13 
+
+[2m
+This script uses multiline input. Press Ctrl+D (Linux) or Ctrl+Z (Windows) on an empty line to end input message.
+[0m
+Prompt template:
+[35m
+SystemMessage(content='Your goal is to help the user with analyzing results of an experiment and suggest improvements to the experiment itself.\n\nThe experiment is defined by a workflow, which is an activity diagram consisting of several tasks with a data flow among them. Each of the tasks can be composed of a subworkflow and you can use tools to obtain the specification of the subworkflow.\n\nThe workflow is specified using a DSL:\narrows "->" represent control flow\narrows with question mark “?->” represent conditional control flow\ndashed arrows "-->" represent data flow\n\nThink in steps and use the available tools. Use the tools if you need specification of a workflow or a task, list the results collected during the experiment, etc. If the information cannot be obtained using the tools, ask the user. Always gather all the necessary information before submitting your final answer.\n')
+HumanMessagePromptTemplate(prompt=PromptTemplate(input_variables=[], template="Experiment workflow: 'MainWorkflow'\n"))
+MessagesPlaceholder(variable_name='chat_history')
+HumanMessagePromptTemplate(prompt=PromptTemplate(input_variables=['input'], template='{input}'))
+MessagesPlaceholder(variable_name='agent_scratchpad')
+[0m
+Tools:
+[35m
+workflow_specification: Get the specification of the workflow (or subworkflow). Note that the workflow specification can contain references to subworkflows. To fully understand the whole workflow, it might be necessary to also obtain the specification of the subworkflows.
+[0m
+
+Start of chat.
+
+User input:
+[35m
+Generate Python code that will run the experiment specified by the experiment workflow. Use the tools to obtain the specification of the experiment workflow and all the referenced workflows.
+
+Use the ProActive Python Client SDK (`import proactive`) to create corresponding tasks and run them.
+
+[0m
+
+
+[1m> Entering new AgentExecutor chain...[0m
+[32;1m[1;3m
+Invoking: `workflow_specification` with `{'workflow_name': 'MainWorkflow'}`
+
+
+[0m[36;1m[1;3mpackage package2;
+
+workflow MainWorkflow {
+  
+  // TASKS
+  task Task1 {
+    subworkflow Workflow2;
+  }
+  task Task2 {
+    implementation "file://implementation_A.py";
+    param value = 0.2;
+  }
+  task Task3 {
+    implementation "file://implementation_B.py";
+  }
+  task Task4 {
+    subworkflow SubWorkflow;
+  }
+
+  // DATA
+  data InputData;
+
+  // TASK CONNECTIONS
+  
+  START -> Task2 -> PARALLEL_1;
+  PARALLEL_1 -> Task1 -> PARALLEL_END_1;
+  PARALLEL_1 -> Task3 -> Task4 -> PARALLEL_END_1;
+  PARALLEL_END_1 -> END;
+
+  // DATA CONNECTIONS
+
+  InputData --> Task2;
+}
+[0m[32;1m[1;3m
+Invoking: `workflow_specification` with `{'workflow_name': 'Workflow2'}`
+
+
+[0m[36;1m[1;3mpackage package1;
+
+workflow Workflow2 {
+  
+  // TASKS
+  task Task5 {
+    implementation "file://implementation_C.py";
+  }
+  task Task6 {
+    subworkflow Workflow3;
+    param p = 4;
+  }
+
+  // TASK CONNECTIONS
+  
+  START -> Task5 -> Task6;
+  Task6 -> Task5;
+}
+[0m[32;1m[1;3m
+Invoking: `workflow_specification` with `{'workflow_name': 'SubWorkflow'}`
+
+
+[0m[36;1m[1;3mpackage package2;
+
+workflow SubWorkflow {
+
+  // TASKS
+  task Task10 {
+    implementation "file://implementation_F.java";
+  }
+  task Task9 {
+    implementation "file://implementation_F.py";
+  }
+  task Task11 {
+    implementation "file://implementation_G.java";
+  }
+
+  // TASK CONNECTIONS
+  
+  START -> Task10 -> Task9 -> Task11 -> END;  
+}
+[0m[32;1m[1;3m
+Invoking: `workflow_specification` with `{'workflow_name': 'Workflow3'}`
+
+
+[0m[36;1m[1;3mpackage package1;
+
+workflow Workflow3 {
+  
+  // TASKS
+  task Task7 {
+    implementation "file://implementation_D.py";
+  }
+  task Task8 {
+    implementation "file://implementation_E.exe";
+  }
+  task Task9 {
+    implementation "file://implementation_F.exe";
+  }
+
+  // PARAMETERS
+  param p = 0;
+
+  // TASK CONNECTIONS
+  
+  START -> Task7;
+
+  Task7 ?-> Task9 {
+    condition "p > 1";
+  }
+
+  Task7 ?-> Task8 {
+    condition "p < 10";
+  }
+  
+  Task9 -> END;
+  Task8 -> END;
+}
+[0m[32;1m[1;3mBased on the specifications of the workflows, I will generate the Python code using the ProActive Python Client SDK to create and run the corresponding tasks. Here's the complete Python code:
+
+```python
+import proactive
+
+# Create the ProActive scheduler client
+client = proactive.ProActiveSchedulerClient('https://try.activeeon.com:8080/automation-dashboard')
+
+# Login to the server
+client.login('username', 'password')
+
+# Create the main workflow
+main_workflow = client.create_workflow('MainWorkflow')
+
+# Task2
+task2 = client.create_python_task('Task2', 'implementation_A.py')
+task2.set_python_command("implementation_A.py")
+task2.add_python_script_parameter("value", 0.2)
+main_workflow.add_task(task2)
+
+# Create Workflow2 subworkflow
+workflow2 = client.create_workflow('Workflow2')
+
+# Task5 in Workflow2
+task5 = client.create_python_task('Task5', 'implementation_C.py')
+task5.set_python_command("implementation_C.py")
+workflow2.add_task(task5)
+
+# Task6 in Workflow2
+workflow3 = client.create_workflow('Workflow3')
+
+# Task7 in Workflow3
+task7 = client.create_python_task('Task7', 'implementation_D.py')
+task7.set_python_command("implementation_D.py")
+workflow3.add_task(task7)
+
+# Task8 in Workflow3
+task8 = client.create_python_task('Task8', 'implementation_E.exe')
+task8.set_python_command("implementation_E.exe")
+workflow3.add_task(task8)
+
+# Task9 in Workflow3
+task9_w3 = client.create_python_task('Task9', 'implementation_F.exe')
+task9_w3.set_python_command("implementation_F.exe")
+workflow3.add_task(task9_w3)
+
+# Conditional control flow in Workflow3
+task7.add_condition(task9_w3, "p > 1")
+task7.add_condition(task8, "p < 10")
+
+# Add Workflow3 to Task6 in Workflow2
+task6 = client.create_subworkflow_task('Task6', workflow3)
+task6.add_subworkflow_parameter("p", 4)
+workflow2.add_task(task6)
+
+# Control flow in Workflow2
+workflow2.connect_tasks(task5, task6)
+workflow2.connect_tasks(task6, task5)
+
+# Add Workflow2 to Task1 in MainWorkflow
+task1 = client.create_subworkflow_task('Task1', workflow2)
+main_workflow.add_task(task1)
+
+# Task3 in MainWorkflow
+task3 = client.create_python_task('Task3', 'implementation_B.py')
+task3.set_python_command("implementation_B.py")
+main_workflow.add_task(task3)
+
+# Create SubWorkflow subworkflow
+sub_workflow = client.create_workflow('SubWorkflow')
+
+# Task10 in SubWorkflow
+task10 = client.create_java_task('Task10', 'implementation_F.java')
+task10.set_java_command("implementation_F.java")
+sub_workflow.add_task(task10)
+
+# Task9 in SubWorkflow
+task9_sw = client.create_python_task('Task9', 'implementation_F.py')
+task9_sw.set_python_command("implementation_F.py")
+sub_workflow.add_task(task9_sw)
+
+# Task11 in SubWorkflow
+task11 = client.create_java_task('Task11', 'implementation_G.java')
+task11.set_java_command("implementation_G.java")
+sub_workflow.add_task(task11)
+
+# Control flow in SubWorkflow
+sub_workflow.connect_tasks(task10, task9_sw)
+sub_workflow.connect_tasks(task9_sw, task11)
+
+# Add SubWorkflow to Task4 in MainWorkflow
+task4 = client.create_subworkflow_task('Task4', sub_workflow)
+main_workflow.add_task(task4)
+
+# Control flow in MainWorkflow
+main_workflow.connect_tasks(task2, task1)
+main_workflow.connect_tasks(task2, task3)
+main_workflow.connect_tasks(task3, task4)
+
+# Submit and execute the MainWorkflow
+client.submit_workflow(main_workflow)
+client.logout()
+```
+
+This code constructs the main workflow, subworkflows, and tasks based on the provided DSL specifications. It then submits the main workflow for execution using the ProActive Scheduler Client. Ensure to replace `'username'` and `'password'` with actual credentials.[0m
+
+[1m> Finished chain.[0m
+Agent reply:
+[36m
+Based on the specifications of the workflows, I will generate the Python code using the ProActive Python Client SDK to create and run the corresponding tasks. Here's the complete Python code:
+
+```python
+import proactive
+
+# Create the ProActive scheduler client
+client = proactive.ProActiveSchedulerClient('https://try.activeeon.com:8080/automation-dashboard')
+
+# Login to the server
+client.login('username', 'password')
+
+# Create the main workflow
+main_workflow = client.create_workflow('MainWorkflow')
+
+# Task2
+task2 = client.create_python_task('Task2', 'implementation_A.py')
+task2.set_python_command("implementation_A.py")
+task2.add_python_script_parameter("value", 0.2)
+main_workflow.add_task(task2)
+
+# Create Workflow2 subworkflow
+workflow2 = client.create_workflow('Workflow2')
+
+# Task5 in Workflow2
+task5 = client.create_python_task('Task5', 'implementation_C.py')
+task5.set_python_command("implementation_C.py")
+workflow2.add_task(task5)
+
+# Task6 in Workflow2
+workflow3 = client.create_workflow('Workflow3')
+
+# Task7 in Workflow3
+task7 = client.create_python_task('Task7', 'implementation_D.py')
+task7.set_python_command("implementation_D.py")
+workflow3.add_task(task7)
+
+# Task8 in Workflow3
+task8 = client.create_python_task('Task8', 'implementation_E.exe')
+task8.set_python_command("implementation_E.exe")
+workflow3.add_task(task8)
+
+# Task9 in Workflow3
+task9_w3 = client.create_python_task('Task9', 'implementation_F.exe')
+task9_w3.set_python_command("implementation_F.exe")
+workflow3.add_task(task9_w3)
+
+# Conditional control flow in Workflow3
+task7.add_condition(task9_w3, "p > 1")
+task7.add_condition(task8, "p < 10")
+
+# Add Workflow3 to Task6 in Workflow2
+task6 = client.create_subworkflow_task('Task6', workflow3)
+task6.add_subworkflow_parameter("p", 4)
+workflow2.add_task(task6)
+
+# Control flow in Workflow2
+workflow2.connect_tasks(task5, task6)
+workflow2.connect_tasks(task6, task5)
+
+# Add Workflow2 to Task1 in MainWorkflow
+task1 = client.create_subworkflow_task('Task1', workflow2)
+main_workflow.add_task(task1)
+
+# Task3 in MainWorkflow
+task3 = client.create_python_task('Task3', 'implementation_B.py')
+task3.set_python_command("implementation_B.py")
+main_workflow.add_task(task3)
+
+# Create SubWorkflow subworkflow
+sub_workflow = client.create_workflow('SubWorkflow')
+
+# Task10 in SubWorkflow
+task10 = client.create_java_task('Task10', 'implementation_F.java')
+task10.set_java_command("implementation_F.java")
+sub_workflow.add_task(task10)
+
+# Task9 in SubWorkflow
+task9_sw = client.create_python_task('Task9', 'implementation_F.py')
+task9_sw.set_python_command("implementation_F.py")
+sub_workflow.add_task(task9_sw)
+
+# Task11 in SubWorkflow
+task11 = client.create_java_task('Task11', 'implementation_G.java')
+task11.set_java_command("implementation_G.java")
+sub_workflow.add_task(task11)
+
+# Control flow in SubWorkflow
+sub_workflow.connect_tasks(task10, task9_sw)
+sub_workflow.connect_tasks(task9_sw, task11)
+
+# Add SubWorkflow to Task4 in MainWorkflow
+task4 = client.create_subworkflow_task('Task4', sub_workflow)
+main_workflow.add_task(task4)
+
+# Control flow in MainWorkflow
+main_workflow.connect_tasks(task2, task1)
+main_workflow.connect_tasks(task2, task3)
+main_workflow.connect_tasks(task3, task4)
+
+# Submit and execute the MainWorkflow
+client.submit_workflow(main_workflow)
+client.logout()
+```
+
+This code constructs the main workflow, subworkflows, and tasks based on the provided DSL specifications. It then submits the main workflow for execution using the ProActive Scheduler Client. Ensure to replace `'username'` and `'password'` with actual credentials.
+[0m
