@@ -5,12 +5,12 @@ def test_instances(update_specification_tool_path):
     test_instances_structure = {
         "List of tasks": [
             update_specification_tool_path("artificial_workflow"),
-            SetQuestion("List all tasks in workflow 'MainWorkflow'.", {"Task1", "Task2", "Task3", "Task4"}),
-            SetQuestion("List all tasks in workflow 'MainWorkflow' that have a subworkflow.", {"Task1", "Task4"}),
+            SetQuestion("List all tasks in workflow 'MainWorkflow'. Do not list tasks nested inside other tasks.", {"Task1", "Task2", "Task3", "Task4"}),
+            SetQuestion("List all tasks in workflow 'MainWorkflow' that have a subworkflow. Do not list tasks nested inside other tasks.", {"Task1", "Task4"}),
             update_specification_tool_path("automl_wrong_implementation"),
-            SetQuestion("List all tasks in workflow 'HyperparameterOptimization'.", {"HyperparameterProposal", "MLModelValidation", "BestHyperparameterSelection"}),
-            SetQuestion("List all tasks in workflow 'MLTrainingAndEvaluation' that have a parameter (set via the 'param' keyword).", {"ModelEvaluation"}),
-            SetQuestion("List all tasks in workflow 'MLTrainingAndEvaluation' that have a subworkflow.", set()),
+            SetQuestion("List all tasks in workflow 'HyperparameterOptimization'. Do not list tasks nested inside other tasks.", {"HyperparameterProposal", "MLModelValidation", "BestHyperparameterSelection"}),
+            SetQuestion("List all tasks in workflow 'MLTrainingAndEvaluation' that have a parameter (set via the 'param' keyword). Do not list tasks nested inside other tasks.", {"ModelEvaluation"}),
+            SetQuestion("List all tasks in workflow 'MLTrainingAndEvaluation' that have a subworkflow. Do not list tasks nested inside other tasks.", set()),
         ],
         "Links in flow": [
             update_specification_tool_path("artificial_workflow"),

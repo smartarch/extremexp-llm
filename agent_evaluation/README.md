@@ -30,23 +30,43 @@ An example workflow specification can be found in the [`/examples/artificial_wor
 
 ## Results summary
 
-We manually created 25 test instances based on the [*test patterns*](/patterns.md). The table summarizes score for each pattern and variant by $\textit{mean}\pm\textit{std}$ of 3 repetitions of the experiment.
-
-| **Pattern category**  | **Pattern name**                  | **Number of instances** | **Variant 1 Score** | **Variant 2 Score** | **Variant 3 Score** |
-|----------------------------|----------------------------------------|------------------------------|--------------------------|--------------------------|--------------------------|
-| Structure | List of tasks                          | 5                            | $0.85\pm0.00$            | $1.00\pm0.00$            | $1.00\pm0.00$            |
-| Structure | Links in flow                          | 4                            | $0.95\pm0.11$            | $1.00\pm0.00$            | $0.85\pm0.22$            |
-| Structure | Task after task                        | 4                            | $0.60\pm0.14$            | $0.75\pm0.00$            | $0.60\pm0.14$            |
-| Structure | Next tasks in flow                     | 4                            | $1.00\pm0.00$            | $1.00\pm0.00$            | $1.00\pm0.00$            |
-| Structure | Flow cycle                             | 4                            | $0.85\pm0.14$            | $1.00\pm0.00$            | $1.00\pm0.00$            |
-| Structure | *Total*                         | *21*                         | $0.85\pm0.04$            | $0.95\pm0.00$            | $0.90\pm0.04$            |
-| Behavior  | Mutually exclusive conditional flow    | 2                            | $1.00\pm0.00$            | $1.00\pm0.00$            | $1.00\pm0.00$            |
-| Behavior  | *Total*                         | *2*                          | $1.00\pm0.00$            | $1.00\pm0.00$            | $1.00\pm0.00$            |
-| Basic functionality | Inconsistent task name and description | 1                            | $0.65\pm0.02$            | $0.54\pm0.10$            | $0.70\pm0.06$            |
-| Basic functionality | Inconsistent descriptions              | 1                            | $0.82\pm0.03$            | $0.80\pm0.02$            | $0.80\pm0.07$            |
-| Basic functionality | *Total*                         | *2*                          | $0.74\pm0.01$            | $0.67\pm0.04$            | $0.75\pm0.06$            |
+We manually created 25 test instances based on the [*test patterns*](/patterns.md). The table summarizes score for each pattern and variant by $\textit{mean}\pm\textit{std}$ of 5 repetitions of the experiment.
 
 Note: The *Basic functionality* patterns are labeled `semantics` in the source code and raw results.
+
+### GPT-4o (`gpt-4o-2024-05-13`)
+
+| **Pattern category**  | **Pattern name**                     | **Number of instances** | **Variant 1 Score** | **Variant 2 Score** | **Variant 3 Score** |
+|-----------------------|--------------------------------------|-------------------------|---------------------|---------------------|---------------------|
+| Structure | List of tasks                                    | 5                       | $0.85\pm0.00$       | $1.00\pm0.00$       | $1.00\pm0.00$       |
+| Structure | Links in flow                                    | 4                       | $0.95\pm0.11$       | $0.95\pm0.11$       | $0.95\pm0.11$       |
+| Structure | Task after task                                  | 4                       | $0.75\pm0.18$       | $0.85\pm0.14$       | $0.70\pm0.11$       |
+| Structure | Next tasks in flow                               | 4                       | $0.95\pm0.11$       | $0.90\pm0.14$       | $0.78\pm0.14$       |
+| Structure | Flow cycle                                       | 4                       | $0.80\pm0.11$       | $1.00\pm0.00$       | $0.70\pm0.11$       |
+| Structure | *Total*                                          | *21*                    | $0.86\pm0.05$       | $0.94\pm0.06$       | $0.83\pm0.03$       |
+| Behavior  | Mutually exclusive conditional flow              | 2                       | $1.00\pm0.00$       | $1.00\pm0.00$       | $1.00\pm0.00$       |
+| Behavior  | *Total*                                          | *2*                     | $1.00\pm0.00$       | $1.00\pm0.00$       | $1.00\pm0.00$       |
+| Basic functionality | Inconsistent task name and description | 1                       | $0.76\pm0.07$       | $0.72\pm0.08$       | $0.73\pm0.04$       |
+| Basic functionality | Inconsistent descriptions              | 1                       | $0.79\pm0.04$       | $0.81\pm0.03$       | $0.77\pm0.05$       |
+| Basic functionality | *Total*                                | *2*                     | $0.77\pm0.04$       | $0.77\pm0.04$       | $0.75\pm0.03$       |
+
+### GPT-4 Turbo (`gpt-4-0125-preview`)
+
+| **Pattern category**  | **Pattern name**                     | **Number of instances** | **Variant 1 Score** | **Variant 2 Score** | **Variant 3 Score** |
+|-----------------------|--------------------------------------|-------------------------|---------------------|---------------------|---------------------|
+| Structure | List of tasks                                    | 5                       | $0.85\pm0.00$       | $1.00\pm0.00$       | $1.00\pm0.00$       |
+| Structure | Links in flow                                    | 4                       | $0.95\pm0.11$       | $1.00\pm0.00$       | $0.85\pm0.22$       |
+| Structure | Task after task                                  | 4                       | $0.60\pm0.14$       | $0.75\pm0.00$       | $0.60\pm0.14$       |
+| Structure | Next tasks in flow                               | 4                       | $1.00\pm0.00$       | $1.00\pm0.00$       | $1.00\pm0.00$       |
+| Structure | Flow cycle                                       | 4                       | $0.85\pm0.14$       | $1.00\pm0.00$       | $1.00\pm0.00$       |
+| Structure | *Total*                                          | *21*                    | $0.85\pm0.04$       | $0.95\pm0.00$       | $0.90\pm0.04$       |
+| Behavior  | Mutually exclusive conditional flow              | 2                       | $1.00\pm0.00$       | $1.00\pm0.00$       | $1.00\pm0.00$       |
+| Behavior  | *Total*                                          | *2*                     | $1.00\pm0.00$       | $1.00\pm0.00$       | $1.00\pm0.00$       |
+| Basic functionality | Inconsistent task name and description | 1                       | $0.65\pm0.02$       | $0.54\pm0.10$       | $0.70\pm0.06$       |
+| Basic functionality | Inconsistent descriptions              | 1                       | $0.82\pm0.03$       | $0.80\pm0.02$       | $0.80\pm0.07$       |
+| Basic functionality | *Total*                                | *2*                     | $0.74\pm0.01$       | $0.67\pm0.04$       | $0.75\pm0.06$       |
+
+
 
 ## Discussion
 

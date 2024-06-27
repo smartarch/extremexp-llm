@@ -5,8 +5,8 @@ import pandas as pd
 import numpy as np
 import sys
 
-# AGG_COLUMN = "pattern"
-AGG_COLUMN = "category"
+AGG_COLUMN = "pattern"
+# AGG_COLUMN = "category"
 VARIANT = 2
 
 def compute_statistics(files):
@@ -38,9 +38,9 @@ if __name__ == "__main__":
 
     files = []
     if AGG_COLUMN == "pattern":
-        glob = f"chain_of_thought/{VARIANT}/*.patterns.csv"
+        glob = f"gpt_4o/{VARIANT}/*.patterns.csv"
     else:
-        glob = f"chain_of_thought/{VARIANT}/*.categories.csv"
+        glob = f"gpt_4o/{VARIANT}/*.categories.csv"
     files = sorted((Path(__file__).parent.parent / "agent_evaluation_logs").glob(glob))
 
     # Expects file paths to CSV files as command-line arguments

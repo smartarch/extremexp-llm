@@ -21,10 +21,12 @@ PROJECT_DIR = Path(__file__).parent.parent  # root of the repository
 
 # Load configuration file
 
-# TODO: improve configuration
-# variant = 1  # separate files (inheritance)
-# variant = 2  # assembled
-variant = 3  # expanded
+if len(sys.argv) == 2:
+    variant = int(sys.argv[1])
+else:
+    # variant = 1  # separate files (inheritance)
+    variant = 2  # assembled
+    # variant = 3  # expanded
 config_file_suffix = "_config.yaml"
 
 config_file_path = f"examples/artificial_workflow/{variant}{config_file_suffix}"
@@ -32,7 +34,7 @@ config = load_config(PROJECT_DIR / config_file_path)
 
 # Create Logger
 
-sys.stdout = Logger(PROJECT_DIR / "agent_evaluation_logs" / "chain_of_thought" / str(variant))
+sys.stdout = Logger(PROJECT_DIR / "agent_evaluation_logs" / "gpt_4o" / str(variant))
 
 print("Configuration file path:", config_file_path)
 print("Configuration:", config)
@@ -42,6 +44,8 @@ print("Configuration:", config)
 llm = create_llm(model=config.get(MODEL, "gpt-4-0125-preview"))
 
 # Tools
+
+# TODO: Try feeding all the specifications to the LLM in the prompt (glob all the .xxp files). With current pricing, it should be reasonable. 
 
 tools = []
 specification_tool = get_specification_tools(config, PROJECT_DIR)
@@ -134,7 +138,7 @@ category_results = results.groupby(by="category", sort=False).agg({"score": "mea
 category_results['count'] = results.groupby(by="category", sort=False).size()
 category_results.to_csv(results_path.replace(".csv", ".categories.csv"), index=True)
 
-with pd.option_context('display.max_rows', None, 'display.max_columns', None):  # more options can be specified also
+with pd.option_context('display.max_rows', None, 'display.max_columns', None):
     print(pattern_results)
     print()
     print(category_results)
