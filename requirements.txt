@@ -8,6 +8,7 @@ pyyaml
 langchain==0.1.11
 langchain-openai
 rouge-score
+bert-score
 
 # # QuickStart (currently unused)
 # chromadb

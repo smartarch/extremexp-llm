@@ -1,7 +1,9 @@
 from test_instance_templates import OpenQuestion
 
+from open_questions_scorers import BertScorer
 
-q = OpenQuestion("", '**Mismatch in Task Objectives**: The "FailurePredictionInManufacture" workflow is described as being for "predicting machine failures (binary classification)". However, the subworkflow "MLTrainingAndEvaluation" derived from the "automl_ideko" package is described for "training and evaluation of the regression ML model". Regression models are not typically used for binary classification tasks. This discrepancy suggests that the task might not be achieving its intended purpose of binary classification.')
+
+q = OpenQuestion("", '**Mismatch in Task Objectives**: The "FailurePredictionInManufacture" workflow is described as being for "predicting machine failures (binary classification)". However, the subworkflow "MLTrainingAndEvaluation" derived from the "automl_ideko" package is described for "training and evaluation of the regression ML model". Regression models are not typically used for binary classification tasks. This discrepancy suggests that the task might not be achieving its intended purpose of binary classification.', scorer=BertScorer())
 
 print("Correct answer + 2 other:")
 print(q.check_answer('''Final answer:
