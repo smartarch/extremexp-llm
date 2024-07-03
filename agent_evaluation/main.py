@@ -35,6 +35,13 @@ config = load_config(PROJECT_DIR / config_file_path)
 # Create Logger
 
 sys.stdout = Logger(PROJECT_DIR / "agent_evaluation_logs" / "gpt_4o" / str(variant))
+answers_log = open(sys.stdout.file_name.replace(".ansi", ".answers.ansi"), "w")  # FIXME: this is ugly and depends on the implementation of Logger
+
+def log_answer(pattern, question, answer, score):
+    answers_log.write(f"Pattern: {Fore.YELLOW}{pattern}{Style.RESET_ALL}\n")
+    answers_log.write(f"Question:{Fore.MAGENTA}\n{question}{Style.RESET_ALL}\n")
+    answers_log.write(f"Answer:{Fore.CYAN}{answer}{Style.RESET_ALL}\n")
+    answers_log.write(f"Score: {score}\n\n")
 
 print("Configuration file path:", config_file_path)
 print("Configuration:", config)
@@ -113,6 +120,8 @@ for category, pattern, test_instance in test_instances(update_specification_tool
         metric = test_instance.check_answer(answer)
         print(f"Answer correctness: {metric:.3f}\n")
 
+        log_answer(pattern, question, test_instance.extract_answer(answer), metric)
+
         results.loc[len(results.index)] = [category, pattern, metric]
 
     elif callable(test_instance):  # helper function
@@ -126,6 +135,8 @@ end_time = time.time()
 
 print("Total test instances:", len(results.index))
 print(f"Test duration: {end_time - start_time:.2f} s, per instance: {(end_time - start_time) / len(results.index):.2f} s")
+
+answers_log.close()
 
 results_path = sys.stdout.file_name.replace(".ansi", ".csv")  # FIXME: this is ugly and depends on the implementation of Logger
 results.to_csv(results_path, index=False)
