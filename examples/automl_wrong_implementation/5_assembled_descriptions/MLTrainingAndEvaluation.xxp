@@ -1,7 +1,7 @@
 package automl_ideko;
 
 workflow MLTrainingAndEvaluation {
-  description "Training and evaluation of the regression ML model with the given hyperparameters.";
+  description "Training and evaluation of the ML model with the given hyperparameters.";
   
   // TASKS
   task FeatureExtraction {

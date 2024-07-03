@@ -1,0 +1,20 @@
+Pattern: Inconsistent task name and description
+Question:
+Identify tasks in 'automl_ideko.FailurePredictionInManufacture', whose name does not correspond with their description. Think step by step. First, reason about the question and write a short explanation of your answer. Then, on a separate line, write "Final answer:" followed by your final answer to the question. Your final answer must be a list of tasks. Write one task per line. Each line must start with the name of the task, followed by a colon (":"), and then one sentence describing why the task is included.
+Answer:
+
+DataRetrieval: The name suggests data extraction, but the description is about saving results and producing plots.
+Score: 0.5110574960708618
+
+Pattern: Inconsistent descriptions
+Question:
+Identify tasks in workflow 'automl_ideko.FailurePredictionInManufacture' (including tasks in the subworkflows), whose description does not correspond with the description of the workflow. Think step by step. First, reason about the question and write a short explanation of your answer. Then, on a separate line, write "Final answer:" followed by your final answer to the question. Your final answer must be a list of tasks. Write one task per line. Each line must start with the name of the task, followed by a colon (":"), and then one sentence describing why the task is included.
+Answer:
+
+```
+DataRetrieval: This task focuses on saving results and producing plots rather than model selection or failure prediction.
+ModelTraining: This task mentions training a regression model, which is not in line with the binary classification focus.
+ModelEvaluation: This task evaluates the model using regression metrics, which are not appropriate for binary classification.
+```
+Score: 0.4715307354927063
+

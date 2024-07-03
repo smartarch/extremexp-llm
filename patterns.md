@@ -540,11 +540,11 @@ Parameters:
 
 Architecture: Workflow $W$ with task $T$ that has a description $D_T$
 
-Question: Identify potential errors in the specification of $W$ and present a list of them.
+Question: Identify tasks in $W$, whose name does not correspond with their description.
 
 Reference answer: The description of task $T$ does not correspond with its name. *(exact formulation might depend on the test instance)*
 
-Evaluation metric: ROUGE
+Evaluation metric: ROUGE or BERTScore
 
 Example instance: Task named 'BinaryClassificationModelTraining' with description 'Training of a regression ML model'
 
@@ -562,11 +562,11 @@ Parameters:
 
 Architecture: Workflow containing a task with inconsistent description.
 
-Question: Identify potential errors in the specification of $W$ and present a list of them.
+Question: Identify tasks in workflow $W$, whose description does not correspond with the workflow description.
 
 Reference answer: *description of the inconsistency (depends on the test instance)*
 
-Evaluation metric: ROUGE
+Evaluation metric: ROUGE or BERTScore
 
 Example instance: A workflow specifying an ML pipeline where the ML goal is said to be "binary classification" in the workflow description. At the same time, the tasks perform training of a "regression" ML model (which is inconsistent with "binary classification").
 
@@ -588,7 +588,7 @@ Question: Identify potential errors in the specification of $W$ and present a li
 
 Reference answer: Task $T_2$ should precede task $T_1$ in flow $F$. *(concrete formulation depends on the test instance)*
 
-Evaluation metric: ROUGE
+Evaluation metric: ROUGE or BERTScore
 
 Example instance: Workflow with task 'MLModelTraining' after 'MLModelEvaluation'.
 

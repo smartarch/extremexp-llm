@@ -38,10 +38,10 @@ if __name__ == "__main__":
 
     files = []
     if AGG_COLUMN == "pattern":
-        glob = f"gpt_4o/{VARIANT}/*.patterns.csv"
+        glob = f"{VARIANT}/*.patterns.csv"
     else:
-        glob = f"gpt_4o/{VARIANT}/*.categories.csv"
-    files = sorted((Path(__file__).parent.parent / "agent_evaluation_logs").glob(glob))
+        glob = f"{VARIANT}/*.categories.csv"
+    files = sorted((Path(__file__).parent.parent / "agent_evaluation_logs" / "gpt_4o").glob(glob))
 
     # Expects file paths to CSV files as command-line arguments
     if files == []:
