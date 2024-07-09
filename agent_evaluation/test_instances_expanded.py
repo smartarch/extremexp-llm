@@ -37,9 +37,9 @@ def test_instances(update_specification_tool_path):
         ],
         "Flow cycle": [
             update_specification_tool_path("artificial_workflow"),
-            YesNoQuestion("In task 'Task1' from workflow 'MainWorkflow', is there a cycle in the control flow?", True),
+            YesNoQuestion("In the task 'Task1' from workflow 'MainWorkflow', is there a cycle in the control flow? Consider only the direct subtasks of 'Task1', not the task itself.", True),
             YesNoQuestion("In workflow 'MainWorkflow', is there a cycle in the control flow directly in the workflow (not inside any of the subtasks)?", False),
-            YesNoQuestion("In task 'Task6' from workflow 'MainWorkflow', is there a cycle in the control flow?", False),  # conditional flow
+            YesNoQuestion("In task 'Task6' from workflow 'MainWorkflow', is there a cycle in the control flow? Consider only the direct subtasks of 'Task6', not the task itself.", False),  # conditional flow
             update_specification_tool_path("automl_wrong_implementation"),
             YesNoQuestion("In task 'HyperparameterOptimization' from workflow 'FailurePredictionInManufacture', is there a cycle in the control flow?", True),  # conditional cycle
         ],
