@@ -38,7 +38,7 @@ def test_instances(update_specification_tool_path):
         "Flow cycle": [
             update_specification_tool_path("artificial_workflow"),
             YesNoQuestion("In workflow 'package1.Workflow2', is there a cycle in the control flow?", True),
-            YesNoQuestion("In workflow 'package2.MainWorkflow', is there a cycle in the control flow?", False),
+            YesNoQuestion("In workflow 'package2.MainWorkflow', is there a cycle in the control flow directly in the workflow (not inside any of the subworkflows)?", False),
             YesNoQuestion("In workflow 'package1.Workflow3', is there a cycle in the control flow?", False),  # conditional flow
             update_specification_tool_path("automl_wrong_implementation"),
             YesNoQuestion("In workflow 'automl.HyperparameterOptimization', is there a cycle in the control flow?", True),  # conditional cycle

@@ -5,3 +5,4 @@ prompt_kwargs:
   with_subworkflows: false
 specification_folder: examples/automl_wrong_implementation/3_expanded
 main_workflow_name: FailurePredictionInManufacture
+all_xxp: true

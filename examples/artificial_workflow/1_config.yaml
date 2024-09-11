@@ -4,3 +4,4 @@ specification_type: xxp
 specification_folder: examples/artificial_workflow/1_separate_files
 main_workflow_name: MainWorkflow
 main_workflow_package: package2
+all_xxp: true

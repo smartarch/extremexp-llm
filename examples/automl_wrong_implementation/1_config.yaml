@@ -4,3 +4,4 @@ specification_type: xxp
 specification_folder: examples/automl_wrong_implementation/1_separate_files
 main_workflow_name: FailurePredictionInManufacture
 main_workflow_package: automl_ideko
+all_xxp: true

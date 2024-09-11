@@ -3,3 +3,4 @@ model: gpt-4o-2024-05-13
 specification_type: xxp_assembled
 specification_folder: examples/automl_wrong_implementation/2_assembled
 main_workflow_name: FailurePredictionInManufacture
+all_xxp: true

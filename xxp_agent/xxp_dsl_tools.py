@@ -1,17 +1,18 @@
 from pathlib import Path
 from typing import Type, Any, Optional
 
-from langchain_core.messages import SystemMessage, BaseMessage
+from langchain_core.messages import SystemMessage, AnyMessage
 from langchain_core.prompts import MessagesPlaceholder, HumanMessagePromptTemplate, ChatPromptTemplate
+from langchain_core.prompts.chat import BaseMessagePromptTemplate
 from langchain_core.tools import BaseTool
 from langchain_core.pydantic_v1 import BaseModel, Field
 
-from helpers import MEMORY_KEY, AGENT_SCRATCHPAD
+from helpers import MEMORY_KEY, AGENT_SCRATCHPAD, glob_all_xxp_files
 
 
 def get_prompt_template(main_workflow_name, main_workflow_package, with_memory=True, with_main=True):
     # based on https://smith.langchain.com/hub/hwchase17/openai-tools-agent and modified
-    messages = [
+    messages: list[AnyMessage | BaseMessagePromptTemplate] = [
         SystemMessage(content="""\
 Your goal is to help the user with analyzing results of an experiment and suggest improvements to the experiment itself.
 
@@ -41,6 +42,41 @@ Think in steps and use the available tools. Use the tools if you need specificat
 
     prompt = ChatPromptTemplate.from_messages(messages)
     return prompt
+
+
+def get_prompt_template_all_xxp(main_workflow_name, main_workflow_package, with_memory=True, with_main=True):
+    # based on https://smith.langchain.com/hub/hwchase17/openai-tools-agent and modified
+    messages: list[AnyMessage | BaseMessagePromptTemplate] = [
+        SystemMessage(content=f"""\
+Your goal is to help the user with analyzing results of an experiment and suggest improvements to the experiment itself.
+
+The experiment is defined by a workflow, which is an activity diagram consisting of several tasks with a data flow among them. Each of the tasks can be composed of a subworkflow.
+
+The workflow is specified using a DSL:
+arrows "->" represent control flow
+arrows with question mark “?->” represent conditional control flow
+dashed arrows "-->" represent data flow
+
+A workflow can be derived from another workflow, which is denoted by the "from" keyword. When working with a derived workflow, always obtain the specification of the base workflow as it is necessary to fully understand the derived workflow.
+"""),
+    ]
+
+    messages.append(HumanMessagePromptTemplate.from_template("Here are the specifications of all the relevant workflows:\n{workflow_specifications}\n"))
+
+    if with_main:
+        messages.append(HumanMessagePromptTemplate.from_template(f"Experiment workflow: '{main_workflow_name}' from package '{main_workflow_package}'\n"))
+
+    if with_memory:
+        messages.append(MessagesPlaceholder(variable_name=MEMORY_KEY))
+    
+    messages += [
+        HumanMessagePromptTemplate.from_template("{input}"),
+        MessagesPlaceholder(variable_name=AGENT_SCRATCHPAD),
+    ]
+
+    prompt = ChatPromptTemplate.from_messages(messages)
+    return prompt
+
 
 class DSLWorkflowSpecificationTool(BaseTool):
 

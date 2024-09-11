@@ -5,3 +5,4 @@ prompt_kwargs:
   with_subworkflows: false
 specification_folder: examples/artificial_workflow/3_expanded
 main_workflow_name: MainWorkflow
+all_xxp: true

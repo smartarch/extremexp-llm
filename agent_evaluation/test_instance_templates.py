@@ -54,11 +54,11 @@ class SetQuestion(TestInstance):
         return self._question + CHAIN_OF_THOUGHT + ' Your final answer must be a comma separated list of values.'
 
     def check_answer(self, answer: str) -> float:
-        answer = self.extract_answer(answer)
-        answers = set(answer.replace(" ", "").split(","))
+        answer = self.extract_answer(answer).strip().rstrip(".")
+        answers = set(answer.replace(" ", "").replace("`", "").split(","))
 
         if len(self._correct_answer) == 0:
-            if answer.strip().lower() in ("", "none"):
+            if answer.lower() in ("", "none"):
                 return 1
             return 0
 
@@ -73,7 +73,7 @@ class SetQuestion(TestInstance):
 class OpenQuestion(TestInstance):
     """Response to this question is a string."""
 
-    def __init__(self, question: str, reference_answer: str, scorer:Scorer=BertScorer()):
+    def __init__(self, question: str, reference_answer: str, scorer:Scorer=RougeScorer()):
         self._question = question
         self._reference_answer = reference_answer
         self._scorer = scorer
@@ -95,7 +95,7 @@ def instance_generator(category: str, test_instances_for_category: dict[str, lis
 class TaskListOpenQuestion(OpenQuestion):
     """Response to this question is a list of tasks, each with a string including more details."""
 
-    def __init__(self, question: str, reference_answer: dict[str, str], scorer:Scorer=BertScorer()):
+    def __init__(self, question: str, reference_answer: dict[str, str], scorer:Scorer=RougeScorer()):
         self._question = question
         self._reference_answer = reference_answer
         self._scorer = scorer

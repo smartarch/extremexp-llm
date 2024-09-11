@@ -102,6 +102,22 @@ class FileValidationError(ValueError):
     """Error for paths outside the root directory."""
 
 
+def glob_all_xxp_files(folder):
+    folder = Path(folder)
+    result = ""
+
+    for file in folder.glob("**/*.xxp"):
+        relative_path = file.relative_to(folder)
+        result += f"""
+{relative_path}:
+```
+{file.read_text()}
+```
+"""
+
+    return result
+
+
 MEMORY_KEY = "chat_history"
 AGENT_SCRATCHPAD = "agent_scratchpad"
 RESULTS_FOLDER = "results_folder"
@@ -112,6 +128,7 @@ MODEL = "model"
 MAIN_WORKFLOW = "main_workflow_name"
 MAIN_WORKFLOW_PACKAGE = "main_workflow_package"
 PROMPT_KWARGS = "prompt_kwargs"
+ALL_XXP = "all_xxp"
 
 class SpecificationType(str, enum.Enum):
     XXP = "xxp"

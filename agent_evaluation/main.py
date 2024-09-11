@@ -7,8 +7,9 @@ sys.path.append(str((Path(__file__).parent / ".." / "xxp_agent" ).resolve()))  #
 from colorama import Style, Fore
 from dotenv import find_dotenv, load_dotenv
 import pandas as pd
+from langchain.tools import tool
 
-from helpers import LOGGER_FOLDER, MODEL, SPECIFICATION_FOLDER, Logger, print_color, print_prompt_template, \
+from helpers import ALL_XXP, LOGGER_FOLDER, MODEL, SPECIFICATION_FOLDER, Logger, glob_all_xxp_files, print_color, print_prompt_template, \
     print_available_tools, print_input_message, print_result
 from agent import create_agent, create_llm
 from config import get_prompt_template, get_specification_tools, load_config
@@ -34,7 +35,7 @@ config = load_config(PROJECT_DIR / config_file_path)
 
 # Create Logger
 
-sys.stdout = Logger(PROJECT_DIR / "agent_evaluation_logs" / "gpt_4o" / str(variant))
+sys.stdout = Logger(PROJECT_DIR / "agent_evaluation_logs" / "gpt_4o_all_xxp" / str(variant))
 answers_log = open(sys.stdout.file_name.replace(".ansi", ".answers.ansi"), "w")  # FIXME: this is ugly and depends on the implementation of Logger
 
 def log_answer(pattern, question, answer, score):
@@ -52,11 +53,19 @@ llm = create_llm(model=config.get(MODEL, "gpt-4-0125-preview"))
 
 # Tools
 
-# TODO: Try feeding all the specifications to the LLM in the prompt (glob all the .xxp files). With current pricing, it should be reasonable. 
-
 tools = []
-specification_tool = get_specification_tools(config, PROJECT_DIR)
-tools.append(specification_tool)
+
+@tool
+def dummy():
+    """Dummy tool, do not use."""
+    return ""
+
+if config.get(ALL_XXP, False):
+    workflow_specifications = glob_all_xxp_files(PROJECT_DIR / config[SPECIFICATION_FOLDER])
+    tools.append(dummy)
+else:
+    specification_tool = get_specification_tools(config, PROJECT_DIR)
+    tools.append(specification_tool)
 
 # FIXME: this is a hacky way to change the configuration folder, but it works for now
 def update_specification_tool_path(folder_name):
@@ -68,7 +77,11 @@ def update_specification_tool_path(folder_name):
         new_config_path = f"examples/{folder_name}/{config_file}"
         new_config = load_config(PROJECT_DIR / new_config_path)
         new_specification_folder = PROJECT_DIR / new_config[SPECIFICATION_FOLDER]
-        specification_tool.specification_folder = new_specification_folder
+        if config.get(ALL_XXP, False):
+            global workflow_specifications
+            workflow_specifications = glob_all_xxp_files(PROJECT_DIR / new_config[SPECIFICATION_FOLDER])
+        else:
+            specification_tool.specification_folder = new_specification_folder
         print(f"Configuration: 'specification_folder' updated to {new_config[SPECIFICATION_FOLDER]}")
     return update_specification_folder
 
@@ -86,7 +99,7 @@ else:  # 3_config.yaml
 
 print_color("This script uses multiline input. Press Ctrl+D (Linux) or Ctrl+Z (Windows) on an empty line to end input message.", Style.DIM)
 
-prompt = get_prompt_template(config, with_memory=False, with_main=False)
+prompt = get_prompt_template(config, with_memory=False, with_main=False, all_xxp=config.get(ALL_XXP, False))
 agent = create_agent(llm, tools, prompt)
 
 print_prompt_template(prompt)
@@ -107,8 +120,13 @@ for category, pattern, test_instance in test_instances(update_specification_tool
 
         print_input_message(question)
 
+        prompt_input = {"input": question}
+
+        if config.get(ALL_XXP, False):
+            prompt_input["workflow_specifications"] = workflow_specifications
+
         response = agent.invoke(
-            {"input": question},
+            prompt_input,
             # This is needed because in most real world scenarios, a session id is needed
             # It isn't really used here because we are using a simple in memory ChatMessageHistory
             config={"configurable": {"session_id": "<foo>"}},

@@ -34,7 +34,9 @@ We manually created 25 test instances based on the [*test patterns*](/patterns.m
 
 Note: The *Basic functionality* patterns are labeled `semantics` in the source code and raw results.
 
-### GPT-4o (`gpt-4o-2024-05-13`)
+### GPT-4o (`gpt-4o-2024-05-13`) Agent
+
+The LLM has to ask for workflow specifications.
 
 | **Pattern category**  | **Pattern name**                     | **Number of instances** | **Variant 1 Score** | **Variant 2 Score** | **Variant 3 Score** |
 |-----------------------|--------------------------------------|-------------------------|---------------------|---------------------|---------------------|
@@ -50,7 +52,29 @@ Note: The *Basic functionality* patterns are labeled `semantics` in the source c
 | Basic functionality | Inconsistent descriptions              | 1                       | $0.79\pm0.04$       | $0.81\pm0.03$       | $0.77\pm0.05$       |
 | Basic functionality | *Total*                                | *2*                     | $0.77\pm0.04$       | $0.77\pm0.04$       | $0.75\pm0.03$       |
 
-### GPT-4 Turbo (`gpt-4-0125-preview`)
+### GPT-4o (`gpt-4o-2024-05-13`) Up Front
+
+All workflow specifications are presented in the initial prompt.
+
+Note that for Variant 3, it does not make it does not make sense to differentiate between *agent* and *up front* modes as there is always only one WADL specification file.
+
+| **Pattern category**  | **Pattern name**                     | **Number of instances** | **Variant 1 Score** | **Variant 2 Score** |
+|-----------------------|--------------------------------------|-------------------------|---------------------|---------------------|
+| Structure | List of tasks                                    | 5                       | $0.95\pm0.12$       | $1.00\pm0.00$       |
+| Structure | Links in flow                                    | 4                       | $1.00\pm0.00$       | $1.00\pm0.00$       |
+| Structure | Task after task                                  | 4                       | $0.95\pm0.11$       | $1.00\pm0.00$       |
+| Structure | Next tasks in flow                               | 4                       | $0.80\pm0.11$       | $0.88\pm0.12$       |
+| Structure | Flow cycle                                       | 4                       | $1.00\pm0.00$       | $1.00\pm0.00$       |
+| Structure | *Total*                                          | *21*                    | $0.94\pm0.04$       | $0.98\pm0.02$       |
+| Behavior  | Mutually exclusive conditional flow              | 2                       | $1.00\pm0.00$       | $1.00\pm0.00$       |
+| Behavior  | *Total*                                          | *2*                     | $1.00\pm0.00$       | $1.00\pm0.00$       |
+| Basic functionality | Inconsistent task name and description | 1                       | TODO                | TODO                |
+| Basic functionality | Inconsistent descriptions              | 1                       | TODO                | TODO                |
+| Basic functionality | *Total*                                | *2*                     | TODO                | TODO                |
+
+### GPT-4 Turbo (`gpt-4-0125-preview`) Agent
+
+The LLM has to ask for workflow specifications.
 
 | **Pattern category**  | **Pattern name**                     | **Number of instances** | **Variant 1 Score** | **Variant 2 Score** | **Variant 3 Score** |
 |-----------------------|--------------------------------------|-------------------------|---------------------|---------------------|---------------------|
