@@ -1,0 +1,3 @@
+pattern,category,score,count
+Inconsistent task name and description,semantics,0.5833333333333334,1
+Inconsistent descriptions,semantics,0.41889483065953653,1

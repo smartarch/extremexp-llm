@@ -12,16 +12,16 @@ def load_config(config_file_path: Path):
 
 
 def get_prompt_template(config, **kwargs):
+    all_xxp = kwargs["all_xxp"]
+    del kwargs["all_xxp"]
     if config[SPECIFICATION_TYPE] == SpecificationType.XXP:
-        if kwargs["all_xxp"]:
-            del kwargs["all_xxp"]
+        if all_xxp:
             return xxp_dsl_tools.get_prompt_template_all_xxp(config[MAIN_WORKFLOW], config[MAIN_WORKFLOW_PACKAGE], **config.get(PROMPT_KWARGS, {}), **kwargs)
         return xxp_dsl_tools.get_prompt_template(config[MAIN_WORKFLOW], config[MAIN_WORKFLOW_PACKAGE], **config.get(PROMPT_KWARGS, {}), **kwargs)
     elif config[SPECIFICATION_TYPE] == SpecificationType.YAML:
         return yaml_tools.get_prompt_template(config[MAIN_WORKFLOW], **config.get(PROMPT_KWARGS, {}), **kwargs)
     elif config[SPECIFICATION_TYPE] == SpecificationType.XXP_ASSEMBLED:
-        if kwargs["all_xxp"]:
-            del kwargs["all_xxp"]
+        if all_xxp:
             return xxp_dsl_tools_assembled.get_prompt_template_all_xxp(config[MAIN_WORKFLOW], **config.get(PROMPT_KWARGS, {}), **kwargs)
         return xxp_dsl_tools_assembled.get_prompt_template(config[MAIN_WORKFLOW], **config.get(PROMPT_KWARGS, {}), **kwargs)
     raise ValueError("Unsupported specification type: " + config[SPECIFICATION_TYPE])
