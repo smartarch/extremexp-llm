@@ -20,7 +20,7 @@ The experiment is defined by a workflow, which is an activity diagram consisting
 
 The workflow is specified using a DSL:
 arrows "->" represent control flow
-arrows with question mark “?->” represent conditional control flow
+arrows with question mark "?->" represent conditional control flow
 dashed arrows "-->" represent data flow
 
 A workflow can be derived from another workflow, which is denoted by the "from" keyword. When working with a derived workflow, always obtain the specification of the base workflow as it is necessary to fully understand the derived workflow.
@@ -54,7 +54,7 @@ The experiment is defined by a workflow, which is an activity diagram consisting
 
 The workflow is specified using a DSL:
 arrows "->" represent control flow
-arrows with question mark “?->” represent conditional control flow
+arrows with question mark "?->" represent conditional control flow
 dashed arrows "-->" represent data flow
 
 A workflow can be derived from another workflow, which is denoted by the "from" keyword. When working with a derived workflow, always obtain the specification of the base workflow as it is necessary to fully understand the derived workflow.

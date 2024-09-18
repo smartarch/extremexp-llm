@@ -167,3 +167,8 @@ xxp_agent_logs/*
 !xxp_agent_logs/automl_wrong_implementation
 !xxp_agent_logs/code
 xxp_agent_logs/automl_wrong_implementation/old
+agent_evaluation_logs_debug
+
+# Not relevant to LLM evaluation
+examples/ideko/
+examples/predictive_maintenance

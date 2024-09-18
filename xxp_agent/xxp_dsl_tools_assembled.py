@@ -20,7 +20,7 @@ The experiment is defined by a workflow, which is an activity diagram consisting
 
 The workflow is specified using a DSL:
 arrows "->" represent control flow
-arrows with question mark “?->” represent conditional control flow
+arrows with question mark "?->" represent conditional control flow
 dashed arrows "-->" represent data flow
 
 Think in steps and use the available tools. Use the tools if you need specification of a workflow or a task, list the results collected during the experiment, etc. If the information cannot be obtained using the tools, ask the user. Always gather all the necessary information before submitting your final answer.
@@ -52,7 +52,7 @@ The experiment is defined by a workflow, which is an activity diagram consisting
 
 The workflow is specified using a DSL:
 arrows "->" represent control flow
-arrows with question mark “?->” represent conditional control flow
+arrows with question mark "?->" represent conditional control flow
 dashed arrows "-->" represent data flow
 """),
     ]
