@@ -8,9 +8,9 @@ The test instances depend on the architecture specifications defined in the [`ex
 
 ## DSL Variants
 
-### Variant 1: Inheritance (also known as `separate files`)
+### Variant 1: Import (also known as `separate files` and Inheritance)
 
-The first variant is the DSL developed for the XXP project. In this variant, there can be workflows derived from other workflows. In the derived workflow (called *assembled* in the project), the configuration of the tasks can be updated, but no new control flow or data flow can be added. To fully understand the derived workflow (especially to be able to reason about the control and data flow), it is necessary to obtain the specification of the base workflow (which is referenced from the derived workflow).
+The first variant is the DSL developed for the XXP project. In this variant, there can be workflows derived from other workflows (reuse and modify them). In the derived workflow (called *assembled* in the project), the configuration of the tasks can be updated, but no new control flow or data flow can be added. To fully understand the derived workflow (especially to be able to reason about the control and data flow), it is necessary to obtain the specification of the base workflow (which is referenced from the derived workflow).
 
 The tasks can either be *primitive* (an implementation file is specified) or *composite* (composed of other tasks). For the composite tasks, a reference to a sub-workflow is specified where the sub-tasks are defined.
 
