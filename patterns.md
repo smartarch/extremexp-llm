@@ -29,9 +29,12 @@ Special types of links (e.g., conditional, exceptional):
 
 Link operators (e.g., parallel flow - fork and join):
 
-* Operator existence
-* Parallel tasks (in a fork-join block)
-* Parallel tasks to a task
+* [Operator existence](#operator-existence)
+* [Parallel tasks (block) existence](#parallel-tasks-block-existence)
+* [List tasks in a parallel (fork-join) block](#list-tasks-in-a-parallel-fork-join-block)
+* [Parallel tasks to a task](#parallel-tasks-to-a-task)
+* [List all parallel tasks](#list-all-parallel-tasks)
+* [List tasks in an operator block (other than simple fork-join)](#list-tasks-in-an-operator-block-other-than-simple-fork-join)
 
 #### Other entities (e.g., data) and links (e.g., data flow)
 
@@ -50,19 +53,19 @@ Link operators (e.g., parallel flow - fork and join):
 
 #### Task order
 
-* Are tasks in correct order? (without conditional flow)
-* Are all tasks in correct order? (without conditional flow)
+* [Are tasks in correct order? (without conditional flow)](#are-tasks-in-correct-order-without-conditional-flow)
+* [Are all tasks in correct order? (without conditional flow)](#are-all-tasks-in-correct-order-without-conditional-flow)
 * [Determine task order (without conditional flow)](#determine-task-order-without-conditional-flow)
 
 #### Conditional flow
 
 * [Is conditional flow mutually exclusive?](#is-conditional-flow-mutually-exclusive)
 * [Next task in conditional flow](#next-task-in-conditional-flow)
-* Are tasks in correct order? (with conditional flow)
-* Are all tasks in correct order? (with conditional flow)
+* [Are tasks in correct order? (with conditional flow)](#are-tasks-in-correct-order-with-conditional-flow)
+* [Are all tasks in correct order? (with conditional flow)](#are-all-tasks-in-correct-order-with-conditional-flow)
 * [Determine task order (with conditional flow)](#determine-task-order-with-conditional-flow)
-* Is loop infinite?
-* Loop end condition
+* [Is loop infinite?](#is-loop-infinite)
+* [Loop end condition](#loop-end-condition)
 
 #### Traces
 
@@ -73,15 +76,15 @@ Link operators (e.g., parallel flow - fork and join):
 
 #### Task functionality
 
-* Describe task functionality
+* [Describe task functionality](#describe-task-functionality)
 * [Inconsistent task name and description](#inconsistent-task-name-and-description)
-* Inconsistent task name and other entities (e.g., parameters, data)
-* Meaning (functionality) of tasks
+* [Inconsistent task name and other entities](#inconsistent-task-name-and-other-entities) (e.g., parameters, data)
+* [Meaning (functionality) of tasks](#meaning-functionality-of-tasks)
 
 #### Workflow functionality
 
-* Describe workflow functionality
-* Inconsistent workflow name and description
+* [Describe workflow functionality](#describe-workflow-functionality)
+* [Inconsistent workflow name and description](#inconsistent-workflow-name-and-description)
 * [Inconsistent descriptions of workflow and tasks](#inconsistent-descriptions-of-workflow-and-tasks)
 
 #### Order of tasks
@@ -428,13 +431,45 @@ Note: It would be possible to also create a pattern to list all links in workflo
 
 ### Operator existence
 
-TODO
-
-### Parallel tasks
+Rationale: Can the LLM understand operators (e.g., fork, join)? Can it determine whether there is an operator used in a workflow?
 
 TODO
+
+### Parallel tasks (block) existence
+
+Rationale: Can the LLM determine whether some tasks can run in parallel?
+
+TODO
+
+Reference answer: yes
+
+Evaluation metric: correctness
+
+### List tasks in a parallel (fork-join) block
+
+Rationale: Can the LLM determine which tasks can run in parallel (inside one particular fork-join block)?
+
+TODO
+
+Reference answer: list of tasks
 
 ### Parallel tasks to a task
+
+Rationale: Can the LLM determine which tasks can run in parallel (to a particular task)?
+
+TODO
+
+### List all parallel tasks
+
+Rationale: Can the LLM determine which tasks can run in parallel?
+
+TODO
+
+Reference answer: several lists of tasks that can be run in parallel (open question)
+
+### List tasks in an operator block (other than simple fork-join)
+
+Rationale: Can the LLM correctly interpret other operators than simple fork-join?
 
 TODO
 
@@ -630,17 +665,97 @@ Evaluation metric: correctness
 
 ## Behavior patterns
 
-### Are tasks in correct order?
+### Are tasks in correct order? (without conditional flow)
 
 Rationale: Can the LLM notice if tasks are in incorrect order (not corresponding to the control flow)?
 
-TODO
+Parameters:
 
-### Are all tasks in correct order?
+* $W$: workflow name
+* $T_0, T_1, \dots, T_N$: tasks in the workflow $W$
+
+Architecture: Workflow $W$ with tasks $T_0, \dots, T_N$. Tasks $T_0$ and $T_1$ are in this order in control flow (not necessarily directly connected by a link, the order might be due to transitivity of many links).
+
+Question: Does task $T_0$ run before $T_1$ in workflow $W$? 
+
+Reference answer: yes
+
+Evaluation metric: correctness
+
+Example instance:
+    Architecture: Workflow with control flow: START -> FeatureExtraction -> ModelTraining -> ModelEvaluation -> END
+    Question: Does 'FeatureExtraction' run before 'ModelEvaluation'?
+    Reference answer: yes
+
+---
+
+Rationale: Can the LLM notice if tasks are in incorrect order (not corresponding to the control flow)? (negative test)
+
+Parameters:
+
+* $W$: workflow name
+* $T_0, T_1, \dots, T_N$: tasks in the workflow $W$
+
+Architecture: Workflow $W$ with tasks $T_0, \dots, T_N$. Tasks $T_0$ and $T_1$ are in this order in control flow (not necessarily directly connected by a link, the order might be due to transitivity of many links).
+
+Question: Does task $T_1$ run before $T_0$ in workflow $W$? 
+
+Reference answer: no
+
+Evaluation metric: correctness
+
+Example instance:
+    Architecture: Workflow with control flow: START -> FeatureExtraction -> ModelTraining -> ModelEvaluation -> END
+    Question: Does 'ModelEvaluation' run before 'FeatureExtraction'?
+    Reference answer: no
+
+---
+
+### Are all tasks in correct order? (without conditional flow)
 
 Rationale: Can the LLM notice if tasks are in incorrect order (not corresponding to the control flow)?
 
-TODO
+Parameters:
+
+* $W$: workflow name
+* $T_1, \dots, T_K$: tasks in the workflow $W$
+
+Architecture: Workflow $W$ with tasks $T_1, \dots, T_K$ in this order in control flow. *(note: the order of parallel tasks might not be defined, so the question is about a possible order)*
+
+Question: Can tasks $T_1, \dots, T_K$ run in this order in workflow $W$?
+
+Reference answer: yes
+
+Evaluation metric: correctness
+
+Example instance:
+    Architecture: Workflow with control flow: START -> FeatureExtraction -> ModelTraining -> ModelEvaluation -> END
+    Question: Can tasks 'FeatureExtraction', 'ModelTraining', 'ModelEvaluation' run in this order?
+    Reference answer: yes
+
+---
+
+Rationale: Can the LLM notice if tasks are in incorrect order (not corresponding to the control flow)? (negative test)
+
+Parameters:
+
+* $W$: workflow name
+* $T_1, \dots, T_K$: tasks in the workflow $W$
+
+Architecture: Workflow $W$ with tasks $T_1, \dots, T_K$ that are ordered in control flow differently than $T_1, \dots, T_K$. *(note: the order of parallel tasks might not be defined, so the question is about a possible order)*
+
+Question: Can tasks $T_1, \dots, T_K$ run in this order in workflow $W$?
+
+Reference answer: no
+
+Evaluation metric: correctness
+
+Example instance:
+    Architecture: Workflow with control flow: START -> FeatureExtraction -> ModelTraining -> ModelEvaluation -> END
+    Question: Can tasks 'ModelTraining', 'FeatureExtraction', 'ModelEvaluation' run in this order?
+    Reference answer: no
+
+---
 
 ### Determine task order (without conditional flow)
 
@@ -707,6 +822,14 @@ Example instance: Workflow with a parameter $p$, $C_1$ is "$p < 10$", $C_2$ is "
 
 ---
 
+### Are tasks in correct order? (with conditional flow)
+
+Same as [Are tasks in correct order? (without conditional flow)](#are-tasks-in-correct-order-without-conditional-flow), but some of the control flow links are conditional.
+
+### Are all tasks in correct order? (with conditional flow)
+
+Same as [Are all tasks in correct order? (without conditional flow)](#are-all-tasks-in-correct-order-without-conditional-flow), but some of the control flow links are conditional.
+
 ### Next task in conditional flow
 
 Rationale: Can the LLM evaluate conditional flow?
@@ -753,6 +876,18 @@ Evaluation metric: Damerau–Levenshtein distance *(note: special care must be g
 Example instance: "Given the initial situation p=0, list all the tasks that will run when workflow 'Workflow3' is executed in order in which they will run.", reference answer: Task7, Task8
 
 ---
+
+### Is loop infinite?
+
+Rationale: Can the LLM determine if a loop is infinite?
+
+TODO
+
+### Loop end condition
+
+Rationale: Can the LLM determine under which conditions a loop ends?
+
+TODO
 
 ### Trace of tasks with initial situation
 
@@ -822,6 +957,12 @@ TODO
 
 In the source code and raw results, these patterns are labeled `semantics`.
 
+### Describe task functionality
+
+Rationale: Can the LLM determine meaning of task based on its name, parameters, links to other tasks, ...?
+
+TODO
+
 ### Inconsistent task name and description
 
 Rationale: Can the LLM detect inconsistent task name and description?
@@ -844,9 +985,75 @@ Example instance: Task named 'BinaryClassificationModelTraining' with descriptio
 
 ---
 
+### Inconsistent task name and other entities
+
+Rationale: Can the LLM detect inconsistencies between task name and linked entities (e.g., data, other tasks)?
+
+TODO
+
 ### Meaning (functionality) of tasks
 
-Task performs an operation that is not directly mentioned in the name, e.g., "FeatureExtraction" is data preprocessing
+Rationale: Can the LLM understand meaning of tasks (e.g., task performs an operation that is not directly mentioned in the name)?
+
+Parameters:
+
+* $W$: workflow name
+* $P$: property of task (e.g., the task is part of data preprocessing)
+* $T$: task in $W$ with property $P$
+
+Architecture: Workflow $W$ containing task $T$ (and possibly other). Property $P$ is mentioned in description/specification of $T$.
+
+Question: Is there a task with property $P$ in workflow $W$?
+
+Reference answer: yes
+
+Evaluation metric: correctness
+
+Example instance: Task 'FeatureExtraction' is labeled as "data preprocessing", question: "Is there a data processing task in 'MLTrainingAndEvaluation'?"
+
+---
+
+Rationale: Can the LLM understand meaning of tasks (e.g., task performs an operation that is not directly mentioned in the name)? (negative test)
+
+Parameters:
+
+* $W$: workflow name
+* $P$: property of task (e.g., the task is part of data preprocessing)
+
+Architecture: Workflow $W$ containing tasks, none of which satisfies property $P$ (it is not mentioned in description/specification of tasks).
+
+Question: Is there a task with property $P$ in workflow $W$?
+
+Reference answer: no
+
+Evaluation metric: correctness
+
+---
+
+### Describe workflow functionality
+
+Rationale: Can the LLM determine meaning of a workflow based on the tasks inside it?
+
+TODO
+
+### Inconsistent workflow name and description
+
+Rationale: Can the LLM detect inconsistent workflow name and description?
+
+Parameters:
+
+* $W$: workflow name
+* $D_W$: workflow description that is inconsistent with name $W$
+
+Architecture: Workflow $W$ that has a description $D_W$
+
+Question: Does the name of workflow $W$ correspond with its description? Explain your answer.
+
+Reference answer: The description of $W$ does not correspond with its name. *(exact formulation might depend on the test instance)*
+
+Evaluation metric: ROUGE or BERTScore
+
+Example instance: Workflow named 'BinaryClassification' with description 'Training and evaluation of a regression ML model'
 
 ---
 
