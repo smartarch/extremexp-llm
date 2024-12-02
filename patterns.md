@@ -4,15 +4,122 @@ This is a full list of test instance *patterns* that can be used for evaluating 
 
 To create *test instances* from the patterns, substitute all the parameters. Note that it might also be necessary to alter the question formulations to adapt them to the language of the specific workflow architecture.
 
+## Overview
+
+### Structure
+
+#### Tasks
+
+* [List of tasks](#list-of-tasks) (in workflow)
+* [List of tasks with a property](#list-of-tasks-with-a-property)
+
+#### Flow Links (e.g., control flow)
+
+* [Link existence](#link-existence), [Task after task](#task-after-task)
+* [Next tasks in flow](#next-tasks-in-flow)
+* [Flow cycle](#flow-cycle)
+* [Flow start detection](#flow-start-detection)
+* [Flow end detection](#flow-end-detection)
+* [Missing link](#missing-link)
+
+Special types of links (e.g., conditional, exceptional):
+
+* [Link existence with a property](#link-existence-with-a-property)
+* [List of links with a property](#list-of-links-with-a-property)
+
+Link operators (e.g., parallel flow - fork and join):
+
+* Operator existence
+* Parallel tasks (in a fork-join block)
+* Parallel tasks to a task
+
+#### Other entities (e.g., data) and links (e.g., data flow)
+
+* [Dependency existence (in the flow)](#dependency-existence-in-the-flow)
+* [List of dependencies (in the flow)](#list-of-dependencies-in-the-flow)
+* [Data production](#data-production)
+
+#### Hierarchical structure
+
+* [Task hierarchy](#task-hierarchy-if-the-architecture-is-hierarchical)
+* [List of composite tasks](#list-of-composite-tasks)
+* [List of nested tasks](#list-of-nested-tasks)
+* [Infinite recursion in references](#infinite-recursion-in-references)
+
+### Behavior
+
+#### Task order
+
+* Partial order of tasks possibility (without conditional flow)
+* Order of tasks possibility (without conditional flow)
+* Determine task order (without conditional flow)
+
+#### Conditional flow
+
+* Is conditional flow mutually exclusive?
+* Next task in conditional flow
+* Partial order of tasks possibility (with conditional flow)
+* Order of tasks possibility (with conditional flow)
+* Determine task order (with conditional flow)
+* Is loop infinite?
+* Loop end condition
+
+#### Traces
+
+* Trace of tasks with initial situation
+* Does task run in every situation?
+
+### Basic functionality
+
+#### Task functionality
+
+* Describe task functionality
+* Inconsistent task name and description
+* Inconsistent task name and other entities (e.g., parameters, data)
+* Meaning (functionality) of tasks
+
+#### Workflow functionality
+
+* Describe workflow functionality
+* Inconsistent workflow name and description
+* Inconsistent descriptions of workflow and tasks
+
+#### Order of tasks
+
+* Semantically incorrect order of tasks
+* Meaning (functionality) of preceding tasks
+
 ## Structure patterns
 
 ### List of tasks
+
+Rationale: Can the LLM list the tasks in a workflow?
+
+Parameters:
+
+* $N$: total number of tasks
+* $W$: workflow name
+* $T_1, \dots, T_N$: tasks in $W$
+
+Architecture: Workflow $W$ with $N$ tasks $T_1, \dots, T_N$.
+
+Question: List all tasks in workflow $W$.
+
+Reference answer: $T_1, \dots, T_N$
+
+Evaluation metric: Jaccard index
+
+Example instance: "List all tasks in workflow 'MLTrainingAndEvaluation'."
+
+---
+
+### List of tasks with a property
 
 Rationale: Can the LLM list the tasks in a workflow and filter them?
 
 Parameters:
 
-* $P$: property of the tasks (e.g., the task has a parameter), can be empty (to list all the tasks)
+* $P$: property of the tasks (e.g., the task has a parameter)
 * $N$: number of tasks satisfying $P$
 * $T$: total number of tasks
 * $W$: workflow name
@@ -29,9 +136,9 @@ Example instance: "List all tasks in workflow 'MLTrainingAndEvaluation' that hav
 
 ---
 
-### Links in flow
+### Link existence
 
-Rationale: Can the LLM understand flow links between tasks?
+Rationale: Can the LLM determine if there is a flow link between two tasks?
 
 Parameters:
 
@@ -51,7 +158,7 @@ Example instance: "In workflow 'MLTrainingAndEvaluation', is there a control flo
 
 ---
 
-Rationale: Can the LLM understand flow links between tasks? (negative test)
+Rationale: Can the LLM determine if there is a flow link between two tasks? (negative test)
 
 Parameters:
 
@@ -73,7 +180,7 @@ Example instance: "In workflow 'MLTrainingAndEvaluation', is there a control flo
 
 ### Task after task
 
-Rationale: Can the LLM understand flow links between tasks?
+Rationale: Can the LLM determine if there is a flow link between two tasks?
 
 Parameters:
 
@@ -93,7 +200,7 @@ Example instance: "In workflow 'MLTrainingAndEvaluation', does 'MLModelEvaluatio
 
 ---
 
-Rationale: Can the LLM understand flow links between tasks? (negative test)
+Rationale: Can the LLM determine if there is a flow link between two tasks? (negative test)
 
 Parameters:
 
@@ -115,7 +222,7 @@ Example instance: "In workflow 'MLTrainingAndEvaluation', does 'MLModelTraining'
 
 ### Next tasks in flow
 
-Rationale: Can the LLM understand flow links between tasks?
+Rationale: Can the LLM determine to which tasks there is a flow link from a given task?
 
 Parameters:
 
@@ -124,9 +231,11 @@ Parameters:
 * $T_0$: task in $W$
 * $T_1, \dots, T_N$: tasks in $W$
 
-Architecture: Workflow $W$ with tasks $T_0, \dots, T_KN$ (and possibly other). There are links in flow $F$ from task $T_0$ to $T_1, \dots, T_N$.
+Architecture: Workflow $W$ with tasks $T_0, \dots, T_N$ (and possibly other). There are links in flow $F$ from task $T_0$ to $T_1, \dots, T_N$.
 
 Question: In workflow $W$, which tasks come directly after $T_0$ in flow $F$?
+
+Alternative question formulation: In workflow $W$, to which tasks there are flow $F$ links from $T_0$?
 
 Reference answer: $T_1, \dots, T_N$
 
@@ -173,77 +282,58 @@ Evaluation metric: correctness
 
 ---
 
-### Task hierarchy (if the architecture is hierarchical)
+### Flow start detection
 
-Rationale: Can the LLM understand task hierarchy (if the architecture is hierarchical)?
+Rationale: Can the LLM determine the start of a flow?
 
 Parameters:
 
+* $F$: flow type that has an unique start (e.g., control flow)
+* $T$: the first task in flow $F$
 * $W$: workflow name
-* $T$: task in the workflow $W$ that is composite (has sub-tasks)
-* $S$: sub-task of $T$
 
-Architecture: Workflow $W$ with task $T$ that has sub-tasks (sub-workflow). One of the sub-tasks is $S$.
+Architecture: Workflow $W$ with some tasks connected by flow $F$. The flow $F$ has a unique start task $T$.
 
-Question: Is task $S$ a part of task $T$ (from workflow $W$)?
+Question: In workflow $W$, which task runs first?
 
-Reference answer: yes
+Reference answer: $T$
 
 Evaluation metric: correctness
 
-Example instance: "Is task 'HyperparameterProposal' a part of task 'HyperparameterOptimization' (from workflow 'FailurePredictionInManufacture')?"
-
 ---
 
-Rationale: Can the LLM understand task hierarchy (if the architecture is hierarchical)? (negative test)
+### Flow end detection
+
+Rationale: Can the LLM determine the last task(s) of a flow?
 
 Parameters:
 
+* $F$: flow type (e.g., control flow)
 * $W$: workflow name
-* $T$: task in the workflow $W$ (it might be composite)
-* $S$: a different task from $W$ (or another workflow) that is not sub-task of $T$
+* $T_1, \dots, T_N$: tasks in $W$ which are last in flow $F$ (can be one task or a list of tasks with no $F$ links from them)
 
-Architecture: Workflow $W$ with task $T$. Another task $S$, that is not sub-task of $T$.
+Architecture: Workflow $W$ with some tasks connected by flow $F$. The flow $F$ ends in tasks $T_1, \dots, T_N$ (there are no flow $F$ link from them).
 
-Question: Is task $S$ a part of task $T$ (from workflow $W$)?
+Question: In workflow $W$, which tasks runs last?
 
-Reference answer: no
+Reference answer: $T_1, \dots, T_N$
 
-Evaluation metric: correctness
-
-Example instance: "Is task 'DataRetrieval' a part of task 'HyperparameterOptimization' (from workflow 'FailurePredictionInManufacture')?"
+Evaluation metric: Jaccard index
 
 ---
 
-### Infinite recursion in references
+### Missing link
 
-Rationale: Can the LLM detect infinite recursion in references (e.g., sub-workflows if the architecture is hierarchical)?
-
-Parameters:
-
-* $W$: workflow name
-
-Architecture: Workflow $W$ that references itself in the workflow.
-
-Question: In workflow $W$, is there an infinite recursion in the references?
-
-Reference answer: yes
-
-Evaluation metric: correctness
-
-Note: The recursion might also be more complicated than just a simple self-reference, i.e., $W_1$ references $W_2$, $W_2$ references $W_3$, $\dots$, $W_K$ references $W_1$.
-
----
-
-Rationale: Can the LLM detect infinite recursion in references (e.g., sub-workflows if the architecture is hierarchical)? (negative test)
+Rationale: Can the LLM detect that the flow is not connected (there is a missing link)?
 
 Parameters:
 
+* $F$: flow type (e.g., control flow)
 * $W$: workflow name
 
-Architecture: Workflow $W$ without infinite recursion of references.
+Architecture: Workflow $W$ with some tasks connected by flow $F$. The flow $F$ is not connected, i.e., there is no path between start and end of the flow (there is at least one missing link).
 
-Question: In workflow $W$, is there an infinite recursion in the references?
+Question: In workflow $W$, is the flow $F$ connected?
 
 Reference answer: no
 
@@ -251,7 +341,104 @@ Evaluation metric: correctness
 
 ---
 
-### Dependency (in the flow)
+Rationale: Can the LLM detect that the flow is not connected (there is a missing link)? (negative test)
+
+Parameters:
+
+* $F$: flow type (e.g., control flow)
+* $W$: workflow name
+
+Architecture: Workflow $W$ with some tasks connected by flow $F$. The flow $F$ is correctly connected.
+
+Question: In workflow $W$, is the flow $F$ connected?
+
+Reference answer: yes
+
+Evaluation metric: correctness
+
+---
+
+### Link existence with a property
+
+Rationale: Can the LLM determine if there is a flow link between two tasks?
+
+Parameters:
+
+* $F$: flow type (e.g., control flow, data flow)
+* $P$: property of the links (e.g., it is conditional)
+* $W$: workflow name
+* $T_1, T_2$: tasks in $W$
+
+Architecture: Workflow $W$ with tasks $T_1, T_2$ (and possibly other), linked $T_1 \to T_2$ in flow $F$ via a link satisfying $P$.
+
+Question: In workflow $W$, is there a flow $F$ link from $T_2$ to $T_1$ satisfying $P$?
+
+Reference answer: yes
+
+Evaluation metric: correctness
+
+Example instance: "In workflow 'HyperparameterOptimization', is there a conditional control flow link from 'HyperparameterProposal' to 'MLModelValidation'?"
+
+---
+
+Rationale: Can the LLM determine if there is a flow link between two tasks? (negative test)
+
+Parameters:
+
+* $F$: flow type (e.g., control flow, data flow)
+* $P$: property of the links (e.g., it is conditional)
+* $W$: workflow name
+* $T_1, T_2$: tasks in $W$
+
+Architecture: Workflow $W$ with tasks $T_1, T_2$ (and possibly other), linked $T_1 \to T_2$ in flow $F$ via a link not satisfying $P$.
+
+Question: In workflow $W$, is there a flow $F$ link from $T_2$ to $T_1$ satisfying $P$?
+
+Reference answer: no
+
+Evaluation metric: correctness
+
+---
+
+### List of links with a property
+
+Rationale: Can the LLM list the links from a given task and filter them?
+
+Parameters:
+
+* $F$: flow type (e.g., control flow, data flow)
+* $P$: property of the links (e.g., it is conditional)
+* $W$: workflow name
+* $T_0$: task in $W$
+* $T_1, \dots, T_N, \dots, T_L$: tasks in $W$ ($N < L$)
+
+Architecture: Workflow $W$ with tasks $T_0, \dots, T_L$ (and possibly other). There are links in flow $F$ from task $T_0$ to $T_1, \dots, T_N$ satisfying $P$ and links from $T_0$ to $T_{N+1}, \dots, T_L$ not satisfying $P$.
+
+Question: To which tasks there is a flow $F$ link from $T_0$ satisfying $P$?
+
+Reference answer: $T_1, \dots, T_N$
+
+Evaluation metric: Jaccard index
+
+Example instance: "In workflow 'HyperparameterOptimization', to which tasks are there conditional flow links from 'HyperparameterProposal'?"
+
+Note: It would be possible to also create a pattern to list all links in workflow satisfying a property, however, it is more complicated to evaluate it as we would have to define a format for encoding the links in the answer (encoding tasks is easier).
+
+---
+
+### Operator existence
+
+TODO
+
+### Parallel tasks
+
+TODO
+
+### Parallel tasks to a task
+
+TODO
+
+### Dependency existence (in the flow)
 
 Rationale: Can the LLM understand dependencies (in the flow)?
 
@@ -261,7 +448,7 @@ Parameters:
 * $E$: entity (e.g., task, data) in the workflow
 * $T$: task in the workflow that depends on $E$ (trough e.g., control flow, data flow)
 
-Architecture: Workflow $W$ with task $T$ that depends on $E$ (the dependency might be transitive through other entities).
+Architecture: Workflow $W$ with task $T$ that depends on $E$ (the dependency might be transitive through other entities). By dependency, we mean there is a path of flow links from $E$ to $T$.
 
 Question: In workflow $W$, does $T$ depend on $E$?
 
@@ -312,7 +499,7 @@ Parameters:
 
 Architecture: Workflow $W$ with task $T$ that depends on $E_1, \dots, E_K$.
 
-Question: List all *entities of type $E$* that $T$ (from $W$) depends.
+Question: List all *entities of type $E$* that $T$ (from $W$) depends on.
 
 Reference answer: $\{E_1, \dots, E_K\}$
 
@@ -347,9 +534,111 @@ Example instance: "In workflow 'MLTrainingAndEvaluation' which task produces 'ML
 
 ---
 
+### Task hierarchy (if the architecture is hierarchical)
+
+Rationale: Can the LLM understand task hierarchy (if the architecture is hierarchical)?
+
+Parameters:
+
+* $W$: workflow name
+* $T$: task in the workflow $W$ that is composite (has sub-tasks)
+* $S$: sub-task of $T$
+
+Architecture: Workflow $W$ with task $T$ that has sub-tasks (sub-workflow). One of the sub-tasks is $S$.
+
+Question: Is task $S$ a part of task $T$ (from workflow $W$)?
+
+Reference answer: yes
+
+Evaluation metric: correctness
+
+Example instance: "Is task 'HyperparameterProposal' a part of task 'HyperparameterOptimization' (from workflow 'FailurePredictionInManufacture')?"
+
+---
+
+Rationale: Can the LLM understand task hierarchy (if the architecture is hierarchical)? (negative test)
+
+Parameters:
+
+* $W$: workflow name
+* $T$: task in the workflow $W$ (it might be composite)
+* $S$: a different task from $W$ (or another workflow) that is not sub-task of $T$
+
+Architecture: Workflow $W$ with task $T$. Another task $S$, that is not sub-task of $T$.
+
+Question: Is task $S$ a part of task $T$ (from workflow $W$)?
+
+Reference answer: no
+
+Evaluation metric: correctness
+
+Example instance: "Is task 'DataRetrieval' a part of task 'HyperparameterOptimization' (from workflow 'FailurePredictionInManufacture')?"
+
+---
+
+### List of composite tasks
+
+Can be expressed via [List of tasks with a property](#list-of-tasks-with-a-property) by the property that the task is a composite task (has nested sub-tasks).
+
+Example instance: "List all tasks from 'AutoML' workflow that are composite."
+
+---
+
+### List of nested tasks
+
+Can be expressed via [List of tasks with a property](#list-of-tasks-with-a-property) by the property that the task is a part of a composite task.
+
+Example instance: "List all tasks that are nested inside composite tasks of 'AutoML' workflow."
+
+---
+
+### Infinite recursion in references
+
+Rationale: Can the LLM detect infinite recursion in references (e.g., sub-workflows if the architecture is hierarchical)?
+
+Parameters:
+
+* $W$: workflow name
+
+Architecture: Workflow $W$ that references itself in the workflow.
+
+Question: In workflow $W$, is there an infinite recursion in the references?
+
+Reference answer: yes
+
+Evaluation metric: correctness
+
+Note: The recursion might also be more complicated than just a simple self-reference, i.e., $W_1$ references $W_2$, $W_2$ references $W_3$, $\dots$, $W_K$ references $W_1$.
+
+---
+
+Rationale: Can the LLM detect infinite recursion in references (e.g., sub-workflows if the architecture is hierarchical)? (negative test)
+
+Parameters:
+
+* $W$: workflow name
+
+Architecture: Workflow $W$ without infinite recursion of references.
+
+Question: In workflow $W$, is there an infinite recursion in the references?
+
+Reference answer: no
+
+Evaluation metric: correctness
+
+---
+
 ## Behavior patterns
 
-### Trace of tasks
+### Partial order of tasks (trace)
+
+Rationale: Can the LLM notice if tasks are in incorrect order (not corresponding to the control flow)?
+
+### Order of tasks
+
+Rationale: Can the LLM notice if tasks are in incorrect order (not corresponding to the control flow)?
+
+### Trace of tasks with initial situation
 
 Rationale: Can the LLM determine if a trace of tasks can occur?
 
@@ -392,9 +681,9 @@ Example instance: "Can the trace of tasks 'TrainTestSplit', 'MLModelEvaluation',
 
 ---
 
-### Task order (without conditional flow)
+### Determine task order (without conditional flow)
 
-Rationale: Can the LLM understand the order of tasks in the workflow without conditional flow?
+Rationale: Can the LLM order the tasks in the workflow without conditional flow to adhere to control flow links?
 
 Parameters:
 
@@ -413,7 +702,7 @@ Example instance: "List all the tasks in workflow 'MLTrainingAndEvaluation' in o
 
 ---
 
-### Mutually exclusive conditional flow
+### Is conditional flow mutually exclusive
 
 Rationale: Can the LLM understand conditional flow guards?
 
@@ -477,7 +766,7 @@ Evaluation metric: correctness
 
 Example instance: TODO
 
-### Conditional flow
+### Next task in conditional flow
 
 Rationale: Can the LLM evaluate conditional flow?
 
@@ -550,7 +839,7 @@ Example instance: Task named 'BinaryClassificationModelTraining' with descriptio
 
 ---
 
-### Inconsistent descriptions
+### Inconsistent descriptions of workflow and tasks
 
 Rationale: Can the LLM detect inconsistent descriptions of workflow and tasks?
 
@@ -569,6 +858,12 @@ Reference answer: *description of the inconsistency (depends on the test instanc
 Evaluation metric: ROUGE or BERTScore
 
 Example instance: A workflow specifying an ML pipeline where the ML goal is said to be "binary classification" in the workflow description. At the same time, the tasks perform training of a "regression" ML model (which is inconsistent with "binary classification").
+
+---
+
+### Meaning (functionality) of tasks
+
+Task performs an operation that is not directly mentioned in the name, e.g., "FeatureExtraction" is data preprocessing
 
 ---
 
@@ -594,7 +889,7 @@ Example instance: Workflow with task 'MLModelTraining' after 'MLModelEvaluation'
 
 ---
 
-### Understanding properties (meaning) of tasks
+### Meaning (functionality) of tasks
 
 Rationale: Can the LLM understand meaning of tasks (e.g., task performs an operation that is not directly mentioned in the name)?
 
