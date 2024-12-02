@@ -50,31 +50,31 @@ Link operators (e.g., parallel flow - fork and join):
 
 #### Task order
 
-* Partial order of tasks possibility (without conditional flow)
-* Order of tasks possibility (without conditional flow)
-* Determine task order (without conditional flow)
+* Are tasks in correct order? (without conditional flow)
+* Are all tasks in correct order? (without conditional flow)
+* [Determine task order (without conditional flow)](#determine-task-order-without-conditional-flow)
 
 #### Conditional flow
 
-* Is conditional flow mutually exclusive?
-* Next task in conditional flow
-* Partial order of tasks possibility (with conditional flow)
-* Order of tasks possibility (with conditional flow)
-* Determine task order (with conditional flow)
+* [Is conditional flow mutually exclusive?](#is-conditional-flow-mutually-exclusive)
+* [Next task in conditional flow](#next-task-in-conditional-flow)
+* Are tasks in correct order? (with conditional flow)
+* Are all tasks in correct order? (with conditional flow)
+* [Determine task order (with conditional flow)](#determine-task-order-with-conditional-flow)
 * Is loop infinite?
 * Loop end condition
 
 #### Traces
 
-* Trace of tasks with initial situation
-* Does task run in every situation?
+* [Trace of tasks with initial situation](#trace-of-tasks-with-initial-situation)
+* [Does task run in every situation?](#does-task-run-in-every-situation)
 
 ### Basic functionality
 
 #### Task functionality
 
 * Describe task functionality
-* Inconsistent task name and description
+* [Inconsistent task name and description](#inconsistent-task-name-and-description)
 * Inconsistent task name and other entities (e.g., parameters, data)
 * Meaning (functionality) of tasks
 
@@ -82,12 +82,12 @@ Link operators (e.g., parallel flow - fork and join):
 
 * Describe workflow functionality
 * Inconsistent workflow name and description
-* Inconsistent descriptions of workflow and tasks
+* [Inconsistent descriptions of workflow and tasks](#inconsistent-descriptions-of-workflow-and-tasks)
 
 #### Order of tasks
 
-* Semantically incorrect order of tasks
-* Meaning (functionality) of preceding tasks
+* [Semantically incorrect order of tasks](#semantically-incorrect-order-of-tasks)
+* [Meaning (functionality) of preceding tasks](#meaning-functionality-of-preceding-tasks)
 
 ## Structure patterns
 
@@ -630,56 +630,17 @@ Evaluation metric: correctness
 
 ## Behavior patterns
 
-### Partial order of tasks (trace)
+### Are tasks in correct order?
 
 Rationale: Can the LLM notice if tasks are in incorrect order (not corresponding to the control flow)?
 
-### Order of tasks
+TODO
+
+### Are all tasks in correct order?
 
 Rationale: Can the LLM notice if tasks are in incorrect order (not corresponding to the control flow)?
 
-### Trace of tasks with initial situation
-
-Rationale: Can the LLM determine if a trace of tasks can occur?
-
-Parameters:
-
-* $W$: workflow name
-* $T_1, \dots, T_K$: tasks in the workflow $W$
-* $S$: situation (e.g., parameter values)
-* $R_1, \dots, R_L$ ($L \le K$): tasks that will run when the workflow is executed with initial situation $S$
-
-Architecture: Workflow $W$ with tasks $T_1, \dots, T_K$. When $W$ is executed with initial situation $S$, tasks $R_1, \dots, R_L$ will run in this order.
-
-Question: Can the trace of tasks $R_1, \dots, R_K$ occur in workflow $W$ in this order?
-
-Reference answer: yes
-
-Evaluation metric: correctness
-
-Example instance: "Can the trace of tasks 'FeatureExtraction', 'MLModelTraining', 'MLModelEvaluation' occur in workflow 'MLTrainingAndEvaluation'?"
-
----
-
-Rationale: Can the LLM determine if a trace of tasks can occur? (negative test)
-
-Parameters:
-
-* $W$: workflow name
-* $T_1, \dots, T_K$: tasks in the workflow $W$
-* $R_1, \dots, R_L$: tasks (from $W$ or different workflow)
-
-Architecture: Workflow $W$ with tasks $T_1, \dots, T_K$. When $W$ is executed (with any initial situation), the tasks that will run will not be exactly $R_1, \dots, R_L$ in this order.
-
-Question: Can the trace of tasks $R_1, \dots, R_K$ occur in workflow $W$ in this order?
-
-Reference answer: no
-
-Evaluation metric: correctness
-
-Example instance: "Can the trace of tasks 'TrainTestSplit', 'MLModelEvaluation', 'MLModelTraining' occur in workflow 'MLTrainingAndEvaluation'?"
-
----
+TODO
 
 ### Determine task order (without conditional flow)
 
@@ -746,26 +707,6 @@ Example instance: Workflow with a parameter $p$, $C_1$ is "$p < 10$", $C_2$ is "
 
 ---
 
-### Does task run in every situation?
-
-Rationale: Can the LLM understand conditional flow guards?
-
-Parameters:
-
-* $F$: flow type (e.g., control flow)
-* $W$: workflow name
-* $T$: task in the workflow $W$
-
-Architecture: Workflow $W$ with task $T$ (and possibly other). There is at least one conditional link in flow $F$ into or before task $T$ such that for any initial situation, task $T$ is executed.
-
-Question: Will the task $T$ be executed in every possible initial situation?
-
-Reference answer: yes
-
-Evaluation metric: correctness
-
-Example instance: TODO
-
 ### Next task in conditional flow
 
 Rationale: Can the LLM evaluate conditional flow?
@@ -790,7 +731,7 @@ Example instance: "Which task will follow 'HyperparameterProposal' in control fl
 
 ---
 
-### Task order (with conditional flow)
+### Determine task order (with conditional flow)
 
 Rationale: Can the LLM understand the order of tasks in the workflow with conditional flow?
 
@@ -812,6 +753,70 @@ Evaluation metric: Damerau–Levenshtein distance *(note: special care must be g
 Example instance: "Given the initial situation p=0, list all the tasks that will run when workflow 'Workflow3' is executed in order in which they will run.", reference answer: Task7, Task8
 
 ---
+
+### Trace of tasks with initial situation
+
+Rationale: Can the LLM determine if a trace of tasks can occur?
+
+Parameters:
+
+* $W$: workflow name
+* $T_1, \dots, T_K$: tasks in the workflow $W$
+* $S$: situation (e.g., parameter values)
+* $R_1, \dots, R_L$ ($L \le K$): tasks that will run when the workflow is executed with initial situation $S$
+
+Architecture: Workflow $W$ with tasks $T_1, \dots, T_K$. When $W$ is executed with initial situation $S$, tasks $R_1, \dots, R_L$ will run in this order.
+
+Question: Can the trace of tasks $R_1, \dots, R_K$ occur in workflow $W$ in this order?
+
+Reference answer: yes
+
+Evaluation metric: correctness
+
+Example instance: "Can the trace of tasks 'FeatureExtraction', 'MLModelTraining', 'MLModelEvaluation' occur in workflow 'MLTrainingAndEvaluation'?"
+
+---
+
+Rationale: Can the LLM determine if a trace of tasks can occur? (negative test)
+
+Parameters:
+
+* $W$: workflow name
+* $T_1, \dots, T_K$: tasks in the workflow $W$
+* $R_1, \dots, R_L$: tasks (from $W$ or different workflow)
+
+Architecture: Workflow $W$ with tasks $T_1, \dots, T_K$. When $W$ is executed (with any initial situation), the tasks that will run will not be exactly $R_1, \dots, R_L$ in this order.
+
+Question: Can the trace of tasks $R_1, \dots, R_K$ occur in workflow $W$ in this order?
+
+Reference answer: no
+
+Evaluation metric: correctness
+
+Example instance: "Can the trace of tasks 'TrainTestSplit', 'MLModelEvaluation', 'MLModelTraining' occur in workflow 'MLTrainingAndEvaluation'?"
+
+---
+
+### Does task run in every situation?
+
+Rationale: Can the LLM understand conditional flow guards?
+
+Parameters:
+
+* $F$: flow type (e.g., control flow)
+* $W$: workflow name
+* $T$: task in the workflow $W$
+
+Architecture: Workflow $W$ with task $T$ (and possibly other). There is at least one conditional link in flow $F$ into or before task $T$ such that for any initial situation, task $T$ is executed.
+
+Question: Will the task $T$ be executed in every possible initial situation?
+
+Reference answer: yes
+
+Evaluation metric: correctness
+
+Example instance: 
+TODO
 
 ## Basic functionality patterns
 
@@ -839,6 +844,12 @@ Example instance: Task named 'BinaryClassificationModelTraining' with descriptio
 
 ---
 
+### Meaning (functionality) of tasks
+
+Task performs an operation that is not directly mentioned in the name, e.g., "FeatureExtraction" is data preprocessing
+
+---
+
 ### Inconsistent descriptions of workflow and tasks
 
 Rationale: Can the LLM detect inconsistent descriptions of workflow and tasks?
@@ -858,12 +869,6 @@ Reference answer: *description of the inconsistency (depends on the test instanc
 Evaluation metric: ROUGE or BERTScore
 
 Example instance: A workflow specifying an ML pipeline where the ML goal is said to be "binary classification" in the workflow description. At the same time, the tasks perform training of a "regression" ML model (which is inconsistent with "binary classification").
-
----
-
-### Meaning (functionality) of tasks
-
-Task performs an operation that is not directly mentioned in the name, e.g., "FeatureExtraction" is data preprocessing
 
 ---
 
@@ -889,7 +894,7 @@ Example instance: Workflow with task 'MLModelTraining' after 'MLModelEvaluation'
 
 ---
 
-### Meaning (functionality) of tasks
+### Meaning (functionality) of preceding tasks
 
 Rationale: Can the LLM understand meaning of tasks (e.g., task performs an operation that is not directly mentioned in the name)?
 
