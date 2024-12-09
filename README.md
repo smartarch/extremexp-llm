@@ -1,6 +1,6 @@
-# Understanding workflow architectures by LLMs
+# Interpreting workflow architectures by LLMs
 
-This is a replication package for the "Understanding workflow architectures by LLMs" paper submitted to SAC'25.
+This is a replication package for the "Interpreting workflow architectures by LLMs" paper submitted to ENASE 25.
 
 Full list of evaluation patterns: [`patterns.md`](patterns.md)
 

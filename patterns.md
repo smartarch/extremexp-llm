@@ -32,11 +32,11 @@ Link operators (e.g., parallel flow - fork and join):
 * [Operator existence](#operator-existence)
 * [Parallel tasks (block) existence](#parallel-tasks-block-existence)
 * [List tasks in a parallel (fork-join) block](#list-tasks-in-a-parallel-fork-join-block)
-* [Parallel tasks to a task](#parallel-tasks-to-a-task)
+* [Parallel tasks to a specific task](#parallel-tasks-to-a-specific-task)
 * [List all parallel tasks](#list-all-parallel-tasks)
 * [List tasks in an operator block (other than simple fork-join)](#list-tasks-in-an-operator-block-other-than-simple-fork-join)
 
-#### Other entities (e.g., data) and links (e.g., data flow)
+#### Dependencies (on other entities, e.g., data)
 
 * [Dependency existence (in the flow)](#dependency-existence-in-the-flow)
 * [List of dependencies (in the flow)](#list-of-dependencies-in-the-flow)
@@ -44,7 +44,7 @@ Link operators (e.g., parallel flow - fork and join):
 
 #### Hierarchical structure
 
-* [Task hierarchy](#task-hierarchy-if-the-architecture-is-hierarchical)
+* [Task hierarchy](#task-hierarchy)
 * [List of composite tasks](#list-of-composite-tasks)
 * [List of nested tasks](#list-of-nested-tasks)
 * [Infinite recursion in references](#infinite-recursion-in-references)
@@ -118,7 +118,7 @@ Example instance: "List all tasks in workflow 'MLTrainingAndEvaluation'."
 
 ### List of tasks with a property
 
-Rationale: Can the LLM list the tasks in a workflow and filter them?
+Rationale: Can the LLM list the tasks in a workflow and filter them based on a specific property?
 
 Parameters:
 
@@ -250,7 +250,7 @@ Example instance: "In workflow 'MainWorkflow', which tasks come directly after '
 
 ### Flow cycle
 
-Rationale: Can the LLM find cycles in the flow?
+Rationale: Can the LLM find cycles in a flow?
 
 Parameters:
 
@@ -327,7 +327,7 @@ Evaluation metric: Jaccard index
 
 ### Missing link
 
-Rationale: Can the LLM detect that the flow is not connected (there is a missing link)?
+Rationale: Can the LLM detect that a flow is not connected (there is a missing link)?
 
 Parameters:
 
@@ -363,7 +363,7 @@ Evaluation metric: correctness
 
 ### Link existence with a property
 
-Rationale: Can the LLM determine if there is a flow link between two tasks?
+Rationale: Can the LLM determine whether there is a flow link between two tasks?
 
 Parameters:
 
@@ -405,7 +405,7 @@ Evaluation metric: correctness
 
 ### List of links with a property
 
-Rationale: Can the LLM list the links from a given task and filter them?
+Rationale: Can the LLM list the links from a given task and filter them based on a specific property?
 
 Parameters:
 
@@ -433,13 +433,13 @@ Note: It would be possible to also create a pattern to list all links in workflo
 
 Rationale: Can the LLM understand operators (e.g., fork, join)? Can it determine whether there is an operator used in a workflow?
 
-TODO
+*Pattern details to be added.*
 
 ### Parallel tasks (block) existence
 
 Rationale: Can the LLM determine whether some tasks can run in parallel?
 
-TODO
+*Pattern details to be added.*
 
 Reference answer: yes
 
@@ -447,23 +447,23 @@ Evaluation metric: correctness
 
 ### List tasks in a parallel (fork-join) block
 
-Rationale: Can the LLM determine which tasks can run in parallel (inside one particular fork-join block)?
+Rationale: Can the LLM determine which tasks can run in parallel (inside a particular fork-join block)?
 
-TODO
+*Pattern details to be added.*
 
 Reference answer: list of tasks
 
-### Parallel tasks to a task
+### Parallel tasks to a specific task
 
 Rationale: Can the LLM determine which tasks can run in parallel (to a particular task)?
 
-TODO
+*Pattern details to be added.*
 
 ### List all parallel tasks
 
 Rationale: Can the LLM determine which tasks can run in parallel?
 
-TODO
+*Pattern details to be added.*
 
 Reference answer: several lists of tasks that can be run in parallel (open question)
 
@@ -471,11 +471,11 @@ Reference answer: several lists of tasks that can be run in parallel (open quest
 
 Rationale: Can the LLM correctly interpret other operators than simple fork-join?
 
-TODO
+*Pattern details to be added.*
 
-### Dependency existence (in the flow)
+### Dependency existence (in a flow)
 
-Rationale: Can the LLM understand dependencies (in the flow)?
+Rationale: Can the LLM find dependencies (in a flow)?
 
 Parameters:
 
@@ -498,7 +498,7 @@ Example instances:
 
 ---
 
-Rationale: Can the LLM understand dependencies (in the flow)? (negative test)
+Rationale: Can the LLM find dependencies (in a flow)? (negative test)
 
 Parameters:
 
@@ -521,9 +521,9 @@ Example instances:
 
 ---
 
-### List of dependencies (in the flow)
+### List of dependencies (in a flow)
 
-Rationale: Can the LLM list dependencies (in the flow)?
+Rationale: Can the LLM list dependencies (in a flow)?
 
 Parameters:
 
@@ -549,7 +549,7 @@ Example instances:
 
 ### Data production
 
-Rationale: Can the LLM detect which task produces the given data?
+Rationale: Can the LLM detect which task produces specific data?
 
 Parameters:
 
@@ -569,9 +569,9 @@ Example instance: "In workflow 'MLTrainingAndEvaluation' which task produces 'ML
 
 ---
 
-### Task hierarchy (if the architecture is hierarchical)
+### Task hierarchy
 
-Rationale: Can the LLM understand task hierarchy (if the architecture is hierarchical)?
+Rationale: Can the LLM interpret task hierarchy well?
 
 Parameters:
 
@@ -591,7 +591,7 @@ Example instance: "Is task 'HyperparameterProposal' a part of task 'Hyperparamet
 
 ---
 
-Rationale: Can the LLM understand task hierarchy (if the architecture is hierarchical)? (negative test)
+Rationale: Can the LLM interpret task hierarchy well? (negative test)
 
 Parameters:
 
@@ -613,6 +613,8 @@ Example instance: "Is task 'DataRetrieval' a part of task 'HyperparameterOptimiz
 
 ### List of composite tasks
 
+Rationale: Can the LLM interpret task hierarchy well?
+
 Can be expressed via [List of tasks with a property](#list-of-tasks-with-a-property) by the property that the task is a composite task (has nested sub-tasks).
 
 Example instance: "List all tasks from 'AutoML' workflow that are composite."
@@ -620,6 +622,8 @@ Example instance: "List all tasks from 'AutoML' workflow that are composite."
 ---
 
 ### List of nested tasks
+
+Rationale: Can the LLM interpret task hierarchy well?
 
 Can be expressed via [List of tasks with a property](#list-of-tasks-with-a-property) by the property that the task is a part of a composite task.
 
@@ -629,7 +633,7 @@ Example instance: "List all tasks that are nested inside composite tasks of 'Aut
 
 ### Infinite recursion in references
 
-Rationale: Can the LLM detect infinite recursion in references (e.g., sub-workflows if the architecture is hierarchical)?
+Rationale: Can the LLM detect infinite recursion in references (e.g., among sub-workflows)?
 
 Parameters:
 
@@ -647,7 +651,7 @@ Note: The recursion might also be more complicated than just a simple self-refer
 
 ---
 
-Rationale: Can the LLM detect infinite recursion in references (e.g., sub-workflows if the architecture is hierarchical)? (negative test)
+Rationale: Can the LLM detect infinite recursion in references (e.g., among sub-workflows)? (negative test)
 
 Parameters:
 
@@ -667,7 +671,7 @@ Evaluation metric: correctness
 
 ### Are tasks in correct order? (without conditional flow)
 
-Rationale: Can the LLM notice if tasks are in incorrect order (not corresponding to the control flow)?
+Rationale: Can the LLM notice that tasks are in incorrect order (not corresponding to the control flow)?
 
 Parameters:
 
@@ -689,7 +693,7 @@ Example instance:
 
 ---
 
-Rationale: Can the LLM notice if tasks are in incorrect order (not corresponding to the control flow)? (negative test)
+Rationale: Can the LLM notice that tasks are in incorrect order (not corresponding to the control flow)? (negative test)
 
 Parameters:
 
@@ -713,7 +717,7 @@ Example instance:
 
 ### Are all tasks in correct order? (without conditional flow)
 
-Rationale: Can the LLM notice if tasks are in incorrect order (not corresponding to the control flow)?
+Rationale: Can the LLM notice that tasks are in incorrect order (not corresponding to the control flow)?
 
 Parameters:
 
@@ -735,7 +739,7 @@ Example instance:
 
 ---
 
-Rationale: Can the LLM notice if tasks are in incorrect order (not corresponding to the control flow)? (negative test)
+Rationale: Can the LLM notice that tasks are in incorrect order (not corresponding to the control flow)? (negative test)
 
 Parameters:
 
@@ -759,7 +763,7 @@ Example instance:
 
 ### Determine task order (without conditional flow)
 
-Rationale: Can the LLM order the tasks in the workflow without conditional flow to adhere to control flow links?
+Rationale: Can the LLM order the tasks in a workflow without conditional flow to adhere to control flow links?
 
 Parameters:
 
@@ -824,9 +828,13 @@ Example instance: Workflow with a parameter $p$, $C_1$ is "$p < 10$", $C_2$ is "
 
 ### Are tasks in correct order? (with conditional flow)
 
+Rationale: Can the LLM notice that tasks are in incorrect order (not corresponding to the control flow)?
+
 Same as [Are tasks in correct order? (without conditional flow)](#are-tasks-in-correct-order-without-conditional-flow), but some of the control flow links are conditional.
 
 ### Are all tasks in correct order? (with conditional flow)
+
+Rationale: Can the LLM notice that tasks are in incorrect order (not corresponding to the control flow)?
 
 Same as [Are all tasks in correct order? (without conditional flow)](#are-all-tasks-in-correct-order-without-conditional-flow), but some of the control flow links are conditional.
 
@@ -879,19 +887,19 @@ Example instance: "Given the initial situation p=0, list all the tasks that will
 
 ### Is loop infinite?
 
-Rationale: Can the LLM determine if a loop is infinite?
+Rationale: Can the LLM determine that a loop is infinite?
 
-TODO
+*Pattern details to be added.*
 
 ### Loop end condition
 
 Rationale: Can the LLM determine under which conditions a loop ends?
 
-TODO
+*Pattern details to be added.*
 
 ### Trace of tasks with initial situation
 
-Rationale: Can the LLM determine if a trace of tasks can occur?
+Rationale: Can the LLM determine that a trace of tasks can occur in a specific initial situation?
 
 Parameters:
 
@@ -912,7 +920,7 @@ Example instance: "Can the trace of tasks 'FeatureExtraction', 'MLModelTraining'
 
 ---
 
-Rationale: Can the LLM determine if a trace of tasks can occur? (negative test)
+Rationale: Can the LLM determine that a trace of tasks can occur in a specific initial situation? (negative test)
 
 Parameters:
 
@@ -934,7 +942,7 @@ Example instance: "Can the trace of tasks 'TrainTestSplit', 'MLModelEvaluation',
 
 ### Does task run in every situation?
 
-Rationale: Can the LLM understand conditional flow guards?
+Rationale: Can the LLM interpret conditional flow guards correctly?
 
 Parameters:
 
@@ -950,22 +958,19 @@ Reference answer: yes
 
 Evaluation metric: correctness
 
-Example instance: 
-TODO
-
 ## Basic functionality patterns
 
 In the source code and raw results, these patterns are labeled `semantics`.
 
 ### Describe task functionality
 
-Rationale: Can the LLM determine meaning of task based on its name, parameters, links to other tasks, ...?
+Rationale: Can the LLM determine the meaning of a task based on its name, parameters, links to other tasks, ...?
 
-TODO
+*Pattern details to be added.*
 
 ### Inconsistent task name and description
 
-Rationale: Can the LLM detect inconsistent task name and description?
+Rationale: Can the LLM detect inconsistency of a task's name and its description?
 
 Parameters:
 
@@ -987,13 +992,13 @@ Example instance: Task named 'BinaryClassificationModelTraining' with descriptio
 
 ### Inconsistent task name and other entities
 
-Rationale: Can the LLM detect inconsistencies between task name and linked entities (e.g., data, other tasks)?
+Rationale: Can the LLM detect inconsistencies of task's name and the linked entities (e.g., data, other tasks)?
 
-TODO
+*Pattern details to be added.*
 
 ### Meaning (functionality) of tasks
 
-Rationale: Can the LLM understand meaning of tasks (e.g., task performs an operation that is not directly mentioned in the name)?
+Rationale: Can the LLM interpret the meaning  of tasks adequately (e.g., task performs an operation that is not directly mentioned in its name)?
 
 Parameters:
 
@@ -1013,7 +1018,7 @@ Example instance: Task 'FeatureExtraction' is labeled as "data preprocessing", q
 
 ---
 
-Rationale: Can the LLM understand meaning of tasks (e.g., task performs an operation that is not directly mentioned in the name)? (negative test)
+Rationale: Can the LLM interpret the meaning  of tasks adequately (e.g., task performs an operation that is not directly mentioned in its name)? (negative test)
 
 Parameters:
 
@@ -1032,9 +1037,9 @@ Evaluation metric: correctness
 
 ### Describe workflow functionality
 
-Rationale: Can the LLM determine meaning of a workflow based on the tasks inside it?
+Rationale: Can the LLM determine the meaning of a workflow based on its tasks?
 
-TODO
+*Pattern details to be added.*
 
 ### Inconsistent workflow name and description
 
@@ -1059,7 +1064,7 @@ Example instance: Workflow named 'BinaryClassification' with description 'Traini
 
 ### Inconsistent descriptions of workflow and tasks
 
-Rationale: Can the LLM detect inconsistent descriptions of workflow and tasks?
+Rationale: Can the LLM detect inconsistent descriptions of a workflow and its tasks?
 
 Parameters:
 
@@ -1081,7 +1086,7 @@ Example instance: A workflow specifying an ML pipeline where the ML goal is said
 
 ### Semantically incorrect order of tasks
 
-Rationale: Can the LLM detect tasks that are clearly in wrong order (semantically)?
+Rationale: Can the LLM detect tasks that are clearly in the wrong order (semantically)?
 
 Parameters:
 
@@ -1103,7 +1108,7 @@ Example instance: Workflow with task 'MLModelTraining' after 'MLModelEvaluation'
 
 ### Meaning (functionality) of preceding tasks
 
-Rationale: Can the LLM understand meaning of tasks (e.g., task performs an operation that is not directly mentioned in the name)?
+Rationale: Can the LLM understand the meaning of tasks (e.g., a task performs an operation that is not directly mentioned in its name)?
 
 Parameters:
 
