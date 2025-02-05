@@ -1,8 +1,10 @@
-# Interpreting workflow architectures by LLMs
+# Interpreting Workflow Architectures by LLMs
 
-This is a replication package for the "Interpreting workflow architectures by LLMs" paper submitted to ENASE 25.
+This is a replication package for the paper **Interpreting Workflow Architectures by LLMs** by *Michal Töpfer*, *Tomáš Bureš*, *František Plášil* and *Petr Hnětynka*.
 
-Full list of evaluation patterns: [`patterns.md`](patterns.md)
+## Test Patterns
+
+[List of test patterns](patterns.md)
 
 ## Installation
 
@@ -16,7 +18,7 @@ To use OpenAI (paid API):
 
 ## LLM Evaluation
 
-The [`agent_evaluation`](agent_evaluation/) folder contains sample test instances for evaluating a LLM-based Agent. The instances are manually created based on the [*test instance patterns*](patterns.md). The evaluation can be run via the [`main.py`](xxp_agent/main.py) file.
+The [`agent_evaluation`](agent_evaluation/) folder contains sample test instances for evaluating a LLM-based Agent. The instances are manually created based on the [*test patterns*](patterns.md). The evaluation can be run via the [`main.py`](xxp_agent/main.py) file.
 
 In the [`agent_evaluation/README.md`](agent_evaluation/README.md) file, the experimental results are summarized and discussed.
 
